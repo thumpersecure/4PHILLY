@@ -45,7 +45,8 @@
   /* Header */
   .top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px}
   .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-  .brand-mark{font-family:"Archivo",sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;color:var(--ink)}
+  .brand-mark{font-family:"Archivo",sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;color:var(--ink);cursor:pointer;user-select:none}
+  .brand-mark:hover span{color:var(--amber-soft)}
   .brand-mark span{color:var(--amber)}
   .brand-tag{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.18em}
   .top-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);text-align:right;line-height:1.7}
@@ -485,7 +486,7 @@ async function getCartoRentalLicense(opa){
 
 async function getOpenViolations(opa){
   return eclipseQuery("VIOLATIONS",
-    `opa_account_num='${opa}' AND violationstatus='OPEN'`,
+    `opa_account_num='${opa}' AND violationstatus IN ('OPEN','IN VIOLATION')`,
     "casenumber,violationdate,violationcode,violationcodetitle,violationstatus,casestatus,casecreateddate,casetype,unit_num,underappeal");
 }
 async function getAllViolations(opa){
@@ -514,7 +515,7 @@ async function get311ForAddress(loc){
   ));
   const seen=new Set();
   return results.flat().filter(r=>{
-    const k=r.cartodb_id!=null?String(r.cartodb_id):(r.requested_datetime+r.address+r.service_name);
+    const k=r.cartodb_id!=null?String(r.cartodb_id):[r.requested_datetime||"",r.address||"",r.service_name||""].join("|");
     if(seen.has(k)) return false;
     seen.add(k); return true;
   }).sort((a,b)=>new Date(b.requested_datetime)-new Date(a.requested_datetime));
@@ -554,8 +555,11 @@ function renderProphead(opa, opaRow){
 }
 
 function renderKPIs({licenseStatus,licenseExp,openCt,unfitCt,t311Ct,allViolCt}){
-  const isInactive=(licenseStatus||"").toLowerCase().includes("inactive")||(licenseStatus||"").toLowerCase().includes("expired");
-  const isActive=(licenseStatus||"").toLowerCase()==="active";
+  const expMs=licenseExp?new Date(licenseExp).getTime():null;
+  const isExpired=expMs!==null&&!isNaN(expMs)&&expMs<Date.now();
+  const statusLower=(licenseStatus||"").toLowerCase();
+  const isInactive=statusLower.includes("inactive")||statusLower.includes("expired")||isExpired;
+  const isActive=statusLower==="active"&&!isExpired;
   $("#kpis").innerHTML=`
     <div class="card">
       <h3>Rental License</h3>
@@ -615,10 +619,11 @@ function renderOpenViolations(ov){
     $("#ov-body").innerHTML=`<div class="banner" style="border-left-color:var(--green)">No open violations.</div>`;
     return;
   }
-  ov.sort((a,b)=>(b.violationdate||0)-(a.violationdate||0));
+  const asMs=v=>{const d=v.violationdate;if(!d)return 0;return typeof d==='number'?d:(new Date(d).getTime()||0);};
+  ov.sort((a,b)=>asMs(b)-asMs(a));
   let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Case</th><th>Date</th><th>Code</th><th>Description</th><th>Unit</th><th>Appeal</th></tr></thead><tbody>`;
   ov.forEach(V=>{
-    const unfit=V.violationcode==="PM15-109.1";
+    const unfit=/^PM-?\d*-?109\.1$/i.test(V.violationcode||"");
     html+=`<tr>
       <td class="k">${esc(V.casenumber||"—")}</td>
       <td>${fmtDate(V.violationdate)}</td>
@@ -633,7 +638,7 @@ function renderOpenViolations(ov){
 }
 
 function renderViolHistory(all){
-  const dist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  const dist={OPEN:0,"IN VIOLATION":0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
   all.forEach(v=>{
     const s=v.violationstatus;
     if(dist[s]!==undefined) dist[s]++; else dist.OTHER++;
@@ -642,13 +647,17 @@ function renderViolHistory(all){
   let earliest=null,latest=null;
   all.forEach(v=>{
     if(v.violationdate){
-      if(earliest===null||v.violationdate<earliest) earliest=v.violationdate;
-      if(latest===null||v.violationdate>latest) latest=v.violationdate;
+      const ms=typeof v.violationdate==='number'?v.violationdate:new Date(v.violationdate).getTime();
+      if(!isNaN(ms)){
+        if(earliest===null||ms<earliest) earliest=ms;
+        if(latest===null||ms>latest) latest=ms;
+      }
     }
   });
   const html=`
     <div style="overflow-x:auto"><table class="dat" style="max-width:560px"><thead><tr><th>violationstatus</th><th>count</th><th>meaning</th></tr></thead><tbody>
       <tr><td>${statusPill("OPEN")}</td><td class="k">${dist.OPEN}</td><td>currently unresolved</td></tr>
+      ${dist["IN VIOLATION"]>0?`<tr><td>${statusPill("IN VIOLATION")}</td><td class="k">${dist["IN VIOLATION"]}</td><td>active violation — not yet complied</td></tr>`:""}
       <tr><td>${statusPill("COMPLIED")}</td><td class="k">${dist.COMPLIED}</td><td>actual confirmed compliance</td></tr>
       <tr><td>${statusPill("CLOSED")}</td><td class="k">${dist.CLOSED}</td><td>administrative — compliance NOT confirmed</td></tr>
       <tr><td>${statusPill("CLOSEDCASE")}</td><td class="k">${dist.CLOSEDCASE}</td><td>parent case admin-closed</td></tr>
@@ -669,7 +678,7 @@ function render311(rows){
     return;
   }
   const byType={};
-  rows.forEach(r=>{ byType[r.service_name]=(byType[r.service_name]||0)+1; });
+  rows.forEach(r=>{ const k=r.service_name||"(unknown)"; byType[k]=(byType[k]||0)+1; });
   const top=Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,8);
   let html=`<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px">`;
   top.forEach(([k,v])=>{
@@ -709,9 +718,11 @@ function renderDriftLicense(eRows,cRows){
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE (authoritative)</div><div>CARTO (mirror)</div><div>STATUS</div></div>`;
   fields.forEach(([key,label,isDate])=>{
     const eV=E[key], cV=C[key];
-    const eDisplay=isDate?fmtDate(eV):(eV!=null&&eV!==""?eV:"—");
-    const cDisplay=isDate?fmtDate(cV):(cV!=null&&cV!==""?cV:"—");
-    const same=String(eDisplay)===String(cDisplay);
+    const eNorm=(eV==null||eV==="")?null:(isDate?fmtDate(eV):String(eV).trim().toUpperCase());
+    const cNorm=(cV==null||cV==="")?null:(isDate?fmtDate(cV):String(cV).trim().toUpperCase());
+    const same=eNorm===cNorm;
+    const eDisplay=eNorm==null?"—":(isDate?eNorm:(eV!=null?String(eV):"—"));
+    const cDisplay=cNorm==null?"—":(isDate?cNorm:(cV!=null?String(cV):"—"));
     html+=`<div class="drift-row ${same?"":"diverge"}">
       <div class="dl-label">${label}</div>
       <div class="drift-vals">
@@ -725,15 +736,17 @@ function renderDriftLicense(eRows,cRows){
 }
 
 function renderDriftViolations(eAll,cartoDist){
-  const eDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  const eDist={OPEN:0,"IN VIOLATION":0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
   eAll.forEach(v=>{ const s=v.violationstatus; if(eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
-  const cDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
-  cartoDist.forEach(r=>{ if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]=Number(r.ct); else cDist.OTHER+=Number(r.ct); });
+  const cDist={OPEN:0,"IN VIOLATION":0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  cartoDist.forEach(r=>{ if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]+=Number(r.ct)||0; else cDist.OTHER+=Number(r.ct)||0; });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
-  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
+  const statuses=["OPEN",
+    ...(eDist["IN VIOLATION"]>0||cDist["IN VIOLATION"]>0?["IN VIOLATION"]:[]),
+    "COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
     ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])];
 
   statuses.forEach(s=>{
@@ -766,7 +779,7 @@ function renderBrief({opaRow,lic,openViol,allViol,t311}){
   const isActive=(licStatus||"").toLowerCase()==="active";
   const expDate=L?.expirationdate?fmtDate(L.expirationdate):null;
   const openCt=openViol.length;
-  const unfit=openViol.filter(v=>v.violationcode==="PM15-109.1");
+  const unfit=openViol.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
   const recent311=t311.filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
 
   let verdict="",vclass="";
@@ -1027,6 +1040,7 @@ $("#bottom-nav").addEventListener("click",e=>{
 $("#star-btn").addEventListener('click',()=>{
   const opa=$("#ph-opa").textContent;
   const addr=$("#ph-addr").textContent;
+  if(!/^\d{6,12}$/.test(opa)) return;
   if(isSaved(opa)) removeSaved(opa);
   else saveProp(opa,addr);
   updateStarBtn(opa);
@@ -1066,6 +1080,7 @@ async function lookup(opa){
       $("#tabs").style.display="none";
       $("#bottom-nav").classList.remove("visible");
       $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
+      history.replaceState(null,'',location.pathname+location.search);
       banner(`No OPA record for parcel <code>${esc(opa)}</code>.`,true);
       return;
     }
@@ -1078,7 +1093,7 @@ async function lookup(opa){
     // Abort if a newer lookup has started (after second await)
     if(seq !== lookupSeq) return;
 
-    const unfitOpen=ovE.filter(v=>v.violationcode==="PM15-109.1").length;
+    const unfitOpen=ovE.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||"")).length;
     renderKPIs({licenseStatus:lic[0]?.licensestatus,licenseExp:lic[0]?.expirationdate,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
     renderLicense(lic,licC);
     renderOpenViolations(ovE);
@@ -1092,7 +1107,13 @@ async function lookup(opa){
     $("#banner").style.display="none";
 
   }catch(err){
+    if(seq !== lookupSeq) return;
     console.error(err);
+    $("#prophead").style.display="none";
+    $("#tabs").style.display="none";
+    $("#bottom-nav").classList.remove("visible");
+    $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
+    history.replaceState(null,'',location.pathname+location.search);
     banner(`Lookup failed: ${esc(err.message)}. The Eclipse or Carto endpoint may be unreachable. Try again.`,true);
   }
 }
@@ -1142,6 +1163,20 @@ $("#go").addEventListener("click",async()=>{
 
 $("#opa").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#go").click(); });
 $("#addr").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#go").click(); });
+$("#addr").addEventListener("input",()=>{ if($("#addr").value.trim()) $("#opa").value=""; });
+$("#opa").addEventListener("input",()=>{ if($("#opa").value.trim()) $("#addr").value=""; });
+
+$(".brand-mark").addEventListener("click",()=>{
+  lookupSeq++;
+  history.replaceState(null,'',location.pathname+location.search);
+  $("#opa").value=""; $("#addr").value="";
+  $("#prophead").style.display="none";
+  $("#tabs").style.display="none";
+  $("#bottom-nav").classList.remove("visible");
+  $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
+  $("#banner").style.display="none";
+  $("#opa").focus();
+});
 
 $$(".quick button").forEach(b=>{
   b.addEventListener("click",()=>{
