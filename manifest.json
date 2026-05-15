@@ -1,0 +1,20 @@
+{
+  "name": "4PHILLY",
+  "short_name": "4PHILLY",
+  "description": "Philadelphia property record — violations, license status, 311 complaints.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#ffb000",
+  "background_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["utilities"],
+  "lang": "en-US"
+}
