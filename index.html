@@ -573,6 +573,82 @@ function statusPill(s){
   return `<span class="pill admin">${esc(s||"—")}</span>`;
 }
 
+function asDateMs(value){
+  if(value==null||value==="") return null;
+  const ms=typeof value==="number"?value:new Date(value).getTime();
+  return Number.isNaN(ms)?null:ms;
+}
+
+function analyzeRentalLicense(row){
+  const statusRaw=String(row?.licensestatus||"").trim();
+  const statusLower=statusRaw.toLowerCase();
+  const expMs=asDateMs(row?.expirationdate);
+  const inactiveMs=asDateMs(row?.inactivedate);
+  const isExpired=expMs!==null&&expMs<Date.now();
+  const statusSignalsInactive=/inactive|expired|revoked|suspend|void|cancel/i.test(statusRaw);
+  const isActive=statusLower==="active"&&!isExpired&&inactiveMs===null;
+  let displayStatus=statusRaw||"Unknown";
+  if((statusLower==="active"&&isExpired)||(!statusRaw&&isExpired)) displayStatus="Expired";
+  if(!isActive&&!statusRaw&&inactiveMs!==null) displayStatus="Inactive";
+  return {isActive,isExpired,statusSignalsInactive,displayStatus};
+}
+
+function summarizeRentalLicenses(rows){
+  const licenses=(Array.isArray(rows)?rows:[]).filter(Boolean);
+  const analyzed=licenses.map((row,idx)=>({
+    row,
+    idx,
+    meta:analyzeRentalLicense(row),
+    recency:Math.max(
+      asDateMs(row.mostrecentissuedate)??-1,
+      asDateMs(row.expirationdate)??-1,
+      asDateMs(row.initialissuedate)??-1
+    ),
+    licenseNum:String(row.licensenum||"").trim()
+  }));
+  analyzed.sort((a,b)=>
+    (Number(b.meta.isActive)-Number(a.meta.isActive)) ||
+    ((b.recency??-1)-(a.recency??-1)) ||
+    a.licenseNum.localeCompare(b.licenseNum) ||
+    (a.idx-b.idx)
+  );
+  const primary=analyzed[0]||null;
+  const activeCount=analyzed.filter(x=>x.meta.isActive).length;
+  const numbers=analyzed.map(x=>x.licenseNum).filter(Boolean);
+  return {count:licenses.length,activeCount,primary,numbers};
+}
+
+function buildLicenseRowMap(rows){
+  const map=new Map();
+  const seen=new Map();
+  (Array.isArray(rows)?rows:[]).forEach((row,idx)=>{
+    const num=String(row?.licensenum||"").trim();
+    const base=num?`num:${num.toUpperCase()}`:`idx:${idx}`;
+    const occ=seen.get(base)||0;
+    seen.set(base,occ+1);
+    map.set(`${base}#${occ}`,row||{});
+  });
+  return map;
+}
+
+function renderBriefLicenseList(licenses){
+  if(!licenses.length) return "";
+  const items=licenses.map(L=>{
+    const meta=analyzeRentalLicense(L);
+    const num=esc(L.licensenum||"—");
+    const status=esc(meta.isActive?"ACTIVE":meta.displayStatus||"—");
+    const exp=L.expirationdate?` · exp ${fmtDate(L.expirationdate)}`:"";
+    const units=(L.numberofunits!=null&&L.numberofunits!=="")?` · units ${esc(String(L.numberofunits))}`:"";
+    return `<li><b>${num}</b> — ${status}${exp}${units}</li>`;
+  }).join("");
+  return `
+    <div class="gap">
+      <h4>Rental licenses on file (${licenses.length})</h4>
+      <ul>${items}</ul>
+    </div>
+  `;
+}
+
 function renderProphead(opa, opaRow){
   $("#prophead").style.display="block";
   $("#tabs").style.display="";
@@ -588,17 +664,30 @@ function renderProphead(opa, opaRow){
   $("#bottom-nav").classList.add("visible");
 }
 
-function renderKPIs({licenseStatus,licenseExp,openCt,unfitCt,t311Ct,allViolCt}){
-  const expMs=licenseExp?new Date(licenseExp).getTime():null;
-  const isExpired=expMs!==null&&!isNaN(expMs)&&expMs<Date.now();
-  const statusLower=(licenseStatus||"").toLowerCase();
-  const isInactive=statusLower.includes("inactive")||statusLower.includes("expired")||isExpired;
-  const isActive=statusLower==="active"&&!isExpired;
+function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
+  licenseSummary=licenseSummary||{count:0,activeCount:0,primary:null,numbers:[]};
+  let licenseBig="None on file";
+  let licenseNote="";
+  let licenseClass="red";
+  if(licenseSummary.count){
+    if(licenseSummary.count===1&&licenseSummary.primary){
+      const meta=licenseSummary.primary.meta;
+      const row=licenseSummary.primary.row;
+      licenseBig=meta.isActive?"ACTIVE":meta.displayStatus||"Unknown";
+      licenseClass=meta.isActive?"green":"red";
+      licenseNote=row.expirationdate?`exp ${fmtDate(row.expirationdate)}`:"1 license on file";
+    }else{
+      licenseBig=`${licenseSummary.activeCount}/${licenseSummary.count} active`;
+      licenseClass=licenseSummary.activeCount===licenseSummary.count?"green":(licenseSummary.activeCount===0?"red":"amber");
+      const nums=licenseSummary.numbers.length?` · ${licenseSummary.numbers.join(", ")}`:"";
+      licenseNote=`${licenseSummary.count} licenses on file${nums}`;
+    }
+  }
   $("#kpis").innerHTML=`
     <div class="card">
       <h3>Rental License</h3>
-      <div class="big ${!licenseStatus?"red":isInactive?"red":isActive?"green":""}">${esc(licenseStatus||"None on file")}</div>
-      <div class="note">${licenseExp?"exp "+fmtDate(licenseExp):""}</div>
+      <div class="big ${licenseClass}">${esc(licenseBig)}</div>
+      <div class="note">${esc(licenseNote)}</div>
     </div>
     <div class="card">
       <h3>Open violations</h3>
@@ -632,10 +721,11 @@ function renderLicense(licE,licC){
   $("#lic-c").textContent=licE.length;
   let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>License #</th><th>Status</th><th>Most recent issue</th><th>Expires</th><th>Inactive date</th><th>Units</th><th>Business name</th></tr></thead><tbody>`;
   licE.forEach(L=>{
-    const inactive=(L.licensestatus||"").toLowerCase()!=="active";
+    const meta=analyzeRentalLicense(L);
+    const statusText=meta.isActive?"ACTIVE":(meta.displayStatus||"—");
     html+=`<tr>
       <td class="k">${esc(L.licensenum||"—")}</td>
-      <td>${inactive?'<span class="pill open">'+esc(L.licensestatus||"—")+'</span>':'<span class="pill complied">ACTIVE</span>'}</td>
+      <td>${meta.isActive?'<span class="pill complied">ACTIVE</span>':'<span class="pill open">'+esc(statusText)+'</span>'}</td>
       <td>${fmtDate(L.mostrecentissuedate)}</td>
       <td class="k">${fmtDate(L.expirationdate)}</td>
       <td>${fmtDate(L.inactivedate)}</td>
@@ -738,8 +828,9 @@ function renderDriftLicense(eRows,cRows){
     $("#drift-lic").innerHTML=`<div class="banner">No rental license in either system for this OPA.</div>`;
     return;
   }
-  const E=eRows[0]||{};
-  const C=cRows[0]||{};
+  const eMap=buildLicenseRowMap(eRows);
+  const cMap=buildLicenseRowMap(cRows);
+  const keys=[...eMap.keys(),...Array.from(cMap.keys()).filter(k=>!eMap.has(k))];
   const fields=[
     ["licensenum","License #"],
     ["licensestatus","Status"],
@@ -748,22 +839,47 @@ function renderDriftLicense(eRows,cRows){
     ["mostrecentissuedate","Most recent issue",true],
     ["numberofunits","Units"]
   ];
-  let html=`<div class="drift-row head"><div></div><div>ECLIPSE (authoritative)</div><div>CARTO (mirror)</div><div>STATUS</div></div>`;
-  fields.forEach(([key,label,isDate])=>{
-    const eV=E[key], cV=C[key];
-    const eNorm=(eV==null||eV==="")?null:(isDate?fmtDate(eV):String(eV).trim().toUpperCase());
-    const cNorm=(cV==null||cV==="")?null:(isDate?fmtDate(cV):String(cV).trim().toUpperCase());
-    const same=eNorm===cNorm;
-    const eDisplay=eNorm==null?"—":(isDate?eNorm:(eV!=null?String(eV):"—"));
-    const cDisplay=cNorm==null?"—":(isDate?cNorm:(cV!=null?String(cV):"—"));
-    html+=`<div class="drift-row ${same?"":"diverge"}">
-      <div class="dl-label">${label}</div>
+  let html="";
+  keys.forEach((key,idx)=>{
+    const hasE=eMap.has(key);
+    const hasC=cMap.has(key);
+    const E=hasE?eMap.get(key):{};
+    const C=hasC?cMap.get(key):{};
+    const eMeta=hasE?analyzeRentalLicense(E):null;
+    const cMeta=hasC?analyzeRentalLicense(C):null;
+    const licenseLabel=(E.licensenum||C.licensenum||`Unnumbered license ${idx+1}`);
+    html+=`<div style="margin-top:${idx===0?0:18}px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);margin-bottom:6px">License ${esc(String(licenseLabel))}</div>
+      <div class="drift-row head"><div></div><div>ECLIPSE (authoritative)</div><div>CARTO (mirror)</div><div>STATUS</div></div>`;
+
+    const samePresence=hasE===hasC;
+    html+=`<div class="drift-row ${samePresence?"":"diverge"}">
+      <div class="dl-label">Record present</div>
       <div class="drift-vals">
-        <div class="dl-e">${esc(String(eDisplay))}</div>
-        <div class="dl-c">${esc(String(cDisplay))}</div>
-        <div class="dl-s">${same?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>'}</div>
+        <div class="dl-e">${hasE?"yes":"no"}</div>
+        <div class="dl-c">${hasC?"yes":"no"}</div>
+        <div class="dl-s">${samePresence?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>'}</div>
       </div>
     </div>`;
+
+    fields.forEach(([fieldKey,label,isDate])=>{
+      const eV=fieldKey==="licensestatus"&&hasE?(eMeta.isActive?"ACTIVE":eMeta.displayStatus):(E[fieldKey]);
+      const cV=fieldKey==="licensestatus"&&hasC?(cMeta.isActive?"ACTIVE":cMeta.displayStatus):(C[fieldKey]);
+      const eNorm=(eV==null||eV==="")?null:(isDate?fmtDate(eV):String(eV).trim().toUpperCase());
+      const cNorm=(cV==null||cV==="")?null:(isDate?fmtDate(cV):String(cV).trim().toUpperCase());
+      const same=eNorm===cNorm;
+      const eDisplay=eNorm==null?"—":(isDate?eNorm:(eV!=null?String(eV):"—"));
+      const cDisplay=cNorm==null?"—":(isDate?cNorm:(cV!=null?String(cV):"—"));
+      html+=`<div class="drift-row ${same?"":"diverge"}">
+        <div class="dl-label">${label}</div>
+        <div class="drift-vals">
+          <div class="dl-e">${esc(String(eDisplay))}</div>
+          <div class="dl-c">${esc(String(cDisplay))}</div>
+          <div class="dl-s">${same?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>'}</div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
   });
   $("#drift-lic").innerHTML=html;
 }
@@ -802,26 +918,29 @@ function renderDriftViolations(eAll,cartoDist){
   $("#drift-viol").innerHTML=html;
 }
 
-function renderBrief({opaRow,lic,openViol,allViol,t311}){
+function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
   const addr=opaRow?.location||"this property";
   const owner=opaRow?.owner_1||"unknown owner";
-  const L=lic[0];
-  const licStatus=L?.licensestatus||null;
-  const isActive=(licStatus||"").toLowerCase()==="active";
-  const expDate=L?.expirationdate?fmtDate(L.expirationdate):null;
+  const summary=licenseSummary||summarizeRentalLicenses(lic);
+  const primary=summary.primary;
+  const expDate=primary?.row?.expirationdate?fmtDate(primary.row.expirationdate):null;
   const openCt=openViol.length;
   const unfit=openViol.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
   const recent311=t311.filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
 
   let verdict="",vclass="";
-  if(!L){
+  if(summary.count===0){
     verdict=`<b>No rental license on file.</b> If units are being rented here, that is unlicensed activity under Phila. Code § 9-3902.`;
     vclass="bad";
-  } else if(!isActive){
-    verdict=`<b>The rental license is ${esc(licStatus)}${expDate?` (expired ${expDate})`:""}.</b> Operating rental housing without an active license is a violation of Phila. Code § 9-3902. Under <i>Frempong v. Richardson</i>, an unlicensed landlord cannot collect rent for the period of unlicensed operation.`;
+  } else if(summary.activeCount===0){
+    const statusLabel=primary?.meta?.displayStatus||"inactive";
+    verdict=`<b>No active rental license found (${summary.count} on file; primary status: ${esc(statusLabel)}${expDate?`, exp ${expDate}`:""}).</b> Operating rental housing without an active license is a violation of Phila. Code § 9-3902. Under <i>Frempong v. Richardson</i>, an unlicensed landlord cannot collect rent for the period of unlicensed operation.`;
     vclass="bad";
+  } else if(summary.activeCount<summary.count){
+    verdict=`<b>${summary.activeCount} of ${summary.count} rental licenses are currently active.</b> Review each license below to verify the unit you care about is covered${expDate?` (primary expires ${expDate})`:""}.`;
+    vclass="good";
   } else {
-    verdict=`<b>Rental license is active.</b>${expDate?` Expires ${expDate}.`:""}`;
+    verdict=`<b>All ${summary.count} rental license${summary.count===1?" is":"s are"} active.</b>${expDate?` Primary expires ${expDate}.`:""}`;
     vclass="good";
   }
 
@@ -837,6 +956,7 @@ function renderBrief({opaRow,lic,openViol,allViol,t311}){
   const html=`
     <p class="lede">A plain-language read of what Philadelphia's L&amp;I record says about ${esc(addr)} right now — and what it doesn't.</p>
     <div class="verdict ${vclass}">${verdict}</div>
+    ${renderBriefLicenseList(lic)}
     ${openSection}
     <p>Over the last 12 months this address shows <b>${recent311.length} 311 complaint${recent311.length===1?"":"s"}</b> in the Philly311 public feed. Over the last 24 months: <b>${t311.length}</b>. Tenant identity on those complaints is not public.</p>
     <p>All time, Eclipse has <b>${allViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${allViol.filter(v=>v.violationstatus==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
@@ -1128,15 +1248,16 @@ async function lookup(opa){
     // Abort if a newer lookup has started (after second await)
     if(seq !== lookupSeq) return;
 
+    const licenseSummary=summarizeRentalLicenses(lic);
     const unfitOpen=ovE.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||"")).length;
-    renderKPIs({licenseStatus:lic[0]?.licensestatus,licenseExp:lic[0]?.expirationdate,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
+    renderKPIs({licenseSummary,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
     renderLicense(lic,licC);
     renderOpenViolations(ovE);
     renderViolHistory(allViol);
     render311(t311);
     renderDriftLicense(lic,licC);
     renderDriftViolations(allViol,cartoVDist);
-    renderBrief({opaRow,lic,openViol:ovE,allViol,t311});
+    renderBrief({opaRow,lic,licenseSummary,openViol:ovE,allViol,t311});
     renderPermits(permits);
     renderBuildingCerts(bcerts);
     $("#banner").style.display="none";
@@ -1188,6 +1309,7 @@ $("#go").addEventListener("click",async()=>{
   const opa=$("#opa").value.trim();
   const addr=$("#addr").value.trim();
   if(opa){
+    if(!/^\d+$/.test(opa)){ banner("OPA account must use digits only (6–12 digits).",true); return; }
     if(!/^\d{6,12}$/.test(opa)){ banner("OPA account must be 6–12 digits.",true); return; }
     lookup(opa); return;
   }
@@ -1209,10 +1331,21 @@ $("#go").addEventListener("click",async()=>{
         ${esc(m.location)} <span style="color:var(--ink-mute)">· OPA ${esc(m.parcel_number)} · ${esc(m.owner_1||"")}</span>
       </button>`;
     });
+    if(matches.length>12){
+      html+=`<div style="margin-top:8px;color:var(--ink-mute);font-size:12px;font-family:'IBM Plex Mono',monospace">Showing first 12 of ${matches.length} matches. Add more address detail for a more accurate match.</div>`;
+    }
     html+=`</div>`;
     banner(html);
     $("#banner").querySelectorAll("button[data-opa]").forEach(btn=>{
-      btn.addEventListener("click",()=>{ $("#opa").value=btn.dataset.opa; lookup(btn.dataset.opa); });
+      btn.addEventListener("click",()=>{
+        const selected=(btn.dataset.opa||"").trim();
+        if(!/^\d{6,12}$/.test(selected)){
+          banner("Selected parcel has an invalid OPA account number. Refine your search and try again.",true);
+          return;
+        }
+        $("#opa").value=selected;
+        lookup(selected);
+      });
     });
   }catch(err){
     banner(`Address resolution failed: ${esc(err.message)}`,true);
