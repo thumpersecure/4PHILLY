@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>4PHILLY — Philadelphia property record</title>
-<meta name="description" content="Unified Philadelphia property record — Eclipse vs Carto drift, rental license status, open violations, 311 complaints. Installable on iOS and Android.">
+<meta name="description" content="Unified Philadelphia property record — Eclipse vs Carto drift, L&amp;I business license status, open violations, 311 complaints. Installable on iOS and Android.">
 <meta name="theme-color" content="#ffb000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23ffb000'/><text x='50' y='70' font-size='54' font-family='Arial Black,sans-serif' font-weight='900' fill='%230a0a0a' text-anchor='middle'>4P</text></svg>">
 <link rel="manifest" href="manifest.json">
 <meta property="og:title" content="4PHILLY">
-<meta property="og:description" content="Philadelphia property record — violations, license status, 311 complaints.">
+<meta property="og:description" content="Philadelphia property record — violations, business license status, 311 complaints.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://thumpersecure.github.io/4philly/">
 <meta property="og:image" content="https://thumpersecure.github.io/4philly/og-image.png">
@@ -238,7 +238,7 @@
       </div>
       <div class="field opa-field">
         <label for="opa">OPA account #</label>
-        <input id="opa" type="text" placeholder="881519440" autocomplete="off" inputmode="numeric">
+        <input id="opa" type="text" placeholder="OPA number (digits only)" autocomplete="off" inputmode="numeric">
       </div>
       <div style="display:flex;align-items:flex-end;gap:8px">
         <button class="btn" id="go">Look up</button>
@@ -246,7 +246,7 @@
     </div>
     <div class="quick">
       <span>try:</span>
-      <button data-opa="881519440">Goldtex · 881519440</button>
+      <button data-addr="315 N 12TH ST">315 N 12th St</button>
       <button data-addr="1900 MARKET ST">1900 Market St</button>
       <button data-opa="881147700">The Sterling</button>
     </div>
@@ -290,7 +290,7 @@
   <section id="pane-inspect" class="pane active" style="display:none">
     <div class="grid" id="kpis"></div>
     <div class="sec">
-      <h2>Rental license <span class="count" id="lic-c"></span></h2>
+      <h2>Business &amp; trade licenses <span class="count" id="lic-c"></span></h2>
       <div id="lic-body"></div>
     </div>
     <div class="sec">
@@ -313,7 +313,7 @@
       <b>What this is:</b> the same data point pulled from Eclipse (li.phila.gov's backend) and Carto (the open-data mirror), placed side by side. Divergent rows highlight in red. Eclipse always wins.
     </div>
     <div class="sec">
-      <h2>License drift</h2>
+      <h2>Business license drift</h2>
       <div id="drift-lic"></div>
     </div>
     <div class="sec">
@@ -357,7 +357,7 @@
   <footer class="footer">
   <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
-  <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Only COMPLIED is real compliance.</div>
+  <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Business licenses include rental, high-rise, food service, and other trade types on file for the OPA. Only COMPLIED is real compliance.</div>
   <div class="footer-disc">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
@@ -496,14 +496,14 @@ async function getOPADetails(opa){
   return rows[0]||null;
 }
 
-async function getRentalLicense(opa){
+async function getBusinessLicenses(opa){
   return eclipseQuery("BUSINESS_LICENSES",
-    `opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`,
+    `opa_account_num='${opa}'`,
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
 
-async function getCartoRentalLicense(opa){
-  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND UPPER(licensetype) LIKE 'RENTAL%'`);
+async function getCartoBusinessLicenses(opa){
+  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}'`);
 }
 
 async function getOpenViolations(opa){
@@ -579,7 +579,7 @@ function asDateMs(value){
   return Number.isNaN(ms)?null:ms;
 }
 
-function analyzeRentalLicense(row){
+function analyzeLicenseRow(row){
   const statusRaw=String(row?.licensestatus||"").trim();
   const statusLower=statusRaw.toLowerCase();
   const expMs=asDateMs(row?.expirationdate);
@@ -593,12 +593,12 @@ function analyzeRentalLicense(row){
   return {isActive,isExpired,statusSignalsInactive,displayStatus};
 }
 
-function summarizeRentalLicenses(rows){
+function summarizeLicenses(rows){
   const licenses=(Array.isArray(rows)?rows:[]).filter(Boolean);
   const analyzed=licenses.map((row,idx)=>({
     row,
     idx,
-    meta:analyzeRentalLicense(row),
+    meta:analyzeLicenseRow(row),
     recency:Math.max(
       asDateMs(row.mostrecentissuedate)??-1,
       asDateMs(row.expirationdate)??-1,
@@ -634,16 +634,17 @@ function buildLicenseRowMap(rows){
 function renderBriefLicenseList(licenses){
   if(!licenses.length) return "";
   const items=licenses.map(L=>{
-    const meta=analyzeRentalLicense(L);
+    const meta=analyzeLicenseRow(L);
     const num=esc(L.licensenum||"—");
+    const typ=esc(L.licensetype||"—");
     const status=esc(meta.isActive?"ACTIVE":meta.displayStatus||"—");
     const exp=L.expirationdate?` · exp ${fmtDate(L.expirationdate)}`:"";
     const units=(L.numberofunits!=null&&L.numberofunits!=="")?` · units ${esc(String(L.numberofunits))}`:"";
-    return `<li><b>${num}</b> — ${status}${exp}${units}</li>`;
+    return `<li><b>${num}</b> (${typ}) — ${status}${exp}${units}</li>`;
   }).join("");
   return `
     <div class="gap">
-      <h4>Rental licenses on file (${licenses.length})</h4>
+      <h4>L&amp;I business licenses on file (${licenses.length})</h4>
       <ul>${items}</ul>
     </div>
   `;
@@ -685,7 +686,7 @@ function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
   }
   $("#kpis").innerHTML=`
     <div class="card">
-      <h3>Rental License</h3>
+      <h3>Business licenses</h3>
       <div class="big ${licenseClass}">${esc(licenseBig)}</div>
       <div class="note">${esc(licenseNote)}</div>
     </div>
@@ -714,17 +715,18 @@ function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
 
 function renderLicense(licE,licC){
   if(!licE||licE.length===0){
-    $("#lic-body").innerHTML=`<div class="banner">No rental license record on file in Eclipse for this OPA.</div>`;
+    $("#lic-body").innerHTML=`<div class="banner">No business or trade license records on file in Eclipse for this OPA.</div>`;
     $("#lic-c").textContent="0";
     return;
   }
   $("#lic-c").textContent=licE.length;
-  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>License #</th><th>Status</th><th>Most recent issue</th><th>Expires</th><th>Inactive date</th><th>Units</th><th>Business name</th></tr></thead><tbody>`;
+  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>License #</th><th>Type</th><th>Status</th><th>Most recent issue</th><th>Expires</th><th>Inactive date</th><th>Units</th><th>Business name</th></tr></thead><tbody>`;
   licE.forEach(L=>{
-    const meta=analyzeRentalLicense(L);
+    const meta=analyzeLicenseRow(L);
     const statusText=meta.isActive?"ACTIVE":(meta.displayStatus||"—");
     html+=`<tr>
       <td class="k">${esc(L.licensenum||"—")}</td>
+      <td>${esc(L.licensetype||"—")}</td>
       <td>${meta.isActive?'<span class="pill complied">ACTIVE</span>':'<span class="pill open">'+esc(statusText)+'</span>'}</td>
       <td>${fmtDate(L.mostrecentissuedate)}</td>
       <td class="k">${fmtDate(L.expirationdate)}</td>
@@ -825,7 +827,7 @@ function render311(rows){
 
 function renderDriftLicense(eRows,cRows){
   if(eRows.length===0&&cRows.length===0){
-    $("#drift-lic").innerHTML=`<div class="banner">No rental license in either system for this OPA.</div>`;
+    $("#drift-lic").innerHTML=`<div class="banner">No business license rows in either system for this OPA.</div>`;
     return;
   }
   const eMap=buildLicenseRowMap(eRows);
@@ -833,6 +835,7 @@ function renderDriftLicense(eRows,cRows){
   const keys=[...eMap.keys(),...Array.from(cMap.keys()).filter(k=>!eMap.has(k))];
   const fields=[
     ["licensenum","License #"],
+    ["licensetype","License type"],
     ["licensestatus","Status"],
     ["expirationdate","Expires",true],
     ["inactivedate","Inactive date",true],
@@ -845,8 +848,8 @@ function renderDriftLicense(eRows,cRows){
     const hasC=cMap.has(key);
     const E=hasE?eMap.get(key):{};
     const C=hasC?cMap.get(key):{};
-    const eMeta=hasE?analyzeRentalLicense(E):null;
-    const cMeta=hasC?analyzeRentalLicense(C):null;
+    const eMeta=hasE?analyzeLicenseRow(E):null;
+    const cMeta=hasC?analyzeLicenseRow(C):null;
     const licenseLabel=(E.licensenum||C.licensenum||`Unnumbered license ${idx+1}`);
     html+=`<div style="margin-top:${idx===0?0:18}px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);margin-bottom:6px">License ${esc(String(licenseLabel))}</div>
@@ -921,26 +924,31 @@ function renderDriftViolations(eAll,cartoDist){
 function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
   const addr=opaRow?.location||"this property";
   const owner=opaRow?.owner_1||"unknown owner";
-  const summary=licenseSummary||summarizeRentalLicenses(lic);
-  const primary=summary.primary;
-  const expDate=primary?.row?.expirationdate?fmtDate(primary.row.expirationdate):null;
+  const allSummary=licenseSummary||summarizeLicenses(lic);
+  const rentalRows=(Array.isArray(lic)?lic:[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
+  const rentalSummary=summarizeLicenses(rentalRows);
+  const primaryRental=rentalSummary.primary;
+  const expDate=primaryRental?.row?.expirationdate?fmtDate(primaryRental.row.expirationdate):null;
   const openCt=openViol.length;
   const unfit=openViol.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
   const recent311=t311.filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
 
   let verdict="",vclass="";
-  if(summary.count===0){
-    verdict=`<b>No rental license on file.</b> If units are being rented here, that is unlicensed activity under Phila. Code § 9-3902.`;
+  if(allSummary.count===0){
+    verdict=`<b>No L&amp;I business or trade license records on file.</b> If regulated activity is occurring here without a required license, that is a separate compliance question under the applicable Phila. Code sections.`;
     vclass="bad";
-  } else if(summary.activeCount===0){
-    const statusLabel=primary?.meta?.displayStatus||"inactive";
-    verdict=`<b>No active rental license found (${summary.count} on file; primary status: ${esc(statusLabel)}${expDate?`, exp ${expDate}`:""}).</b> Operating rental housing without an active license is a violation of Phila. Code § 9-3902. Under <i>Frempong v. Richardson</i>, an unlicensed landlord cannot collect rent for the period of unlicensed operation.`;
+  } else if(rentalSummary.count===0){
+    verdict=`<b>No rental-type license on file.</b> Eclipse still shows <b>${allSummary.count}</b> other business or trade license record(s) for this parcel (see list below), such as high-rise, food service, or other categories. If residential units are being rented here without a rental license, that may be unlicensed activity under Phila. Code § 9-3902.`;
+    vclass="";
+  } else if(rentalSummary.activeCount===0){
+    const statusLabel=primaryRental?.meta?.displayStatus||"inactive";
+    verdict=`<b>No active rental license found (${rentalSummary.count} rental-type record(s) on file; primary status: ${esc(statusLabel)}${expDate?`, exp ${expDate}`:""}).</b> Among <b>all</b> license types on this parcel, Eclipse shows <b>${allSummary.count}</b> record(s) total — see the Inspect tab for every type. Operating rental housing without an active rental license is a violation of Phila. Code § 9-3902. Under <i>Frempong v. Richardson</i>, an unlicensed landlord cannot collect rent for the period of unlicensed operation.`;
     vclass="bad";
-  } else if(summary.activeCount<summary.count){
-    verdict=`<b>${summary.activeCount} of ${summary.count} rental licenses are currently active.</b> Review each license below to verify the unit you care about is covered${expDate?` (primary expires ${expDate})`:""}.`;
+  } else if(rentalSummary.activeCount<rentalSummary.count){
+    verdict=`<b>${rentalSummary.activeCount} of ${rentalSummary.count} rental-type license(s) are currently active.</b> This parcel has <b>${allSummary.count}</b> total license record(s) on file across all types — review each row below to verify the unit or use you care about is covered${expDate?` (primary rental-type record expires ${expDate})`:""}.`;
     vclass="good";
   } else {
-    verdict=`<b>All ${summary.count} rental license${summary.count===1?" is":"s are"} active.</b>${expDate?` Primary expires ${expDate}.`:""}`;
+    verdict=`<b>All ${rentalSummary.count} rental-type license record(s) on file are active.</b> Eclipse also lists <b>${allSummary.count}</b> total license record(s) including non-rental types (high-rise, food service, etc.).${expDate?` Primary rental-type expiration: ${expDate}.`:""}`;
     vclass="good";
   }
 
@@ -1218,8 +1226,8 @@ async function lookup(opa){
   try{
     const [opaRow,lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
       getOPADetails(opa),
-      getRentalLicense(opa),
-      getCartoRentalLicense(opa).catch(()=>[]),
+      getBusinessLicenses(opa),
+      getCartoBusinessLicenses(opa).catch(()=>[]),
       getOpenViolations(opa),
       getAllViolations(opa),
       getCartoViolationCount(opa).catch(()=>[]),
@@ -1248,7 +1256,7 @@ async function lookup(opa){
     // Abort if a newer lookup has started (after second await)
     if(seq !== lookupSeq) return;
 
-    const licenseSummary=summarizeRentalLicenses(lic);
+    const licenseSummary=summarizeLicenses(lic);
     const unfitOpen=ovE.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||"")).length;
     renderKPIs({licenseSummary,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
     renderLicense(lic,licC);
