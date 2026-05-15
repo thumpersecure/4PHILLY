@@ -270,15 +270,30 @@
 <script>
 const ECLIPSE = "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services";
 const CARTO = "https://phl.carto.com/api/v2/sql";
+const PHILLY_TIME_ZONE = "America/New_York";
+const PHILLY_DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+  timeZone: PHILLY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => [...document.querySelectorAll(sel)];
 
 function fmtDate(ms){
   if(ms===null||ms===undefined||ms==="") return "—";
-  const d = typeof ms === "number" ? new Date(ms) : new Date(ms);
+  if(typeof ms === "string"){
+    const trimmed = ms.trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+  }
+  const d = new Date(ms);
   if(isNaN(d.getTime())) return "—";
-  return d.toISOString().slice(0,10);
+  const parts = PHILLY_DATE_FORMAT.formatToParts(d);
+  const year = parts.find(part => part.type === "year")?.value;
+  const month = parts.find(part => part.type === "month")?.value;
+  const day = parts.find(part => part.type === "day")?.value;
+  return year && month && day ? `${year}-${month}-${day}` : "—";
 }
 function fmtMoney(n){
   if(!n && n!==0) return "—";
@@ -299,6 +314,7 @@ async function eclipseQuery(layer, where, fields="*", extra=""){
   const r = await fetch(url);
   if(!r.ok) throw new Error(`Eclipse ${layer} ${r.status}`);
   const j = await r.json();
+  if(j.error) throw new Error(`Eclipse ${layer}: ${j.error.message || j.error.code || "unknown error"}`);
   return (j.features || []).map(f => f.attributes);
 }
 async function cartoQuery(sql){
@@ -306,6 +322,7 @@ async function cartoQuery(sql){
   const r = await fetch(url);
   if(!r.ok) throw new Error(`Carto ${r.status}`);
   const j = await r.json();
+  if(j.error) throw new Error(`Carto: ${Array.isArray(j.error) ? j.error[0] : String(j.error)}`);
   return j.rows || [];
 }
 
@@ -330,11 +347,11 @@ async function getOPADetails(opa){
 }
 
 async function getRentalLicense(opa){
-  return eclipseQuery("BUSINESS_LICENSES", `opa_account_num='${opa}' AND licensetype='Rental'`,
+  return eclipseQuery("BUSINESS_LICENSES", `opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`,
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
 async function getCartoRentalLicense(opa){
-  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND licensetype='Rental'`);
+  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND UPPER(licensetype) LIKE 'RENTAL%'`);
 }
 
 async function getOpenViolations(opa){
@@ -432,7 +449,7 @@ function renderLicense(licE, licC){
       <td>${fmtDate(L.mostrecentissuedate)}</td>
       <td class="k">${fmtDate(L.expirationdate)}</td>
       <td>${fmtDate(L.inactivedate)}</td>
-      <td>${L.numberofunits||"—"}</td>
+      <td>${esc(L.numberofunits!=null&&L.numberofunits!==""?String(L.numberofunits):"—")}</td>
       <td>${esc(L.business_name||L.legalname||"—")}</td>
     </tr>`;
   });
@@ -556,7 +573,7 @@ function renderDriftViolations(eAll, cartoDist){
   const eDist = {OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0};
   eAll.forEach(v => { if(eDist[v.violationstatus]!==undefined) eDist[v.violationstatus]++; });
   const cDist = {OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0};
-  cartoDist.forEach(r => { if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus] = Number(r.ct); });
+  cartoDist.forEach(r => { if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus] += Number(r.ct) || 0; });
 
   const eTotal = Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal = Object.values(cDist).reduce((a,b)=>a+b,0);
@@ -713,6 +730,25 @@ function banner(msg, isErr){
   b.style.display = "block";
 }
 
+function resetSearchState({focus=false, showPrompt=false} = {}){
+  $("#opa").value = "";
+  $("#addr").value = "";
+  $("#prophead").style.display = "none";
+  $("#tabs").style.display = "none";
+  $$(".pane").forEach(p => {
+    p.classList.remove("active");
+    p.style.display = "none";
+  });
+  if(showPrompt){
+    banner("Enter an address or an OPA account number to begin.");
+    $("#banner").classList.remove("err");
+  } else {
+    $("#banner").classList.remove("err");
+    $("#banner").style.display = "none";
+  }
+  if(focus) $("#opa").focus();
+}
+
 // ----- Entry points -----
 $("#go").addEventListener("click", async ()=>{
   const opa = $("#opa").value.trim();
@@ -762,6 +798,12 @@ $("#go").addEventListener("click", async ()=>{
 
 $("#opa").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#go").click(); });
 $("#addr").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#go").click(); });
+$("#addr").addEventListener("input", ()=>{ if($("#addr").value.trim()) $("#opa").value = ""; });
+$("#opa").addEventListener("input", ()=>{ if($("#opa").value.trim()) $("#addr").value = ""; });
+
+$(".brand-mark").addEventListener("click", ()=>{
+  resetSearchState({focus:true});
+});
 
 document.querySelectorAll(".quick button[data-opa]").forEach(b=>{
   b.addEventListener("click", ()=>{
@@ -771,10 +813,8 @@ document.querySelectorAll(".quick button[data-opa]").forEach(b=>{
   });
 });
 
-// auto-load Goldtex on first paint so it's immediately useful
 window.addEventListener("DOMContentLoaded", ()=>{
-  $("#opa").value = "881519440";
-  lookup("881519440");
+  resetSearchState({focus:true, showPrompt:true});
 });
 </script>
 </body>

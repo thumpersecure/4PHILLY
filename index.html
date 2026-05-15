@@ -384,6 +384,13 @@
 const ECLIPSE = "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services";
 const CARTO   = "https://phl.carto.com/api/v2/sql";
 const TABS    = ['inspect','drift','brief','records','limits'];
+const PHILLY_TIME_ZONE = "America/New_York";
+const PHILLY_DATE_FORMAT = new Intl.DateTimeFormat("en-US",{
+  timeZone: PHILLY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => [...document.querySelectorAll(sel)];
@@ -394,9 +401,17 @@ let lookupSeq = 0;
 // ---- Formatters ----
 function fmtDate(ms){
   if(ms===null||ms===undefined||ms==="") return "—";
+  if(typeof ms==="string"){
+    const trimmed=ms.trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+  }
   const d = new Date(ms);
   if(isNaN(d.getTime())) return "—";
-  return d.toISOString().slice(0,10);
+  const parts=PHILLY_DATE_FORMAT.formatToParts(d);
+  const year=parts.find(part=>part.type==="year")?.value;
+  const month=parts.find(part=>part.type==="month")?.value;
+  const day=parts.find(part=>part.type==="day")?.value;
+  return year&&month&&day ? `${year}-${month}-${day}` : "—";
 }
 function fmtMoney(n){
   if(!n && n!==0) return "—";
@@ -617,7 +632,7 @@ function renderLicense(licE,licC){
       <td>${fmtDate(L.mostrecentissuedate)}</td>
       <td class="k">${fmtDate(L.expirationdate)}</td>
       <td>${fmtDate(L.inactivedate)}</td>
-      <td>${L.numberofunits||"—"}</td>
+      <td>${esc(L.numberofunits!=null&&L.numberofunits!==""?String(L.numberofunits):"—")}</td>
       <td>${esc(L.business_name||L.legalname||"—")}</td>
     </tr>`;
   });
@@ -1138,6 +1153,29 @@ function banner(msg,isErr){
   b.style.display="block";
 }
 
+function resetSearchState({focus=false,showPrompt=false}={}){
+  lookupSeq++;
+  history.replaceState(null,"",location.pathname+location.search);
+  $("#opa").value="";
+  $("#addr").value="";
+  switchTab("inspect");
+  $("#prophead").style.display="none";
+  $("#tabs").style.display="none";
+  $("#bottom-nav").classList.remove("visible");
+  $$(".pane").forEach(p=>{
+    p.classList.remove("active");
+    p.style.display="none";
+  });
+  if(showPrompt){
+    banner("Enter an address or an OPA account number to begin.");
+    $("#banner").classList.remove("err");
+  }else{
+    $("#banner").classList.remove("err");
+    $("#banner").style.display="none";
+  }
+  if(focus) $("#opa").focus();
+}
+
 // ---- Entry points ----
 $("#go").addEventListener("click",async()=>{
   const opa=$("#opa").value.trim();
@@ -1180,15 +1218,7 @@ $("#addr").addEventListener("input",()=>{ if($("#addr").value.trim()) $("#opa").
 $("#opa").addEventListener("input",()=>{ if($("#opa").value.trim()) $("#addr").value=""; });
 
 $(".brand-mark").addEventListener("click",()=>{
-  lookupSeq++;
-  history.replaceState(null,'',location.pathname+location.search);
-  $("#opa").value=""; $("#addr").value="";
-  $("#prophead").style.display="none";
-  $("#tabs").style.display="none";
-  $("#bottom-nav").classList.remove("visible");
-  $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
-  $("#banner").style.display="none";
-  $("#opa").focus();
+  resetSearchState({focus:true});
 });
 
 $$(".quick button").forEach(b=>{
@@ -1214,8 +1244,7 @@ window.addEventListener("DOMContentLoaded",()=>{
     lookup(hashMatch[1]);
     return;
   }
-  $("#opa").value="881519440";
-  lookup("881519440");
+  resetSearchState({focus:true,showPrompt:true});
 });
 
 if('serviceWorker' in navigator){
