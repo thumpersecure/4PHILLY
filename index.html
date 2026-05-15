@@ -64,6 +64,7 @@
   .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute)}
   .quick button{background:transparent;color:var(--ink-dim);border:1px solid var(--line-soft);padding:8px 9px;min-height:44px;font-family:inherit;font-size:11px;border-radius:2px;cursor:pointer;touch-action:manipulation}
   .quick button:hover{color:var(--amber);border-color:var(--amber)}
+  .quick button:active{color:var(--amber);border-color:var(--amber);background:rgba(255,176,0,.08)}
 
   /* Saved bar */
   .saved-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;padding:6px 0;border-top:1px solid var(--line-soft)}
@@ -172,14 +173,17 @@
   .limit-card .severity.policy{background:rgba(154,154,154,.08);color:var(--ink-dim);border:1px solid var(--line)}
 
   /* Loading skeleton */
-  .skel{display:inline-block;width:60px;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px}
+  .skel{display:inline-block;width:60px;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;vertical-align:middle}
+  .skel-block{display:block;width:100%;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;margin-bottom:8px}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-  .footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:1.8}
+  .footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:2}
   .footer b{color:var(--ink-dim)}
+  .footer .footer-row{margin-bottom:4px}
+  .footer .footer-disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--ink-mute);opacity:.7}
 
   /* Bottom nav */
-  .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--panel);border-top:1px solid var(--line);display:none;align-items:stretch;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;min-height:60px;background:var(--panel);border-top:1px solid var(--line);display:none;align-items:stretch;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
   .bottom-nav.visible{display:flex}
   .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;border:none;color:var(--ink-mute);font-family:"Archivo",sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;gap:3px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0 2px}
   .bnav-btn.active{color:var(--amber)}
@@ -191,7 +195,7 @@
     .top-meta{text-align:left}
     .brand-mark{font-size:24px}
     .tabs{display:none}
-    body{padding-bottom:60px}
+    body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
     table.dat{font-size:11px}
     table.dat th,table.dat td{padding:7px 6px}
   }
@@ -214,7 +218,7 @@
       </div>
     </div>
     <div class="top-meta">
-      <div>build <span class="mono">0.2.0</span></div>
+      <div>build <span class="mono">0.3.0</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -236,7 +240,7 @@
     <div class="quick">
       <span>try:</span>
       <button data-opa="881519440">Goldtex · 881519440</button>
-      <button data-opa="888057268">Academy House</button>
+      <button data-addr="1900 MARKET ST">1900 Market St</button>
       <button data-opa="881147700">The Sterling</button>
     </div>
     <div class="saved-bar" id="saved-bar" style="display:none">
@@ -344,32 +348,32 @@
   </div><!-- /pane-container -->
 
   <footer class="footer">
-    <div><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
-    <div><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
-    <div><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Only COMPLIED is real compliance.</div>
-    <div style="margin-top:14px;color:var(--ink-mute)">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
-  </footer>
+  <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
+  <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
+  <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Only COMPLIED is real compliance.</div>
+  <div class="footer-disc">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+</footer>
 
 </div><!-- /wrap -->
 
-<nav class="bottom-nav" id="bottom-nav" aria-label="Tab navigation">
-  <button class="bnav-btn active" data-tab="inspect" aria-pressed="true">
+<nav class="bottom-nav" id="bottom-nav" role="tablist" aria-label="Tab navigation">
+  <button class="bnav-btn active" data-tab="inspect" role="tab" aria-selected="true">
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     Inspect
   </button>
-  <button class="bnav-btn" data-tab="drift" aria-pressed="false">
+  <button class="bnav-btn" data-tab="drift" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     Drift
   </button>
-  <button class="bnav-btn" data-tab="brief" aria-pressed="false">
+  <button class="bnav-btn" data-tab="brief" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
     Brief
   </button>
-  <button class="bnav-btn" data-tab="records" aria-pressed="false">
+  <button class="bnav-btn" data-tab="records" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     Records
   </button>
-  <button class="bnav-btn" data-tab="limits" aria-pressed="false">
+  <button class="bnav-btn" data-tab="limits" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     Limits
   </button>
@@ -411,15 +415,17 @@ setNow();
 async function eclipseQuery(layer, where, fields="*", extra=""){
   const url=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json&resultRecordCount=2000${extra}`;
   const r=await fetch(url);
-  if(!r.ok) throw new Error(`Eclipse ${layer} ${r.status}`);
+  if(!r.ok) throw new Error(`Eclipse ${layer} HTTP ${r.status}`);
   const j=await r.json();
+  if(j.error) throw new Error(`Eclipse ${layer}: ${j.error.message||j.error.code||'unknown error'}`);
   return (j.features||[]).map(f=>f.attributes);
 }
 async function cartoQuery(sql){
   const url=`${CARTO}?q=${encodeURIComponent(sql)}&format=json`;
   const r=await fetch(url);
-  if(!r.ok) throw new Error(`Carto ${r.status}`);
+  if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
   const j=await r.json();
+  if(j.error) throw new Error(`Carto: ${Array.isArray(j.error)?j.error[0]:String(j.error)}`);
   return j.rows||[];
 }
 
@@ -470,11 +476,11 @@ async function getOPADetails(opa){
 
 async function getRentalLicense(opa){
   return eclipseQuery("BUSINESS_LICENSES",
-    `opa_account_num='${opa}' AND licensetype='Rental'`,
+    `opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`,
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
 async function getCartoRentalLicense(opa){
-  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND licensetype='Rental'`);
+  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND UPPER(licensetype) LIKE 'RENTAL%'`);
 }
 
 async function getOpenViolations(opa){
@@ -497,12 +503,12 @@ async function get311ForAddress(loc){
   const patterns=addrVariants(stripped);
   const since=new Date(Date.now()-1000*60*60*24*730).toISOString();
   const queries=patterns.map(p=>
-    cartoQuery(`SELECT requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 200`).catch(()=>[])
+    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 200`).catch(()=>[])
   );
   const results=await Promise.all(queries);
   const seen=new Set();
   return results.flat().filter(r=>{
-    const k=r.requested_datetime+r.address+r.service_name;
+    const k=r.cartodb_id!=null?String(r.cartodb_id):(r.requested_datetime+r.address+r.service_name);
     if(seen.has(k)) return false;
     seen.add(k); return true;
   }).sort((a,b)=>new Date(b.requested_datetime)-new Date(a.requested_datetime));
@@ -523,7 +529,6 @@ async function getBuildingCerts(opa){
 function statusPill(s){
   if(s==="OPEN") return `<span class="pill open">OPEN</span>`;
   if(s==="COMPLIED") return `<span class="pill complied">COMPLIED</span>`;
-  if(["CLOSED","CLOSEDCASE","RESOLVE","ERROR"].includes(s)) return `<span class="pill admin">${s||"—"}</span>`;
   return `<span class="pill admin">${esc(s||"—")}</span>`;
 }
 
@@ -548,7 +553,7 @@ function renderKPIs({licenseStatus,licenseExp,openCt,unfitCt,t311Ct,allViolCt}){
   $("#kpis").innerHTML=`
     <div class="card">
       <h3>Rental License</h3>
-      <div class="big ${isInactive?"red":isActive?"green":""}">${esc(licenseStatus||"—")}</div>
+      <div class="big ${!licenseStatus?"red":isInactive?"red":isActive?"green":""}">${esc(licenseStatus||"None on file")}</div>
       <div class="note">${licenseExp?"exp "+fmtDate(licenseExp):""}</div>
     </div>
     <div class="card">
@@ -698,8 +703,8 @@ function renderDriftLicense(eRows,cRows){
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE (authoritative)</div><div>CARTO (mirror)</div><div>STATUS</div></div>`;
   fields.forEach(([key,label,isDate])=>{
     const eV=E[key], cV=C[key];
-    const eDisplay=isDate?fmtDate(eV):(eV??"—");
-    const cDisplay=isDate?fmtDate(cV):(cV??"—");
+    const eDisplay=isDate?fmtDate(eV):(eV!=null&&eV!==""?eV:"—");
+    const cDisplay=isDate?fmtDate(cV):(cV!=null&&cV!==""?cV:"—");
     const same=String(eDisplay)===String(cDisplay);
     html+=`<div class="drift-row ${same?"":"diverge"}">
       <div class="dl-label">${label}</div>
@@ -722,8 +727,9 @@ function renderDriftViolations(eAll,cartoDist){
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
-  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR"];
-  if(eDist.OTHER>0||cDist.OTHER>0) statuses.push("OTHER");
+  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
+    ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])];
+
   statuses.forEach(s=>{
     const same=eDist[s]===cDist[s];
     html+=`<div class="drift-row ${same?"":"diverge"}">
@@ -975,7 +981,7 @@ function switchTab(which){
   $$(".bnav-btn[data-tab]").forEach(x=>{
     const active=x.dataset.tab===which;
     x.classList.toggle("active",active);
-    x.setAttribute("aria-pressed",String(active));
+    x.setAttribute("aria-selected",String(active));
   });
   $$(".pane").forEach(p=>p.classList.remove("active"));
   const pane=$("#pane-"+which);
@@ -1131,11 +1137,17 @@ $("#go").addEventListener("click",async()=>{
 $("#opa").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#go").click(); });
 $("#addr").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#go").click(); });
 
-$$(".quick button[data-opa]").forEach(b=>{
+$$(".quick button").forEach(b=>{
   b.addEventListener("click",()=>{
-    $("#opa").value=b.dataset.opa;
-    $("#addr").value="";
-    lookup(b.dataset.opa);
+    if(b.dataset.opa){
+      $("#opa").value=b.dataset.opa;
+      $("#addr").value="";
+      lookup(b.dataset.opa);
+    } else if(b.dataset.addr){
+      $("#addr").value=b.dataset.addr;
+      $("#opa").value="";
+      $("#go").click();
+    }
   });
 });
 
