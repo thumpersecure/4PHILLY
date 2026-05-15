@@ -384,11 +384,12 @@ const $ = sel => document.querySelector(sel);
 const $$ = sel => [...document.querySelectorAll(sel)];
 
 let currentTab = 'inspect';
+let lookupSeq = 0;
 
 // ---- Formatters ----
 function fmtDate(ms){
   if(ms===null||ms===undefined||ms==="") return "—";
-  const d = typeof ms==="number" ? new Date(ms) : new Date(ms);
+  const d = new Date(ms);
   if(isNaN(d.getTime())) return "—";
   return d.toISOString().slice(0,10);
 }
@@ -433,7 +434,7 @@ const ADDR_ABBR={
 };
 function normalizeAddr(raw){
   return raw.trim().toUpperCase()
-    .replace(/[.,#]/g,'')
+    .replace(/[.,#%_]/g,'')
     .replace(/\b(APT|UNIT|STE|SUITE|FL|FLOOR|RM|ROOM)\b\s*\w*/g,'')
     .replace(/\s+/g,' ').trim();
 }
@@ -557,7 +558,7 @@ function renderKPIs({licenseStatus,licenseExp,openCt,unfitCt,t311Ct,allViolCt}){
     </div>
     <div class="card">
       <h3>Unfit / dangerous</h3>
-      <div class="big ${unfitCt>0?"red":""}">${unfitCt}</div>
+      <div class="big ${unfitCt>0?"red":"green"}">${unfitCt}</div>
       <div class="note">PM15-109.1 citations</div>
     </div>
     <div class="card">
@@ -713,15 +714,17 @@ function renderDriftLicense(eRows,cRows){
 }
 
 function renderDriftViolations(eAll,cartoDist){
-  const eDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0};
-  eAll.forEach(v=>{ if(eDist[v.violationstatus]!==undefined) eDist[v.violationstatus]++; });
-  const cDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0};
-  cartoDist.forEach(r=>{ if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]=Number(r.ct); });
+  const eDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  eAll.forEach(v=>{ const s=v.violationstatus; if(eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
+  const cDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  cartoDist.forEach(r=>{ if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]=Number(r.ct); else cDist.OTHER+=Number(r.ct); });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
-  ["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR"].forEach(s=>{
+  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR"];
+  if(eDist.OTHER>0||cDist.OTHER>0) statuses.push("OTHER");
+  statuses.forEach(s=>{
     const same=eDist[s]===cDist[s];
     html+=`<div class="drift-row ${same?"":"diverge"}">
       <div class="dl-label">${s}</div>
@@ -1020,9 +1023,15 @@ $("#star-btn").addEventListener('click',()=>{
 // ---- Main lookup ----
 async function lookup(opa){
   setNow();
+  const seq = ++lookupSeq;
   const newHash=`#opa=${opa}`;
   if(location.hash!==newHash) history.replaceState(null,'',newHash);
-  $("#banner").style.display="none";
+
+  // Reset UI before fetch so stale data from previous property is not visible
+  switchTab('inspect');
+  $("#prophead").style.display="none";
+  $("#tabs").style.display="none";
+  banner("Looking up…");
 
   try{
     const [opaRow,lic,licC,ovE,allViol,cartoVDist,permits,bcerts]=await Promise.all([
@@ -1036,7 +1045,14 @@ async function lookup(opa){
       getBuildingCerts(opa).catch(()=>[])
     ]);
 
+    // Abort if a newer lookup has started
+    if(seq !== lookupSeq) return;
+
     if(!opaRow){
+      $("#prophead").style.display="none";
+      $("#tabs").style.display="none";
+      $("#bottom-nav").classList.remove("visible");
+      $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
       banner(`No OPA record for parcel <code>${esc(opa)}</code>.`,true);
       return;
     }
@@ -1045,6 +1061,9 @@ async function lookup(opa){
     let t311=[];
     try{ t311=await get311ForAddress(opaRow.location||""); }
     catch(e){ console.warn("311 fetch failed",e); }
+
+    // Abort if a newer lookup has started (after second await)
+    if(seq !== lookupSeq) return;
 
     const unfitOpen=ovE.filter(v=>v.violationcode==="PM15-109.1").length;
     renderKPIs({licenseStatus:lic[0]?.licensestatus,licenseExp:lic[0]?.expirationdate,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
@@ -1057,6 +1076,7 @@ async function lookup(opa){
     renderBrief({opaRow,lic,openViol:ovE,allViol,t311});
     renderPermits(permits);
     renderBuildingCerts(bcerts);
+    $("#banner").style.display="none";
 
   }catch(err){
     console.error(err);
