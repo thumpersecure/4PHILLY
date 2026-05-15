@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>4PHILLY</title>
+<script>
+// Redirect case variants (e.g. /4PHILLY/, /4Philly/) to the canonical lowercase path.
+var path = window.location.pathname;
+var lower = path.toLowerCase();
+if (path !== lower) {
+  window.location.replace(lower + window.location.search + window.location.hash);
+} else {
+  // Genuinely missing page — redirect to root.
+  window.location.replace('/' + window.location.search + window.location.hash);
+}
+</script>
+</head>
+<body></body>
+</html>
