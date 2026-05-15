@@ -486,7 +486,7 @@ async function getCartoRentalLicense(opa){
 
 async function getOpenViolations(opa){
   return eclipseQuery("VIOLATIONS",
-    `opa_account_num='${opa}' AND violationstatus IN ('OPEN','IN VIOLATION')`,
+    `opa_account_num='${opa}' AND violationstatus='OPEN'`,
     "casenumber,violationdate,violationcode,violationcodetitle,violationstatus,casestatus,casecreateddate,casetype,unit_num,underappeal");
 }
 async function getAllViolations(opa){
@@ -511,7 +511,7 @@ async function get311ForAddress(loc){
   const patterns=[...new Set([loosePat,fullPat])];
   const since=new Date(Date.now()-1000*60*60*24*730).toISOString().slice(0,10);
   const results=await Promise.all(patterns.map(p=>
-    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(e=>{console.warn('311 query failed:',e);return [];})
+    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,subject,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(e=>{console.warn('311 query failed:',e);return [];})
   ));
   const seen=new Set();
   return results.flat().filter(r=>{
@@ -523,13 +523,25 @@ async function get311ForAddress(loc){
 
 async function getPermits(opa){
   return eclipseQuery("PERMITS",`opa_account_num='${opa}'`,
-    "permitnumber,permittype,permit_description,permitissuedate,status,applicanttype,typeofwork,unit_num,mostrecentinsp,approvedscopeofwork",
+    "permitnumber,permittype,permitdescription,permitissuedate,status,applicanttype,typeofwork,unit_num,mostrecentinsp,approvedscopeofwork",
     "&resultRecordCount=200&orderByFields=permitissuedate+DESC");
 }
-async function getBuildingCerts(opa){
-  return eclipseQuery("BUILDING_CERTS",`opa_account_num='${opa}'`,
-    "certnum,certtype,certdate,certissuedate,certstatus,unit_num,certaction",
-    "&resultRecordCount=100&orderByFields=certissuedate+DESC");
+async function getBuildingCerts(loc){
+  if(!loc) return [];
+  const base=normalizeAddr(loc).replace(/\b(APT|UNIT|STE|FL|RM)\b.*/,'').trim();
+  if(!base) return [];
+  const patterns=addrVariants(base);
+  const results=await Promise.all(patterns.map(p=>
+    eclipseQuery("BUILDING_CERTS",`UPPER(address) LIKE '${p.replace(/'/g,"''")}'`,
+      "buildingcertnumber,buildingcerttype,inspectiondate,inspectionresult,expirationdate,unit_num,contractorname,address",
+      "&resultRecordCount=200&orderByFields=inspectiondate+DESC").catch(e=>{console.warn('BUILDING_CERTS query failed:',e);return [];})
+  ));
+  const seen=new Set();
+  return results.flat().filter(r=>{
+    const k=r.buildingcertnumber||(r.address+"|"+r.inspectiondate+"|"+r.buildingcerttype);
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  });
 }
 
 // ---- Render helpers ----
@@ -638,7 +650,7 @@ function renderOpenViolations(ov){
 }
 
 function renderViolHistory(all){
-  const dist={OPEN:0,"IN VIOLATION":0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  const dist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
   all.forEach(v=>{
     const s=v.violationstatus;
     if(dist[s]!==undefined) dist[s]++; else dist.OTHER++;
@@ -657,7 +669,6 @@ function renderViolHistory(all){
   const html=`
     <div style="overflow-x:auto"><table class="dat" style="max-width:560px"><thead><tr><th>violationstatus</th><th>count</th><th>meaning</th></tr></thead><tbody>
       <tr><td>${statusPill("OPEN")}</td><td class="k">${dist.OPEN}</td><td>currently unresolved</td></tr>
-      ${dist["IN VIOLATION"]>0?`<tr><td>${statusPill("IN VIOLATION")}</td><td class="k">${dist["IN VIOLATION"]}</td><td>active violation — not yet complied</td></tr>`:""}
       <tr><td>${statusPill("COMPLIED")}</td><td class="k">${dist.COMPLIED}</td><td>actual confirmed compliance</td></tr>
       <tr><td>${statusPill("CLOSED")}</td><td class="k">${dist.CLOSED}</td><td>administrative — compliance NOT confirmed</td></tr>
       <tr><td>${statusPill("CLOSEDCASE")}</td><td class="k">${dist.CLOSEDCASE}</td><td>parent case admin-closed</td></tr>
@@ -685,14 +696,14 @@ function render311(rows){
     html+=`<div style="font-family:'IBM Plex Mono',monospace;font-size:12px"><span style="color:var(--amber)">${v}</span> <span style="color:var(--ink-dim)">${esc(k)}</span></div>`;
   });
   html+=`</div>`;
-  html+=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Date</th><th>Type</th><th>Status</th><th>Agency</th><th>Description</th></tr></thead><tbody>`;
+  html+=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Date</th><th>Type</th><th>Status</th><th>Agency</th><th>Subject</th></tr></thead><tbody>`;
   rows.slice(0,40).forEach(r=>{
     html+=`<tr>
       <td>${fmtDate(r.requested_datetime)}</td>
       <td class="k">${esc(r.service_name||"—")}</td>
       <td>${esc(r.status||"—")}</td>
       <td>${esc(r.agency_responsible||"—")}</td>
-      <td>${esc((r.description||"").slice(0,160))}</td>
+      <td>${esc((r.subject||"").slice(0,160))}</td>
     </tr>`;
   });
   html+=`</tbody></table></div>`;
@@ -736,17 +747,15 @@ function renderDriftLicense(eRows,cRows){
 }
 
 function renderDriftViolations(eAll,cartoDist){
-  const eDist={OPEN:0,"IN VIOLATION":0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  const eDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
   eAll.forEach(v=>{ const s=v.violationstatus; if(eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
-  const cDist={OPEN:0,"IN VIOLATION":0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  const cDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
   cartoDist.forEach(r=>{ if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]+=Number(r.ct)||0; else cDist.OTHER+=Number(r.ct)||0; });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
-  const statuses=["OPEN",
-    ...(eDist["IN VIOLATION"]>0||cDist["IN VIOLATION"]>0?["IN VIOLATION"]:[]),
-    "COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
+  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
     ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])];
 
   statuses.forEach(s=>{
@@ -840,13 +849,13 @@ function renderPermits(rows){
   }
   let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Permit #</th><th>Type</th><th>Description</th><th>Issued</th><th>Status</th><th>Unit</th></tr></thead><tbody>`;
   rows.forEach(p=>{
-    const desc=(p.permit_description||p.approvedscopeofwork||p.typeofwork||"—").slice(0,120);
+    const desc=(p.permitdescription||p.approvedscopeofwork||p.typeofwork||"—").slice(0,120);
     html+=`<tr>
       <td class="k">${esc(p.permitnumber||"—")}</td>
       <td>${esc(p.permittype||"—")}</td>
       <td>${esc(desc)}</td>
       <td>${fmtDate(p.permitissuedate)}</td>
-      <td><span class="pill ${p.status==="ISSUED"?"complied":"admin"}">${esc(p.status||"—")}</span></td>
+      <td><span class="pill ${/^(ISSUED|COMPLETED|FINAL|ACTIVE|CLOSED)$/i.test(p.status||"")?"complied":/^(WITHDRAWN|REVOKED|DENIED|REJECTED)$/i.test(p.status||"")?"open":"admin"}">${esc(p.status||"—")}</span></td>
       <td>${esc(p.unit_num||"—")}</td>
     </tr>`;
   });
@@ -857,18 +866,22 @@ function renderPermits(rows){
 function renderBuildingCerts(rows){
   $("#bcert-c").textContent=rows.length;
   if(!rows.length){
-    $("#bcert-body").innerHTML=`<div class="banner">No building certification records in Eclipse for this OPA.</div>`;
+    $("#bcert-body").innerHTML=`<div class="banner">No building certification records in Eclipse for this address.</div>`;
     return;
   }
-  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Cert #</th><th>Type</th><th>Action</th><th>Cert date</th><th>Status</th><th>Unit</th></tr></thead><tbody>`;
+  rows.sort((a,b)=>(b.inspectiondate||0)-(a.inspectiondate||0));
+  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Cert #</th><th>Type</th><th>Inspected</th><th>Expires</th><th>Result</th><th>Unit</th><th>Contractor</th></tr></thead><tbody>`;
   rows.forEach(c=>{
+    const result=String(c.inspectionresult||"").toLowerCase();
+    const pill=result.includes("certif")?"complied":result.includes("fail")||result.includes("defici")?"open":"admin";
     html+=`<tr>
-      <td class="k">${esc(c.certnum||"—")}</td>
-      <td>${esc(c.certtype||"—")}</td>
-      <td>${esc(c.certaction||"—")}</td>
-      <td>${fmtDate(c.certissuedate||c.certdate)}</td>
-      <td><span class="pill admin">${esc(c.certstatus||"—")}</span></td>
+      <td class="k">${esc(c.buildingcertnumber||"—")}</td>
+      <td>${esc(c.buildingcerttype||"—")}</td>
+      <td>${fmtDate(c.inspectiondate)}</td>
+      <td>${fmtDate(c.expirationdate)}</td>
+      <td><span class="pill ${pill}">${esc(c.inspectionresult||"—")}</span></td>
       <td>${esc(c.unit_num||"—")}</td>
+      <td>${esc((c.contractorname||"").split(/\r?\n/)[0]||"—")}</td>
     </tr>`;
   });
   html+=`</tbody></table></div>`;
@@ -1061,15 +1074,14 @@ async function lookup(opa){
   banner("Looking up…");
 
   try{
-    const [opaRow,lic,licC,ovE,allViol,cartoVDist,permits,bcerts]=await Promise.all([
+    const [opaRow,lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
       getOPADetails(opa),
       getRentalLicense(opa),
       getCartoRentalLicense(opa).catch(()=>[]),
       getOpenViolations(opa),
       getAllViolations(opa),
       getCartoViolationCount(opa).catch(()=>[]),
-      getPermits(opa).catch(()=>[]),
-      getBuildingCerts(opa).catch(()=>[])
+      getPermits(opa).catch(()=>[])
     ]);
 
     // Abort if a newer lookup has started
@@ -1086,9 +1098,10 @@ async function lookup(opa){
     }
     renderProphead(opa,opaRow);
 
-    let t311=[];
-    try{ t311=await get311ForAddress(opaRow.location||""); }
-    catch(e){ console.warn("311 fetch failed",e); }
+    const [t311,bcerts]=await Promise.all([
+      get311ForAddress(opaRow.location||"").catch(e=>{console.warn("311 fetch failed",e);return [];}),
+      getBuildingCerts(opaRow.location||"").catch(e=>{console.warn("building certs failed",e);return [];})
+    ]);
 
     // Abort if a newer lookup has started (after second await)
     if(seq !== lookupSeq) return;
