@@ -495,6 +495,20 @@ async function getRentalLicense(opa){
     `opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`,
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
+
+// Returns the most relevant single license: active licenses take priority over inactive;
+// within each group, the most recently issued wins.
+function bestLicense(lic){
+  if(!lic||!lic.length) return undefined;
+  const ms=L=>{
+    const d=L.mostrecentissuedate||L.initialissuedate;
+    if(!d) return 0;
+    return typeof d==='number'?d:new Date(d).getTime()||0;
+  };
+  const active=lic.filter(L=>(L.licensestatus||"").toLowerCase()==="active");
+  const pool=active.length?active:lic;
+  return pool.reduce((best,L)=>ms(L)>ms(best)?L:best, pool[0]);
+}
 async function getCartoRentalLicense(opa){
   return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND UPPER(licensetype) LIKE 'RENTAL%'`);
 }
@@ -798,7 +812,7 @@ function renderDriftViolations(eAll,cartoDist){
 function renderBrief({opaRow,lic,openViol,allViol,t311}){
   const addr=opaRow?.location||"this property";
   const owner=opaRow?.owner_1||"unknown owner";
-  const L=lic[0];
+  const L=bestLicense(lic);
   const licStatus=L?.licensestatus||null;
   const isActive=(licStatus||"").toLowerCase()==="active";
   const expDate=L?.expirationdate?fmtDate(L.expirationdate):null;
@@ -1122,7 +1136,8 @@ async function lookup(opa){
     if(seq !== lookupSeq) return;
 
     const unfitOpen=ovE.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||"")).length;
-    renderKPIs({licenseStatus:lic[0]?.licensestatus,licenseExp:lic[0]?.expirationdate,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
+    const bestLic=bestLicense(lic);
+    renderKPIs({licenseStatus:bestLic?.licensestatus,licenseExp:bestLic?.expirationdate,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
     renderLicense(lic,licC);
     renderOpenViolations(ovE);
     renderViolHistory(allViol);
