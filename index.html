@@ -529,7 +529,6 @@ async function getBuildingCerts(opa){
 function statusPill(s){
   if(s==="OPEN") return `<span class="pill open">OPEN</span>`;
   if(s==="COMPLIED") return `<span class="pill complied">COMPLIED</span>`;
-  if(["CLOSED","CLOSEDCASE","RESOLVE","ERROR"].includes(s)) return `<span class="pill admin">${s||"—"}</span>`;
   return `<span class="pill admin">${esc(s||"—")}</span>`;
 }
 
@@ -554,7 +553,7 @@ function renderKPIs({licenseStatus,licenseExp,openCt,unfitCt,t311Ct,allViolCt}){
   $("#kpis").innerHTML=`
     <div class="card">
       <h3>Rental License</h3>
-      <div class="big ${isInactive?"red":isActive?"green":""}">${esc(licenseStatus||"—")}</div>
+      <div class="big ${!licenseStatus?"red":isInactive?"red":isActive?"green":""}">${esc(licenseStatus||"None on file")}</div>
       <div class="note">${licenseExp?"exp "+fmtDate(licenseExp):""}</div>
     </div>
     <div class="card">
@@ -704,8 +703,8 @@ function renderDriftLicense(eRows,cRows){
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE (authoritative)</div><div>CARTO (mirror)</div><div>STATUS</div></div>`;
   fields.forEach(([key,label,isDate])=>{
     const eV=E[key], cV=C[key];
-    const eDisplay=isDate?fmtDate(eV):(eV??"—");
-    const cDisplay=isDate?fmtDate(cV):(cV??"—");
+    const eDisplay=isDate?fmtDate(eV):(eV!=null&&eV!==""?eV:"—");
+    const cDisplay=isDate?fmtDate(cV):(cV!=null&&cV!==""?cV:"—");
     const same=String(eDisplay)===String(cDisplay);
     html+=`<div class="drift-row ${same?"":"diverge"}">
       <div class="dl-label">${label}</div>
@@ -728,8 +727,9 @@ function renderDriftViolations(eAll,cartoDist){
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
-  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR"];
-  if(eDist.OTHER>0||cDist.OTHER>0) statuses.push("OTHER");
+  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
+    ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])];
+
   statuses.forEach(s=>{
     const same=eDist[s]===cDist[s];
     html+=`<div class="drift-row ${same?"":"diverge"}">
