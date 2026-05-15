@@ -476,11 +476,11 @@ async function getOPADetails(opa){
 
 async function getRentalLicense(opa){
   return eclipseQuery("BUSINESS_LICENSES",
-    `opa_account_num='${opa}' AND licensetype='Rental'`,
+    `opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`,
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
 async function getCartoRentalLicense(opa){
-  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND licensetype='Rental'`);
+  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`);
 }
 
 async function getOpenViolations(opa){
@@ -503,12 +503,12 @@ async function get311ForAddress(loc){
   const patterns=addrVariants(stripped);
   const since=new Date(Date.now()-1000*60*60*24*730).toISOString();
   const queries=patterns.map(p=>
-    cartoQuery(`SELECT requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 200`).catch(()=>[])
+    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 200`).catch(()=>[])
   );
   const results=await Promise.all(queries);
   const seen=new Set();
   return results.flat().filter(r=>{
-    const k=r.requested_datetime+r.address+r.service_name;
+    const k=r.cartodb_id!=null?String(r.cartodb_id):(r.requested_datetime+r.address+r.service_name);
     if(seen.has(k)) return false;
     seen.add(k); return true;
   }).sort((a,b)=>new Date(b.requested_datetime)-new Date(a.requested_datetime));
