@@ -240,7 +240,7 @@
     <div class="quick">
       <span>try:</span>
       <button data-opa="881519440">Goldtex · 881519440</button>
-      <button data-opa="882927800">1234 Market St</button>
+      <button data-addr="1900 MARKET ST">1900 Market St</button>
       <button data-opa="881147700">The Sterling</button>
     </div>
     <div class="saved-bar" id="saved-bar" style="display:none">
@@ -480,7 +480,7 @@ async function getRentalLicense(opa){
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
 async function getCartoRentalLicense(opa){
-  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND licensetype LIKE 'Rental%'`);
+  return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}' AND UPPER(licensetype) LIKE 'RENTAL%'`);
 }
 
 async function getOpenViolations(opa){
@@ -1137,11 +1137,17 @@ $("#go").addEventListener("click",async()=>{
 $("#opa").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#go").click(); });
 $("#addr").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#go").click(); });
 
-$$(".quick button[data-opa]").forEach(b=>{
+$$(".quick button").forEach(b=>{
   b.addEventListener("click",()=>{
-    $("#opa").value=b.dataset.opa;
-    $("#addr").value="";
-    lookup(b.dataset.opa);
+    if(b.dataset.opa){
+      $("#opa").value=b.dataset.opa;
+      $("#addr").value="";
+      lookup(b.dataset.opa);
+    } else if(b.dataset.addr){
+      $("#addr").value=b.dataset.addr;
+      $("#opa").value="";
+      $("#go").click();
+    }
   });
 });
 
