@@ -218,7 +218,7 @@
       </div>
     </div>
     <div class="top-meta">
-      <div>build <span class="mono">0.2.0</span></div>
+      <div>build <span class="mono">0.3.0</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -240,7 +240,7 @@
     <div class="quick">
       <span>try:</span>
       <button data-opa="881519440">Goldtex · 881519440</button>
-      <button data-opa="888057268">Academy House</button>
+      <button data-opa="882927800">1234 Market St</button>
       <button data-opa="881147700">The Sterling</button>
     </div>
     <div class="saved-bar" id="saved-bar" style="display:none">
@@ -348,32 +348,32 @@
   </div><!-- /pane-container -->
 
   <footer class="footer">
-    <div><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
-    <div><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
-    <div><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Only COMPLIED is real compliance.</div>
-    <div style="margin-top:14px;color:var(--ink-mute)">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
-  </footer>
+  <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
+  <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
+  <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Only COMPLIED is real compliance.</div>
+  <div class="footer-disc">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+</footer>
 
 </div><!-- /wrap -->
 
-<nav class="bottom-nav" id="bottom-nav" aria-label="Tab navigation">
-  <button class="bnav-btn active" data-tab="inspect" aria-pressed="true">
+<nav class="bottom-nav" id="bottom-nav" role="tablist" aria-label="Tab navigation">
+  <button class="bnav-btn active" data-tab="inspect" role="tab" aria-selected="true">
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     Inspect
   </button>
-  <button class="bnav-btn" data-tab="drift" aria-pressed="false">
+  <button class="bnav-btn" data-tab="drift" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     Drift
   </button>
-  <button class="bnav-btn" data-tab="brief" aria-pressed="false">
+  <button class="bnav-btn" data-tab="brief" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
     Brief
   </button>
-  <button class="bnav-btn" data-tab="records" aria-pressed="false">
+  <button class="bnav-btn" data-tab="records" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     Records
   </button>
-  <button class="bnav-btn" data-tab="limits" aria-pressed="false">
+  <button class="bnav-btn" data-tab="limits" role="tab" aria-selected="false">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     Limits
   </button>
