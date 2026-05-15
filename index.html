@@ -497,13 +497,15 @@ async function getCartoViolationCount(opa){
 }
 
 async function get311ForAddress(loc){
-  const stripped=normalizeAddr(loc).replace(/\b(APT|UNIT|STE|FL|RM)\b.*/,'').trim();
+  const stripped=normalizeAddr(loc)
+    .replace(/^(\d+)-\d+\b/,'$1')
+    .replace(/\b(APT|UNIT|STE|FL|RM)\b.*/,'').trim();
   const parts=stripped.split(' ').filter(x=>x.length>1&&!/^(ST|AVE|RD|BLVD|DR|CT|LN|PL|STREET|AVENUE)$/.test(x));
   if(!parts.length) return [];
   const patterns=addrVariants(stripped);
   const since=new Date(Date.now()-1000*60*60*24*730).toISOString();
   const queries=patterns.map(p=>
-    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 200`).catch(()=>[])
+    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(()=>[])
   );
   const results=await Promise.all(queries);
   const seen=new Set();
