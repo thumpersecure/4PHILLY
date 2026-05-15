@@ -389,7 +389,7 @@ let lookupSeq = 0;
 // ---- Formatters ----
 function fmtDate(ms){
   if(ms===null||ms===undefined||ms==="") return "—";
-  const d = typeof ms==="number" ? new Date(ms) : new Date(ms);
+  const d = new Date(ms);
   if(isNaN(d.getTime())) return "—";
   return d.toISOString().slice(0,10);
 }
@@ -434,7 +434,7 @@ const ADDR_ABBR={
 };
 function normalizeAddr(raw){
   return raw.trim().toUpperCase()
-    .replace(/[.,#]/g,'')
+    .replace(/[.,#%_]/g,'')
     .replace(/\b(APT|UNIT|STE|SUITE|FL|FLOOR|RM|ROOM)\b\s*\w*/g,'')
     .replace(/\s+/g,' ').trim();
 }
@@ -558,7 +558,7 @@ function renderKPIs({licenseStatus,licenseExp,openCt,unfitCt,t311Ct,allViolCt}){
     </div>
     <div class="card">
       <h3>Unfit / dangerous</h3>
-      <div class="big ${unfitCt>0?"red":""}">${unfitCt}</div>
+      <div class="big ${unfitCt>0?"red":"green"}">${unfitCt}</div>
       <div class="note">PM15-109.1 citations</div>
     </div>
     <div class="card">
