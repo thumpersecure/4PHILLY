@@ -497,17 +497,21 @@ async function getCartoViolationCount(opa){
 }
 
 async function get311ForAddress(loc){
-  const stripped=normalizeAddr(loc)
+  const base=normalizeAddr(loc)
     .replace(/^(\d+)-\d+\b/,'$1')
     .replace(/\b(APT|UNIT|STE|FL|RM)\b.*/,'').trim();
-  const parts=stripped.split(' ').filter(x=>x.length>1&&!/^(ST|AVE|RD|BLVD|DR|CT|LN|PL|STREET|AVENUE)$/.test(x));
-  if(!parts.length) return [];
-  const patterns=addrVariants(stripped);
-  const since=new Date(Date.now()-1000*60*60*24*730).toISOString();
-  const queries=patterns.map(p=>
-    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(()=>[])
-  );
-  const results=await Promise.all(queries);
+  if(!base) return [];
+  const SKIP=new Set(['N','S','E','W','NE','NW','SE','SW','ST','AVE','RD','BLVD','DR','CT','LN','PL','STREET','AVENUE','ROAD','BOULEVARD','DRIVE','COURT','LANE','PLACE']);
+  const tokens=base.split(' ').filter(Boolean);
+  const keyTokens=tokens.filter(t=>!SKIP.has(t));
+  if(!keyTokens.length) return [];
+  const loosePat='%'+keyTokens.join('%')+'%';
+  const fullPat='%'+tokens.join('%')+'%';
+  const patterns=[...new Set([loosePat,fullPat])];
+  const since=new Date(Date.now()-1000*60*60*24*730).toISOString().slice(0,10);
+  const results=await Promise.all(patterns.map(p=>
+    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,description,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(e=>{console.warn('311 query failed:',e);return [];})
+  ));
   const seen=new Set();
   return results.flat().filter(r=>{
     const k=r.cartodb_id!=null?String(r.cartodb_id):(r.requested_datetime+r.address+r.service_name);
