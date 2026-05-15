@@ -981,7 +981,7 @@ function switchTab(which){
   $$(".bnav-btn[data-tab]").forEach(x=>{
     const active=x.dataset.tab===which;
     x.classList.toggle("active",active);
-    x.setAttribute("aria-pressed",String(active));
+    x.setAttribute("aria-selected",String(active));
   });
   $$(".pane").forEach(p=>p.classList.remove("active"));
   const pane=$("#pane-"+which);
