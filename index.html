@@ -233,7 +233,8 @@
   .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;border:none;color:var(--ink-mute);font-family:"Archivo",sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;gap:3px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0 2px}
   .bnav-btn.active{color:var(--amber)}
   .bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  body.mobile-nav-visible{padding-bottom:calc(var(--bottom-nav-height) + env(safe-area-inset-bottom))}
+  body.bottom-nav-enabled .tabs{display:none!important}
+  body.bottom-nav-enabled .wrap{padding-bottom:calc(var(--bottom-nav-height) + 24px + env(safe-area-inset-bottom))}
 
   /* Responsive overrides */
   @media(max-width:679px){
@@ -252,9 +253,6 @@
     .tabs{display:none}
     table.dat{font-size:11px}
     table.dat th,table.dat td{padding:7px 6px}
-  }
-  @media(min-width:680px){
-    .bottom-nav{display:none!important}
   }
 </style>
 </head>
@@ -461,7 +459,8 @@ let currentTab = 'inspect';
 let lookupSeq = 0;
 let hasActiveRecord = false;
 let progressHideTimer = null;
-const mobileBottomNavQuery = window.matchMedia("(max-width: 679px)");
+const compactWidthQuery = window.matchMedia("(max-width: 760px)");
+const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
 
 function setLookupBusy(isBusy){
   const btn=$("#go");
@@ -508,10 +507,11 @@ function completeLookupProgress(seq,label,opts={}){
 function syncBottomNavVisibility(){
   const nav=$("#bottom-nav");
   if(!nav) return;
-  const shouldShow=hasActiveRecord&&mobileBottomNavQuery.matches;
+  const useBottomNavLayout=compactWidthQuery.matches||(coarsePointerQuery.matches&&window.innerWidth<=980);
+  const shouldShow=hasActiveRecord&&useBottomNavLayout;
+  document.body.classList.toggle("bottom-nav-enabled",useBottomNavLayout);
   nav.classList.toggle("visible",shouldShow);
   nav.setAttribute("aria-hidden",String(!shouldShow));
-  document.body.classList.toggle("mobile-nav-visible",shouldShow);
 }
 
 function setActiveRecordState(nextState){
@@ -519,10 +519,15 @@ function setActiveRecordState(nextState){
   syncBottomNavVisibility();
 }
 
-if(typeof mobileBottomNavQuery.addEventListener==="function"){
-  mobileBottomNavQuery.addEventListener("change",syncBottomNavVisibility);
-}else if(typeof mobileBottomNavQuery.addListener==="function"){
-  mobileBottomNavQuery.addListener(syncBottomNavVisibility);
+if(typeof compactWidthQuery.addEventListener==="function"){
+  compactWidthQuery.addEventListener("change",syncBottomNavVisibility);
+}else if(typeof compactWidthQuery.addListener==="function"){
+  compactWidthQuery.addListener(syncBottomNavVisibility);
+}
+if(typeof coarsePointerQuery.addEventListener==="function"){
+  coarsePointerQuery.addEventListener("change",syncBottomNavVisibility);
+}else if(typeof coarsePointerQuery.addListener==="function"){
+  coarsePointerQuery.addListener(syncBottomNavVisibility);
 }
 window.addEventListener("resize",syncBottomNavVisibility,{passive:true});
 if(window.visualViewport){
@@ -1459,10 +1464,12 @@ $("#go").addEventListener("click",async()=>{
     lookup(opa); return;
   }
   if(!addr){ banner("Enter an address or an OPA account number.",true); return; }
+  updateLookupProgress(lookupSeq,8,"Resolving address to an OPA parcel...");
   banner("Resolving address against OPA layer…");
   try{
     const matches=await resolveAddress(addr);
     if(matches.length===0){
+      completeLookupProgress(lookupSeq,"No OPA parcel found for this address.",{error:true});
       banner(`No OPA parcel matches "${esc(addr)}". Try a different spelling or use the OPA number directly.`,true);
       return;
     }
@@ -1480,6 +1487,7 @@ $("#go").addEventListener("click",async()=>{
       html+=`<div style="margin-top:8px;color:var(--ink-mute);font-size:12px;font-family:'IBM Plex Mono',monospace">Showing first 12 of ${matches.length} matches. Add more address detail for a more accurate match.</div>`;
     }
     html+=`</div>`;
+    completeLookupProgress(lookupSeq,"Select one of the matching parcels.");
     banner(html);
     $("#banner").querySelectorAll("button[data-opa]").forEach(btn=>{
       btn.addEventListener("click",()=>{
@@ -1493,6 +1501,7 @@ $("#go").addEventListener("click",async()=>{
       });
     });
   }catch(err){
+    completeLookupProgress(lookupSeq,"Address resolution failed.",{error:true});
     banner(`Address resolution failed: ${esc(err.message)}`,true);
   }
 });
