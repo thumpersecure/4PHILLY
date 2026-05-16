@@ -519,6 +519,24 @@ function setActiveRecordState(nextState){
   syncBottomNavVisibility();
 }
 
+function clearRenderedPanels(){
+  $("#kpis").innerHTML="";
+  $("#lic-body").innerHTML="";
+  $("#ov-body").innerHTML="";
+  $("#vh-body").innerHTML="";
+  $("#t-body").innerHTML="";
+  $("#drift-lic").innerHTML="";
+  $("#drift-viol").innerHTML="";
+  $("#brief-body").innerHTML="";
+  $("#prm-body").innerHTML="";
+  $("#bcert-body").innerHTML="";
+  $("#lic-c").textContent="";
+  $("#ov-c").textContent="";
+  $("#t-c").textContent="";
+  $("#prm-c").textContent="";
+  $("#bcert-c").textContent="";
+}
+
 if(typeof compactWidthQuery.addEventListener==="function"){
   compactWidthQuery.addEventListener("change",syncBottomNavVisibility);
 }else if(typeof compactWidthQuery.addListener==="function"){
@@ -1352,6 +1370,8 @@ async function lookup(opa){
   switchTab('inspect');
   $("#prophead").style.display="none";
   $("#tabs").style.display="none";
+  setActiveRecordState(false);
+  clearRenderedPanels();
   $$(".pane").forEach(p=>p.style.display="none");
   banner("Looking up records...");
 
@@ -1440,6 +1460,7 @@ function resetSearchState({focus=false,showPrompt=false}={}){
   $("#prophead").style.display="none";
   $("#tabs").style.display="none";
   setActiveRecordState(false);
+  clearRenderedPanels();
   $$(".pane").forEach(p=>{
     p.classList.remove("active");
     p.style.display="none";
