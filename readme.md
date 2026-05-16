@@ -4,13 +4,13 @@
 
 ### Philadelphia property record — unified, live, drift-aware
 
-[![Build](https://img.shields.io/badge/build-0.3.0-ffb000?style=flat-square&labelColor=000000)](https://thumpersecure.github.io/4PHILLY/)
+[![Build](https://img.shields.io/badge/build-0.3.0-ffb000?style=flat-square&labelColor=000000)](https://thumpersecure.github.io/4philly/)
 [![License](https://img.shields.io/badge/license-MIT-ffb000?style=flat-square&labelColor=000000)](#license)
 [![PWA](https://img.shields.io/badge/PWA-installable-ffb000?style=flat-square&labelColor=000000)](#install-as-a-pwa)
 [![Backend](https://img.shields.io/badge/backend-none-ffb000?style=flat-square&labelColor=000000)](#tech)
 [![Data](https://img.shields.io/badge/sources-Eclipse%20%2B%20Carto-ffb000?style=flat-square&labelColor=000000)](#data-sources)
 
-**[→ Open the app](https://thumpersecure.github.io/4PHILLY/)**  ·  [Report a bug](../../issues)  ·  [Coverage gaps](#what-this-cant-tell-you)
+**[→ Open the app](https://thumpersecure.github.io/4philly/)**  ·  [Report a bug](../../issues)  ·  [Coverage gaps](#what-this-cant-tell-you)
 
 </div>
 
@@ -113,7 +113,7 @@ See the **Limits** tab inside the app for the full list with source citations.
 <details>
 <summary><b>iOS (Safari)</b></summary>
 
-1. Open <https://thumpersecure.github.io/4PHILLY/> in Safari
+1. Open <https://thumpersecure.github.io/4philly/> in Safari
 1. Tap the Share button
 1. Tap **Add to Home Screen**
 1. Confirm — 4PHILLY now lives on your home screen like a native app
@@ -147,7 +147,7 @@ See the **Limits** tab inside the app for the full list with source citations.
 <summary>Click to expand</summary>
 
 ```text
-4PHILLY/
+4philly/
 ├── index.html              # entry point
 ├── manifest.webmanifest    # PWA manifest
 ├── sw.js                   # service worker
@@ -181,6 +181,15 @@ See the **Limits** tab inside the app for the full list with source citations.
 </div>
 
 No frameworks. No build step. Vanilla JS, `fetch`, and the two city APIs.
+
+-----
+
+## GitHub Pages deployment
+
+- Pages deploy is automated with `.github/workflows/deploy-pages.yml`.
+- On `main` pushes, the workflow publishes from the repository root (`.`).
+- For branch layouts that publish from `/docs`, run the workflow manually and choose `publish_source=docs`.
+- Repo path references are normalized to lowercase `/4philly/` so case-sensitive paths resolve consistently.
 
 -----
 
@@ -249,7 +258,7 @@ Civic data is public. This tool makes it legible.
 
 <div align="center">
 
-**[→ Open the app](https://thumpersecure.github.io/4PHILLY/)**
+**[→ Open the app](https://thumpersecure.github.io/4philly/)**
 
 <sub>4PHILLY is an independent civic tool. Not affiliated with the City of Philadelphia, L&I, or OPA.</sub>
 
