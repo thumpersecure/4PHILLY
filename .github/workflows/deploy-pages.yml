@@ -1,0 +1,90 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      publish_source:
+        description: "Publish source directory"
+        required: true
+        default: root
+        type: choice
+        options:
+          - root
+          - docs
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run integration checks
+        run: node --test tests/opa-licenses.integration.test.mjs
+
+  build:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select publish source
+        id: source
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_SOURCE: ${{ github.event.inputs.publish_source }}
+        run: |
+          SOURCE_DIR="."
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$REQUESTED_SOURCE" = "docs" ]; then
+            SOURCE_DIR="docs"
+          fi
+
+          if [ ! -f "$SOURCE_DIR/index.html" ]; then
+            echo "Expected $SOURCE_DIR/index.html but it was not found."
+            echo "Use publish_source=root or add a docs/ build output."
+            exit 1
+          fi
+
+          if [ ! -f "$SOURCE_DIR/404.html" ]; then
+            echo "Expected $SOURCE_DIR/404.html but it was not found."
+            exit 1
+          fi
+
+          echo "dir=$SOURCE_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.source.outputs.dir }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,5 +1,5 @@
-const CACHE = '4philly-v2';
-const STATIC = ['./', './index.html', './manifest.json', './icon.svg'];
+const CACHE = '4philly-v3';
+const STATIC = ['./', './index.html', './404.html', './manifest.json', './icon.svg', './og-image.png'];
 const FONT_ORIGIN = 'https://fonts.gstatic.com';
 const API_ORIGINS = ['https://services.arcgis.com', 'https://phl.carto.com'];
 
@@ -52,7 +52,12 @@ self.addEventListener('fetch', e => {
         const clone = r.clone();
         caches.open(CACHE).then(c => c.put(request, clone));
         return r;
-      }).catch(() => caches.match(request))
+      }).catch(async () => {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+        if (request.mode === 'navigate') return caches.match('./index.html');
+        return Response.error();
+      })
     );
   }
 });

@@ -40,13 +40,16 @@
     --green:#30d158;
     --blue:#64b5f6;
     --shadow:0 1px 0 rgba(255,255,255,.02), 0 10px 30px rgba(0,0,0,.5);
+    --bottom-nav-height:64px;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh}
+  @supports (min-height: 100dvh){body{min-height:100dvh}}
   a{color:var(--amber);text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)}
   a:hover{color:var(--amber-soft);border-bottom-color:var(--amber-soft)}
   code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
-  .wrap{max-width:1200px;margin:0 auto;padding:16px 16px 80px}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px 16px calc(26px + env(safe-area-inset-bottom))}
   @media(min-width:680px){.wrap{padding:28px 22px 80px}}
 
   /* Header */
@@ -67,6 +70,8 @@
   .field input:focus{border-color:var(--amber)}
   .btn{background:var(--amber);color:#1a1100;border:none;padding:0 18px;min-height:44px;font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .15s;touch-action:manipulation}
   .btn:hover{background:var(--amber-soft)}
+  .btn:disabled{cursor:not-allowed;opacity:.72}
+  .btn.busy{background:var(--amber-soft)}
   .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line)}
   .btn.ghost:hover{color:var(--ink);border-color:var(--amber)}
   .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute)}
@@ -185,25 +190,66 @@
   .skel-block{display:block;width:100%;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;margin-bottom:8px}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+  /* Lookup progress */
+  .lookup-progress{margin-top:10px;padding:10px 12px;border:1px solid var(--line);background:var(--panel);border-radius:3px}
+  .lookup-progress[hidden]{display:none}
+  .lookup-progress.error{border-color:rgba(255,69,58,.45)}
+  .lookup-progress-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-dim)}
+  .lookup-progress-track{height:6px;background:var(--line-soft);border-radius:999px;overflow:hidden;margin-top:8px}
+  .lookup-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--amber) 0%,var(--amber-soft) 100%);transition:width .25s ease}
+  .lookup-progress.error .lookup-progress-fill{background:var(--red)}
+
   .footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:2}
   .footer b{color:var(--ink-dim)}
   .footer .footer-row{margin-bottom:4px}
   .footer .footer-disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--ink-mute);opacity:.7}
 
   /* Bottom nav */
-  .bottom-nav{position:fixed;bottom:0;left:0;right:0;min-height:60px;background:var(--panel);border-top:1px solid var(--line);display:none;align-items:stretch;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-  .bottom-nav.visible{display:flex}
+  .bottom-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    min-height:var(--bottom-nav-height);
+    background:rgba(18,18,18,.97);
+    border-top:1px solid var(--line);
+    display:flex;
+    align-items:stretch;
+    z-index:100;
+    padding-bottom:env(safe-area-inset-bottom);
+    visibility:hidden;
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(6px);
+    transition:opacity .2s ease, transform .2s ease, visibility .2s ease;
+    backdrop-filter:blur(6px);
+  }
+  .bottom-nav.visible{
+    visibility:visible;
+    opacity:1;
+    pointer-events:auto;
+    transform:translateY(0);
+  }
   .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;border:none;color:var(--ink-mute);font-family:"Archivo",sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;gap:3px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0 2px}
   .bnav-btn.active{color:var(--amber)}
   .bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  body.mobile-nav-visible{padding-bottom:calc(var(--bottom-nav-height) + env(safe-area-inset-bottom))}
 
   /* Responsive overrides */
   @media(max-width:679px){
+    .wrap{padding:14px 14px calc(24px + env(safe-area-inset-bottom))}
     .top{flex-direction:column;gap:14px}
     .top-meta{text-align:left}
     .brand-mark{font-size:24px}
+    .prophead{padding:14px 14px}
+    .prophead-inner{flex-direction:column;gap:12px}
+    .search{gap:8px}
+    .search > div:last-child{width:100%}
+    .search > div:last-child .btn{width:100%}
+    .grid{grid-template-columns:1fr}
+    .card{padding:14px}
+    .card .big{font-size:24px}
     .tabs{display:none}
-    body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
     table.dat{font-size:11px}
     table.dat th,table.dat td{padding:7px 6px}
   }
@@ -256,6 +302,15 @@
       <div id="saved-chips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
     </div>
     <div id="banner" class="banner" style="display:none"></div>
+    <div id="lookup-progress" class="lookup-progress" role="status" aria-live="polite" aria-hidden="true" hidden>
+      <div class="lookup-progress-row">
+        <span id="lookup-progress-label">Preparing lookup…</span>
+        <span id="lookup-progress-pct" class="mono">0%</span>
+      </div>
+      <div id="lookup-progress-track" class="lookup-progress-track" role="progressbar" aria-label="Lookup progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="lookup-progress-fill" class="lookup-progress-fill"></div>
+      </div>
+    </div>
   </section>
 
   <div id="prophead" class="prophead" style="display:none">
@@ -404,6 +459,75 @@ const $$ = sel => [...document.querySelectorAll(sel)];
 
 let currentTab = 'inspect';
 let lookupSeq = 0;
+let hasActiveRecord = false;
+let progressHideTimer = null;
+const mobileBottomNavQuery = window.matchMedia("(max-width: 679px)");
+
+function setLookupBusy(isBusy){
+  const btn=$("#go");
+  if(!btn) return;
+  btn.disabled=!!isBusy;
+  btn.classList.toggle("busy",!!isBusy);
+  btn.setAttribute("aria-busy",String(!!isBusy));
+  btn.textContent=isBusy?"Looking up...":"Look up";
+}
+
+function updateLookupProgress(seq,value,label,opts={}){
+  if(seq!==lookupSeq) return;
+  const root=$("#lookup-progress");
+  if(!root) return;
+  const clamped=Math.max(0,Math.min(100,Math.round(value)));
+  root.hidden=false;
+  root.setAttribute("aria-hidden","false");
+  root.classList.toggle("error",!!opts.error);
+  $("#lookup-progress-label").textContent=label;
+  $("#lookup-progress-pct").textContent=`${clamped}%`;
+  $("#lookup-progress-track").setAttribute("aria-valuenow",String(clamped));
+  $("#lookup-progress-fill").style.width=`${clamped}%`;
+}
+
+function hideLookupProgressNow(){
+  window.clearTimeout(progressHideTimer);
+  const root=$("#lookup-progress");
+  if(!root) return;
+  root.hidden=true;
+  root.classList.remove("error");
+  root.setAttribute("aria-hidden","true");
+}
+
+function completeLookupProgress(seq,label,opts={}){
+  if(seq!==lookupSeq) return;
+  updateLookupProgress(seq,100,label,opts);
+  window.clearTimeout(progressHideTimer);
+  progressHideTimer=window.setTimeout(()=>{
+    if(seq!==lookupSeq) return;
+    hideLookupProgressNow();
+  },opts.error?900:320);
+}
+
+function syncBottomNavVisibility(){
+  const nav=$("#bottom-nav");
+  if(!nav) return;
+  const shouldShow=hasActiveRecord&&mobileBottomNavQuery.matches;
+  nav.classList.toggle("visible",shouldShow);
+  nav.setAttribute("aria-hidden",String(!shouldShow));
+  document.body.classList.toggle("mobile-nav-visible",shouldShow);
+}
+
+function setActiveRecordState(nextState){
+  hasActiveRecord=!!nextState;
+  syncBottomNavVisibility();
+}
+
+if(typeof mobileBottomNavQuery.addEventListener==="function"){
+  mobileBottomNavQuery.addEventListener("change",syncBottomNavVisibility);
+}else if(typeof mobileBottomNavQuery.addListener==="function"){
+  mobileBottomNavQuery.addListener(syncBottomNavVisibility);
+}
+window.addEventListener("resize",syncBottomNavVisibility,{passive:true});
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",syncBottomNavVisibility,{passive:true});
+}
 
 // ---- Formatters ----
 function fmtDate(ms){
@@ -663,7 +787,7 @@ function renderProphead(opa, opaRow){
   $("#ph-cd").textContent=opaRow?.council_district_2024||opaRow?.council_district_2016||"—";
   $("#ph-zip").textContent=opaRow?.zip_code||"—";
   updateStarBtn(opa);
-  $("#bottom-nav").classList.add("visible");
+  setActiveRecordState(true);
 }
 
 function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
@@ -1214,6 +1338,8 @@ $("#star-btn").addEventListener('click',()=>{
 async function lookup(opa){
   setNow();
   const seq = ++lookupSeq;
+  setLookupBusy(true);
+  updateLookupProgress(seq,10,"Requesting property records...");
   const newHash=`#opa=${opa}`;
   if(location.hash!==newHash) history.replaceState(null,'',newHash);
 
@@ -1222,7 +1348,7 @@ async function lookup(opa){
   $("#prophead").style.display="none";
   $("#tabs").style.display="none";
   $$(".pane").forEach(p=>p.style.display="none");
-  banner("Looking up…");
+  banner("Looking up records...");
 
   try{
     const [opaRow,lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
@@ -1237,17 +1363,20 @@ async function lookup(opa){
 
     // Abort if a newer lookup has started
     if(seq !== lookupSeq) return;
+    updateLookupProgress(seq,60,"Loading complaints and certifications...");
 
     if(!opaRow){
       $("#prophead").style.display="none";
       $("#tabs").style.display="none";
-      $("#bottom-nav").classList.remove("visible");
+      setActiveRecordState(false);
       $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
       history.replaceState(null,'',location.pathname+location.search);
+      completeLookupProgress(seq,"No property record found.",{error:true});
       banner(`No OPA record for parcel <code>${esc(opa)}</code>.`,true);
       return;
     }
     renderProphead(opa,opaRow);
+    updateLookupProgress(seq,76,"Loading supplemental records...");
 
     const [t311,bcerts]=await Promise.all([
       get311ForAddress(opaRow.location||"").catch(e=>{console.warn("311 fetch failed",e);return [];}),
@@ -1256,6 +1385,7 @@ async function lookup(opa){
 
     // Abort if a newer lookup has started (after second await)
     if(seq !== lookupSeq) return;
+    updateLookupProgress(seq,90,"Preparing property report...");
 
     const licenseSummary=summarizeLicenses(lic);
     const unfitOpen=ovE.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||"")).length;
@@ -1270,16 +1400,20 @@ async function lookup(opa){
     renderPermits(permits);
     renderBuildingCerts(bcerts);
     $("#banner").style.display="none";
+    completeLookupProgress(seq,"Property report ready.");
 
   }catch(err){
     if(seq !== lookupSeq) return;
     console.error(err);
     $("#prophead").style.display="none";
     $("#tabs").style.display="none";
-    $("#bottom-nav").classList.remove("visible");
+    setActiveRecordState(false);
     $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
     history.replaceState(null,'',location.pathname+location.search);
+    completeLookupProgress(seq,"Lookup failed.",{error:true});
     banner(`Lookup failed: ${esc(err.message)}. The Eclipse or Carto endpoint may be unreachable. Try again.`,true);
+  }finally{
+    if(seq===lookupSeq) setLookupBusy(false);
   }
 }
 
@@ -1292,13 +1426,15 @@ function banner(msg,isErr){
 
 function resetSearchState({focus=false,showPrompt=false}={}){
   lookupSeq++;
+  setLookupBusy(false);
+  hideLookupProgressNow();
   history.replaceState(null,"",location.pathname+location.search);
   $("#opa").value="";
   $("#addr").value="";
   switchTab("inspect");
   $("#prophead").style.display="none";
   $("#tabs").style.display="none";
-  $("#bottom-nav").classList.remove("visible");
+  setActiveRecordState(false);
   $$(".pane").forEach(p=>{
     p.classList.remove("active");
     p.style.display="none";
@@ -1387,6 +1523,7 @@ $$(".quick button").forEach(b=>{
 window.addEventListener("DOMContentLoaded",()=>{
   renderLimitsTab();
   renderSavedBar();
+  syncBottomNavVisibility();
   const hashMatch=location.hash.match(/^#opa=(\d{6,12})$/);
   if(hashMatch){
     $("#opa").value=hashMatch[1];
