@@ -2,6 +2,8 @@
   "name": "4PHILLY",
   "short_name": "4PHILLY",
   "description": "Philadelphia property record — violations, license status, 311 complaints.",
+  "id": "./",
+  "scope": "./",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
