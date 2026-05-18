@@ -41,7 +41,6 @@
     --green:#30d158;
     --blue:#64b5f6;
     --shadow:0 1px 0 rgba(255,255,255,.02), 0 10px 30px rgba(0,0,0,.5);
-    --bottom-nav-height:64px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
@@ -205,37 +204,7 @@
   .footer .footer-row{margin-bottom:4px}
   .footer .footer-disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--ink-mute);opacity:.7}
 
-  /* Bottom nav */
-  .bottom-nav{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    min-height:var(--bottom-nav-height);
-    background:rgba(18,18,18,.97);
-    border-top:1px solid var(--line);
-    display:flex;
-    align-items:stretch;
-    z-index:100;
-    padding-bottom:env(safe-area-inset-bottom);
-    visibility:hidden;
-    opacity:0;
-    pointer-events:none;
-    transform:translateY(6px);
-    transition:opacity .2s ease, transform .2s ease, visibility .2s ease;
-    backdrop-filter:blur(6px);
-  }
-  .bottom-nav.visible{
-    visibility:visible;
-    opacity:1;
-    pointer-events:auto;
-    transform:translateY(0);
-  }
-  .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;border:none;color:var(--ink-mute);font-family:"Archivo",sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;gap:3px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:0 2px}
-  .bnav-btn.active{color:var(--amber)}
-  .bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  body.bottom-nav-enabled .tabs{display:none!important}
-  body.bottom-nav-enabled .wrap{padding-bottom:calc(var(--bottom-nav-height) + 24px + env(safe-area-inset-bottom))}
+  /* Bottom nav — removed; tabs always at top */
 
   /* Responsive overrides */
   @media(max-width:679px){
@@ -252,7 +221,8 @@
     .grid{grid-template-columns:1fr}
     .card{padding:14px}
     .card .big{font-size:24px}
-    .tabs{display:none}
+    .tabs{gap:0;font-size:11px}
+    .tabs .tab{padding:10px 10px;font-size:11px;letter-spacing:.04em}
     table.dat{font-size:11px}
     table.dat th,table.dat td{padding:7px 6px}
   }
@@ -414,33 +384,13 @@
   <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Business licenses include rental, high-rise, food service, and other trade types on file for the OPA. Only COMPLIED is real compliance.</div>
+  <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a></div>
   <div class="footer-disc">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
 
-<nav class="bottom-nav" id="bottom-nav" role="tablist" aria-label="Tab navigation">
-  <button class="bnav-btn active" data-tab="inspect" role="tab" aria-selected="true">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    Inspect
-  </button>
-  <button class="bnav-btn" data-tab="drift" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    Drift
-  </button>
-  <button class="bnav-btn" data-tab="brief" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Brief
-  </button>
-  <button class="bnav-btn" data-tab="records" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    Records
-  </button>
-  <button class="bnav-btn" data-tab="limits" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    Limits
-  </button>
-</nav>
+<!-- bottom-nav removed; tabs are always at top -->
 
 <script>
 const ECLIPSE = "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services";
@@ -459,10 +409,7 @@ const $$ = sel => [...document.querySelectorAll(sel)];
 
 let currentTab = 'inspect';
 let lookupSeq = 0;
-let hasActiveRecord = false;
 let progressHideTimer = null;
-const compactWidthQuery = window.matchMedia("(max-width: 760px)");
-const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
 
 function setLookupBusy(isBusy){
   const btn=$("#go");
@@ -506,20 +453,7 @@ function completeLookupProgress(seq,label,opts={}){
   },opts.error?900:320);
 }
 
-function syncBottomNavVisibility(){
-  const nav=$("#bottom-nav");
-  if(!nav) return;
-  const useBottomNavLayout=compactWidthQuery.matches||(coarsePointerQuery.matches&&window.innerWidth<=980);
-  const shouldShow=hasActiveRecord&&useBottomNavLayout;
-  document.body.classList.toggle("bottom-nav-enabled",useBottomNavLayout);
-  nav.classList.toggle("visible",shouldShow);
-  nav.setAttribute("aria-hidden",String(!shouldShow));
-}
-
-function setActiveRecordState(nextState){
-  hasActiveRecord=!!nextState;
-  syncBottomNavVisibility();
-}
+function setActiveRecordState(nextState){}
 
 function clearRenderedPanels(){
   $("#kpis").innerHTML="";
@@ -537,21 +471,6 @@ function clearRenderedPanels(){
   $("#t-c").textContent="";
   $("#prm-c").textContent="";
   $("#bcert-c").textContent="";
-}
-
-if(typeof compactWidthQuery.addEventListener==="function"){
-  compactWidthQuery.addEventListener("change",syncBottomNavVisibility);
-}else if(typeof compactWidthQuery.addListener==="function"){
-  compactWidthQuery.addListener(syncBottomNavVisibility);
-}
-if(typeof coarsePointerQuery.addEventListener==="function"){
-  coarsePointerQuery.addEventListener("change",syncBottomNavVisibility);
-}else if(typeof coarsePointerQuery.addListener==="function"){
-  coarsePointerQuery.addListener(syncBottomNavVisibility);
-}
-window.addEventListener("resize",syncBottomNavVisibility,{passive:true});
-if(window.visualViewport){
-  window.visualViewport.addEventListener("resize",syncBottomNavVisibility,{passive:true});
 }
 
 // ---- Formatters ----
@@ -844,6 +763,7 @@ function renderBriefLicenseList(licenses){
 function renderProphead(opa, opaRow){
   $("#prophead").style.display="block";
   $("#tabs").style.display="";
+  switchTab(currentTab);
   $("#ph-addr").textContent=opaRow?.location||`OPA ${opa}`;
   $("#ph-opa").textContent=opa;
   $("#ph-owner").textContent=opaRow?.owner_1||"—";
@@ -1363,11 +1283,6 @@ function switchTab(which){
   if(!TABS.includes(which)) return;
   currentTab=which;
   $$(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===which));
-  $$(".bnav-btn[data-tab]").forEach(x=>{
-    const active=x.dataset.tab===which;
-    x.classList.toggle("active",active);
-    x.setAttribute("aria-selected",String(active));
-  });
   $$(".pane").forEach(p=>p.classList.remove("active"));
   const pane=$("#pane-"+which);
   if(pane) pane.classList.add("active");
@@ -1377,11 +1292,6 @@ function switchTab(which){
 $("#tabs").addEventListener("click",e=>{
   const t=e.target.closest(".tab");
   if(t) switchTab(t.dataset.tab);
-});
-
-$("#bottom-nav").addEventListener("click",e=>{
-  const btn=e.target.closest(".bnav-btn");
-  if(btn&&btn.dataset.tab) switchTab(btn.dataset.tab);
 });
 
 // ---- Swipe ----
@@ -1429,7 +1339,6 @@ async function lookup(opa){
   $("#tabs").style.display="none";
   setActiveRecordState(false);
   clearRenderedPanels();
-  $$(".pane").forEach(p=>p.classList.remove("active"));
   banner("Looking up records...");
 
   try{
@@ -1619,7 +1528,6 @@ $$(".quick button").forEach(b=>{
 window.addEventListener("DOMContentLoaded",()=>{
   renderLimitsTab();
   renderSavedBar();
-  syncBottomNavVisibility();
   const hashMatch=location.hash.match(/^#opa=(\d{6,12})$/);
   if(hashMatch){
     $("#opa").value=hashMatch[1];
