@@ -1,4 +1,4 @@
-const CACHE = '4philly-v3';
+const CACHE = '4philly-v8';
 const STATIC = ['./', './index.html', './404.html', './manifest.json', './icon.svg'];
 const FONT_ORIGIN = 'https://fonts.gstatic.com';
 const API_ORIGINS = ['https://services.arcgis.com', 'https://phl.carto.com'];
