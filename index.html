@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>4PHILLY — Philadelphia property record</title>
 <meta name="description" content="Unified Philadelphia property record — Eclipse vs Carto drift, L&amp;I business license status, open violations, 311 complaints. Installable on iOS and Android.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com; img-src 'self' data:;">
 <meta name="theme-color" content="#ffb000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -50,7 +51,7 @@
   a:hover{color:var(--amber-soft);border-bottom-color:var(--amber-soft)}
   code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
   .wrap{max-width:1200px;margin:0 auto;padding:16px 16px calc(26px + env(safe-area-inset-bottom))}
-  @media(min-width:680px){.wrap{padding:28px 22px 80px}}
+  @media(min-width:680px){.wrap{padding:28px 22px calc(80px + env(safe-area-inset-bottom))}}
 
   /* Header */
   .top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px}
@@ -81,8 +82,8 @@
 
   /* Saved bar */
   .saved-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;padding:6px 0;border-top:1px solid var(--line-soft)}
-  .saved-chip{background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.25);color:var(--amber);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 10px;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-  .saved-chip .remove-chip{background:transparent;border:none;color:var(--ink-mute);cursor:pointer;padding:0;font-size:16px;line-height:1;min-width:22px;min-height:22px;display:flex;align-items:center;justify-content:center}
+  .saved-chip{background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.25);color:var(--amber);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 10px;min-height:44px;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .saved-chip .remove-chip{background:transparent;border:none;color:var(--ink-mute);cursor:pointer;padding:0;font-size:16px;line-height:1;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
 
   /* Banner */
   .banner{margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);font-size:13px;color:var(--ink-dim);border-radius:2px}
@@ -244,6 +245,7 @@
     .brand-mark{font-size:24px}
     .prophead{padding:14px 14px}
     .prophead-inner{flex-direction:column;gap:12px}
+    .prophead-inner .star-btn{align-self:flex-end;margin-top:-8px}
     .search{gap:8px}
     .search > div:last-child{width:100%}
     .search > div:last-child .btn{width:100%}
@@ -278,8 +280,8 @@
   <section>
     <div class="search">
       <div class="field">
-        <label for="addr">Address (any partial)</label>
-        <input id="addr" type="text" placeholder="e.g. 315 N 12th" autocomplete="off" inputmode="search">
+        <label for="addr">Address or building name</label>
+        <input id="addr" type="text" placeholder="e.g. 315 N 12th or The Sterling" autocomplete="off" inputmode="search">
       </div>
       <div class="field opa-field">
         <label for="opa">OPA account #</label>
@@ -299,7 +301,7 @@
       <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-mute);white-space:nowrap">saved:</span>
       <div id="saved-chips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
     </div>
-    <div id="banner" class="banner" style="display:none"></div>
+    <div id="banner" class="banner" role="status" aria-live="polite" style="display:none"></div>
     <div id="lookup-progress" class="lookup-progress" role="status" aria-live="polite" aria-hidden="true" hidden>
       <div class="lookup-progress-row">
         <span id="lookup-progress-label">Preparing lookup…</span>
@@ -341,7 +343,7 @@
   <div id="pane-container">
 
   <!-- INSPECT -->
-  <section id="pane-inspect" class="pane active" style="display:none">
+  <section id="pane-inspect" class="pane active">
     <div class="grid" id="kpis"></div>
     <div class="sec">
       <h2>Business &amp; trade licenses <span class="count" id="lic-c"></span></h2>
@@ -362,7 +364,7 @@
   </section>
 
   <!-- DRIFT -->
-  <section id="pane-drift" class="pane" style="display:none">
+  <section id="pane-drift" class="pane">
     <div class="banner" style="display:block;margin-top:0">
       <b>What this is:</b> the same data point pulled from Eclipse (li.phila.gov's backend) and Carto (the open-data mirror), placed side by side. Divergent rows highlight in red. Eclipse always wins.
     </div>
@@ -381,12 +383,12 @@
   </section>
 
   <!-- BRIEF -->
-  <section id="pane-brief" class="pane" style="display:none">
+  <section id="pane-brief" class="pane">
     <div class="brief" id="brief-body"></div>
   </section>
 
   <!-- RECORDS -->
-  <section id="pane-records" class="pane" style="display:none">
+  <section id="pane-records" class="pane">
     <div class="sec">
       <h2>Permits <span class="count" id="prm-c"></span></h2>
       <div id="prm-body"></div>
@@ -398,7 +400,7 @@
   </section>
 
   <!-- LIMITS -->
-  <section id="pane-limits" class="pane" style="display:none">
+  <section id="pane-limits" class="pane">
     <div class="brief">
       <p class="lede">What 4PHILLY can't tell you — and why.</p>
       <p style="font-size:13px;color:var(--ink-dim);margin-top:0">This app queries data the city already publishes. Where it falls short, the limitation is a city data gap, a policy decision, or a technical constraint of running without a server. Future versions will try to address each of these.</p>
@@ -559,6 +561,12 @@ function fmtDate(ms){
     const trimmed=ms.trim();
     if(/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
   }
+  if(typeof ms==="number"){
+    // Eclipse stores dates as midnight UTC epoch ms; format in UTC to avoid off-by-one
+    const d=new Date(ms);
+    if(isNaN(d.getTime())) return "—";
+    return d.toISOString().slice(0,10);
+  }
   const d = new Date(ms);
   if(isNaN(d.getTime())) return "—";
   const parts=PHILLY_DATE_FORMAT.formatToParts(d);
@@ -614,6 +622,9 @@ function normalizeAddr(raw){
     .replace(/\b(APT|UNIT|STE|SUITE|FL|FLOOR|RM|ROOM)\b\s*\w*/g,'')
     .replace(/\s+/g,' ').trim();
 }
+function sqlSafeStr(s){
+  return s.replace(/'/g,"''").replace(/\\/g,'').replace(/;/g,'').replace(/--/g,'');
+}
 function addrVariants(addr){
   const base=normalizeAddr(addr);
   const parts=base.split(' ').filter(Boolean);
@@ -624,6 +635,8 @@ function addrVariants(addr){
 }
 
 // ---- Data fetchers ----
+function assertOPA(opa){ if(!/^\d{6,12}$/.test(opa)) throw new Error("Invalid OPA account number"); }
+
 async function resolveAddress(addr){
   const patterns=addrVariants(addr);
   const results=await Promise.all(patterns.map(p=>{
@@ -640,31 +653,60 @@ async function resolveAddress(addr){
 }
 
 async function getOPADetails(opa){
+  assertOPA(opa);
   const rows=await eclipseQuery("opa_properties_public_pde",`parcel_number='${opa}'`,"*");
   return rows[0]||null;
 }
 
 async function getBusinessLicenses(opa){
+  assertOPA(opa);
   return eclipseQuery("BUSINESS_LICENSES",
     `opa_account_num='${opa}'`,
     "licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname");
 }
 
 async function getCartoBusinessLicenses(opa){
+  assertOPA(opa);
   return cartoQuery(`SELECT licensenum,licensetype,licensestatus,initialissuedate,mostrecentissuedate,expirationdate,inactivedate,numberofunits,business_name,legalname FROM business_licenses WHERE opa_account_num='${opa}'`);
 }
 
 async function getOpenViolations(opa){
+  assertOPA(opa);
   return eclipseQuery("VIOLATIONS",
     `opa_account_num='${opa}' AND violationstatus='OPEN'`,
     "casenumber,violationdate,violationcode,violationcodetitle,violationstatus,casestatus,casecreateddate,casetype,unit_num,underappeal");
 }
 async function getAllViolations(opa){
+  assertOPA(opa);
   return eclipseQuery("VIOLATIONS",`opa_account_num='${opa}'`,
     "casenumber,violationdate,violationcode,violationcodetitle,violationstatus,casestatus,casecreateddate,violationresolutiondate");
 }
 async function getCartoViolationCount(opa){
+  assertOPA(opa);
   return cartoQuery(`SELECT violationstatus, COUNT(*) AS ct FROM violations WHERE opa_account_num='${opa}' GROUP BY violationstatus`);
+}
+
+async function resolveByBuildingName(name){
+  const normalized=name.trim().toUpperCase().replace(/[.,#%_']/g,'').replace(/\s+/g,' ').trim();
+  if(!normalized) return [];
+  const safeName=sqlSafeStr(normalized);
+  const pattern='%'+safeName.replace(/\s+/g,'%')+'%';
+  const rows=await eclipseQuery("BUSINESS_LICENSES",
+    `UPPER(business_name) LIKE '${pattern}' OR UPPER(legalname) LIKE '${pattern}'`,
+    "opa_account_num,business_name,legalname",
+    "&resultRecordCount=30");
+  const opaSet=new Map();
+  rows.forEach(r=>{
+    const opa=(r.opa_account_num||"").trim();
+    if(/^\d{6,12}$/.test(opa)&&!opaSet.has(opa))
+      opaSet.set(opa,r.business_name||r.legalname||"");
+  });
+  if(!opaSet.size) return [];
+  const details=await Promise.all([...opaSet.keys()].slice(0,12).map(async opa=>{
+    const d=await getOPADetails(opa).catch(()=>null);
+    return d?{...d,_matchedName:opaSet.get(opa)}:null;
+  }));
+  return details.filter(Boolean);
 }
 
 async function get311ForAddress(loc){
@@ -681,7 +723,7 @@ async function get311ForAddress(loc){
   const patterns=[...new Set([loosePat,fullPat])];
   const since=new Date(Date.now()-1000*60*60*24*730).toISOString().slice(0,10);
   const results=await Promise.all(patterns.map(p=>
-    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,subject,address FROM public_cases_fc WHERE UPPER(address) LIKE '${p.replace(/'/g,"''")}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(e=>{console.warn('311 query failed:',e);return [];})
+    cartoQuery(`SELECT cartodb_id,requested_datetime,service_name,status,agency_responsible,subject,address FROM public_cases_fc WHERE UPPER(address) LIKE '${sqlSafeStr(p)}' AND requested_datetime >= '${since}' ORDER BY requested_datetime DESC LIMIT 500`).catch(e=>{console.warn('311 query failed:',e);return [];})
   ));
   const seen=new Set();
   return results.flat().filter(r=>{
@@ -692,6 +734,7 @@ async function get311ForAddress(loc){
 }
 
 async function getPermits(opa){
+  assertOPA(opa);
   return eclipseQuery("PERMITS",`opa_account_num='${opa}'`,
     "permitnumber,permittype,permitdescription,permitissuedate,status,applicanttype,typeofwork,unit_num,mostrecentinsp,approvedscopeofwork",
     "&resultRecordCount=200&orderByFields=permitissuedate+DESC");
@@ -801,7 +844,6 @@ function renderBriefLicenseList(licenses){
 function renderProphead(opa, opaRow){
   $("#prophead").style.display="block";
   $("#tabs").style.display="";
-  $$(".pane").forEach(p=>p.style.display="");
   $("#ph-addr").textContent=opaRow?.location||`OPA ${opa}`;
   $("#ph-opa").textContent=opa;
   $("#ph-owner").textContent=opaRow?.owner_1||"—";
@@ -912,10 +954,10 @@ function renderOpenViolations(ov){
 }
 
 function renderViolHistory(all){
-  const dist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
+  const dist={OPEN:0,COMPLIED:0,COMPEXCP:0,CMPLY:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,DEMOLISH:0,"SVN ISSUED":0,"CVN ISSUED":0,"WARNING ISSUED":0,"STOP WORK":0,ERROR:0,OTHER:0};
   all.forEach(v=>{
     const s=v.violationstatus;
-    if(dist[s]!==undefined) dist[s]++; else dist.OTHER++;
+    if(s!=null&&dist[s]!==undefined) dist[s]++; else dist.OTHER++;
   });
   const total=all.length;
   let earliest=null,latest=null;
@@ -928,18 +970,30 @@ function renderViolHistory(all){
       }
     }
   });
-  const html=`
-    <div style="overflow-x:auto"><table class="dat" style="max-width:560px"><thead><tr><th>violationstatus</th><th>count</th><th>meaning</th></tr></thead><tbody>
-      <tr><td>${statusPill("OPEN")}</td><td class="k">${dist.OPEN}</td><td>currently unresolved</td></tr>
-      <tr><td>${statusPill("COMPLIED")}</td><td class="k">${dist.COMPLIED}</td><td>actual confirmed compliance</td></tr>
-      <tr><td>${statusPill("CLOSED")}</td><td class="k">${dist.CLOSED}</td><td>administrative — compliance NOT confirmed</td></tr>
-      <tr><td>${statusPill("CLOSEDCASE")}</td><td class="k">${dist.CLOSEDCASE}</td><td>parent case admin-closed</td></tr>
-      <tr><td>${statusPill("RESOLVE")}</td><td class="k">${dist.RESOLVE}</td><td>via appeal — compliance NOT confirmed</td></tr>
-      <tr><td>${statusPill("ERROR")}</td><td class="k">${dist.ERROR}</td><td>data-entry anomaly</td></tr>
-      ${dist.OTHER?`<tr><td>${statusPill("OTHER")}</td><td class="k">${dist.OTHER}</td><td>other / null</td></tr>`:""}
-      <tr style="background:var(--panel-2)"><td><b style="color:var(--ink)">TOTAL</b></td><td class="k"><b>${total}</b></td><td>earliest ${fmtDate(earliest)} · latest ${fmtDate(latest)}</td></tr>
+  const rows=[
+    ["OPEN",dist.OPEN,"currently unresolved"],
+    ["COMPLIED",dist.COMPLIED,"actual confirmed compliance"],
+    ["COMPEXCP",dist.COMPEXCP,"complied by exception"],
+    ["CMPLY",dist.CMPLY,"compliance (legacy code)"],
+    ["CLOSED",dist.CLOSED,"administrative — compliance NOT confirmed"],
+    ["CLOSEDCASE",dist.CLOSEDCASE,"parent case admin-closed"],
+    ["RESOLVE",dist.RESOLVE,"via appeal — compliance NOT confirmed"],
+    ["DEMOLISH",dist.DEMOLISH,"structure demolished"],
+    ["SVN ISSUED",dist["SVN ISSUED"],"summary violation notice issued"],
+    ["CVN ISSUED",dist["CVN ISSUED"],"code violation notice issued"],
+    ["WARNING ISSUED",dist["WARNING ISSUED"],"warning notice issued"],
+    ["STOP WORK",dist["STOP WORK"],"stop-work order"],
+    ["ERROR",dist.ERROR,"data-entry anomaly"],
+    ["OTHER",dist.OTHER,"other / null"]
+  ].filter(([,ct])=>ct>0);
+  let html=`
+    <div style="overflow-x:auto"><table class="dat" style="max-width:560px"><thead><tr><th>violationstatus</th><th>count</th><th>meaning</th></tr></thead><tbody>`;
+  rows.forEach(([label,ct,meaning])=>{
+    html+=`<tr><td>${statusPill(label)}</td><td class="k">${ct}</td><td>${meaning}</td></tr>`;
+  });
+  html+=`<tr style="background:var(--panel-2)"><td><b style="color:var(--ink)">TOTAL</b></td><td class="k"><b>${total}</b></td><td>earliest ${fmtDate(earliest)} · latest ${fmtDate(latest)}</td></tr>
     </tbody></table></div>
-    <div class="note" style="margin-top:10px;color:var(--ink-mute);font-family:'IBM Plex Mono',monospace;font-size:11px">Only <b style="color:var(--green)">COMPLIED</b> is real compliance. The other non-OPEN values are administrative closure without a recorded compliance event.</div>
+    <div class="note" style="margin-top:10px;color:var(--ink-mute);font-family:'IBM Plex Mono',monospace;font-size:11px">Only <b style="color:var(--green)">COMPLIED</b> is confirmed compliance. COMPEXCP and CMPLY may also indicate compliance outcomes. Other non-OPEN values are administrative closure without a recorded compliance event.</div>
   `;
   $("#vh-body").innerHTML=html;
 }
@@ -1036,16 +1090,17 @@ function renderDriftLicense(eRows,cRows){
 }
 
 function renderDriftViolations(eAll,cartoDist){
-  const eDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
-  eAll.forEach(v=>{ const s=v.violationstatus; if(eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
-  const cDist={OPEN:0,COMPLIED:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,ERROR:0,OTHER:0};
-  cartoDist.forEach(r=>{ if(cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]+=Number(r.ct)||0; else cDist.OTHER+=Number(r.ct)||0; });
+  const KNOWN_STATUSES=["OPEN","COMPLIED","COMPEXCP","CMPLY","CLOSED","CLOSEDCASE","RESOLVE","DEMOLISH","SVN ISSUED","CVN ISSUED","WARNING ISSUED","STOP WORK","ERROR"];
+  const eDist={OTHER:0}; KNOWN_STATUSES.forEach(s=>eDist[s]=0);
+  eAll.forEach(v=>{ const s=v.violationstatus; if(s!=null&&eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
+  const cDist={OTHER:0}; KNOWN_STATUSES.forEach(s=>cDist[s]=0);
+  cartoDist.forEach(r=>{ if(r.violationstatus!=null&&cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]+=Number(r.ct)||0; else cDist.OTHER+=Number(r.ct)||0; });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
-  const statuses=["OPEN","COMPLIED","CLOSED","CLOSEDCASE","RESOLVE","ERROR",
-    ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])];
+  const statuses=[...KNOWN_STATUSES,
+    ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])].filter(s=>eDist[s]>0||cDist[s]>0);
 
   statuses.forEach(s=>{
     const same=eDist[s]===cDist[s];
@@ -1090,7 +1145,7 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
     vclass="";
   } else if(rentalSummary.activeCount===0){
     const statusLabel=primaryRental?.meta?.displayStatus||"inactive";
-    verdict=`<b>No active rental license found (${rentalSummary.count} rental-type record(s) on file; primary status: ${esc(statusLabel)}${expDate?`, exp ${expDate}`:""}).</b> Among <b>all</b> license types on this parcel, Eclipse shows <b>${allSummary.count}</b> record(s) total — see the Inspect tab for every type. Operating rental housing without an active rental license is a violation of Phila. Code § 9-3902. Under <i>Frempong v. Richardson</i>, an unlicensed landlord cannot collect rent for the period of unlicensed operation.`;
+    verdict=`<b>No active rental license found (${rentalSummary.count} rental-type record(s) on file; primary status: ${esc(statusLabel)}${expDate?`, exp ${expDate}`:""}).</b> Among <b>all</b> license types on this parcel, Eclipse shows <b>${allSummary.count}</b> record(s) total — see the Inspect tab for every type. Operating rental housing without an active rental license is a violation of Phila. Code § 9-3902. Under <i>Frempong v. Richardson</i> (2019), an unlicensed landlord may not be able to collect rent for the period of unlicensed operation — though subsequent proceedings (2024) may have narrowed this holding. Consult a housing attorney.`;
     vclass="bad";
   } else if(rentalSummary.activeCount<rentalSummary.count){
     verdict=`<b>${rentalSummary.activeCount} of ${rentalSummary.count} rental-type license(s) are currently active.</b> This parcel has <b>${allSummary.count}</b> total license record(s) on file across all types — review each row below to verify the unit or use you care about is covered${expDate?` (primary rental-type record expires ${expDate})`:""}.`;
@@ -1132,7 +1187,7 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
       <ul>
         <li>File a complaint at <a href="https://www.phila.gov/311/" target="_blank" rel="noopener">phila.gov/311</a> — that creates a public record.</li>
         <li>Request the property's full history under Pennsylvania RTKL: <a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener">L&amp;I Open Records Officer</a>.</li>
-        <li>If the landlord is unlicensed during a rent collection period, see <i>Frempong v. Richardson</i>, 209 A.3d 1001 (Pa. Super. 2019).</li>
+        <li>If the landlord is unlicensed during a rent collection period, see <i>Frempong v. Richardson</i>, 209 A.3d 1001 (Pa. Super. 2019). Note: subsequent 2024 proceedings in this case may have modified the practical scope of this holding — consult a housing attorney for current guidance.</li>
       </ul>
     </div>
   `;
@@ -1208,15 +1263,15 @@ function renderLimitsTab(){
     },
     {
       severity:"technical",
-      title:"Permits and building certs layer names are pending live verification",
-      why:"The Eclipse ArcGIS service exposes VIOLATIONS and BUSINESS_LICENSES as confirmed layer names (used by li.phila.gov). The PERMITS and BUILDING_CERTS layer names on the Records tab are based on documentation rather than confirmed live query. If the actual layer names differ, those sections show 'No records' without an explicit error message.",
-      future:"Verify layer names against the ArcGIS service directory on the next release and update accordingly."
+      title:"Permits and building certs queries may return incomplete data",
+      why:"The Eclipse ArcGIS service exposes PERMITS and BUILDING_CERTS as confirmed layer names (verified live). However, some properties may have permit or certification records under older layer variants (LI_PERMITS, LI_VIOLATIONS). The Records tab queries the current layers only and may not surface legacy records from before the layer migration.",
+      future:"Future versions: cross-reference older layer variants where the primary layers return zero results."
     },
     {
       severity:"policy",
       title:"Inspector identity is not in public data",
       why:"No inspector name, badge number, or organizational unit appears in any public Eclipse or Carto layer. This is a policy decision, not a technical oversight. The data exists inside L&I's system; it simply isn't published. Without inspector IDs, it's impossible to detect geographic or temporal patterns in enforcement.",
-      future:"Future versions: a RTKL request workflow and a call for the city to publish a stable non-PII inspector identifier — as NYC HPD does — to enable pattern detection without exposing personal information."
+      future:"Future versions: a RTKL request workflow and a call for the city to publish a stable non-PII inspector identifier to enable pattern detection without exposing personal information."
     },
     {
       severity:"policy",
@@ -1316,6 +1371,7 @@ function switchTab(which){
   $$(".pane").forEach(p=>p.classList.remove("active"));
   const pane=$("#pane-"+which);
   if(pane) pane.classList.add("active");
+  window.scrollTo({top:0,behavior:"instant"});
 }
 
 $("#tabs").addEventListener("click",e=>{
@@ -1340,7 +1396,7 @@ $("#bottom-nav").addEventListener("click",e=>{
   container.addEventListener("touchend",e=>{
     const dx=e.changedTouches[0].clientX-startX;
     const dy=e.changedTouches[0].clientY-startY;
-    if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)) return;
+    if(Math.abs(dx)<80||Math.abs(dx)<Math.abs(dy)*1.5) return;
     const idx=TABS.indexOf(currentTab);
     if(dx<0&&idx<TABS.length-1) switchTab(TABS[idx+1]);
     if(dx>0&&idx>0) switchTab(TABS[idx-1]);
@@ -1359,6 +1415,7 @@ $("#star-btn").addEventListener('click',()=>{
 
 // ---- Main lookup ----
 async function lookup(opa){
+  if(!/^\d{6,12}$/.test(opa)){ banner("Invalid OPA account number.",true); return; }
   setNow();
   const seq = ++lookupSeq;
   setLookupBusy(true);
@@ -1372,7 +1429,7 @@ async function lookup(opa){
   $("#tabs").style.display="none";
   setActiveRecordState(false);
   clearRenderedPanels();
-  $$(".pane").forEach(p=>p.style.display="none");
+  $$(".pane").forEach(p=>p.classList.remove("active"));
   banner("Looking up records...");
 
   try{
@@ -1394,7 +1451,7 @@ async function lookup(opa){
       $("#prophead").style.display="none";
       $("#tabs").style.display="none";
       setActiveRecordState(false);
-      $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
+      $$(".pane").forEach(p=>p.classList.remove("active"));
       history.replaceState(null,'',location.pathname+location.search);
       completeLookupProgress(seq,"No property record found.",{error:true});
       banner(`No OPA record for parcel <code>${esc(opa)}</code>.`,true);
@@ -1433,7 +1490,7 @@ async function lookup(opa){
     $("#prophead").style.display="none";
     $("#tabs").style.display="none";
     setActiveRecordState(false);
-    $$(".pane").forEach(p=>{ p.classList.remove("active"); p.style.display="none"; });
+    $$(".pane").forEach(p=>p.classList.remove("active"));
     history.replaceState(null,'',location.pathname+location.search);
     completeLookupProgress(seq,"Lookup failed.",{error:true});
     banner(`Lookup failed: ${esc(err.message)}. The Eclipse or Carto endpoint may be unreachable. Try again.`,true);
@@ -1461,10 +1518,7 @@ function resetSearchState({focus=false,showPrompt=false}={}){
   $("#tabs").style.display="none";
   setActiveRecordState(false);
   clearRenderedPanels();
-  $$(".pane").forEach(p=>{
-    p.classList.remove("active");
-    p.style.display="none";
-  });
+  $$(".pane").forEach(p=>p.classList.remove("active"));
   if(showPrompt){
     banner("Enter an address or an OPA account number to begin.");
     $("#banner").classList.remove("err");
@@ -1485,13 +1539,22 @@ $("#go").addEventListener("click",async()=>{
     lookup(opa); return;
   }
   if(!addr){ banner("Enter an address or an OPA account number.",true); return; }
-  updateLookupProgress(lookupSeq,8,"Resolving address to an OPA parcel...");
+  const seq = ++lookupSeq;
+  setLookupBusy(true);
+  hideLookupProgressNow();
+  updateLookupProgress(seq,8,"Resolving address to an OPA parcel...");
   banner("Resolving address against OPA layer…");
   try{
-    const matches=await resolveAddress(addr);
+    let matches=await resolveAddress(addr);
+    if(seq!==lookupSeq){ return; }
     if(matches.length===0){
-      completeLookupProgress(lookupSeq,"No OPA parcel found for this address.",{error:true});
-      banner(`No OPA parcel matches "${esc(addr)}". Try a different spelling or use the OPA number directly.`,true);
+      updateLookupProgress(seq,40,"Trying building name search...");
+      matches=await resolveByBuildingName(addr).catch(()=>[]);
+      if(seq!==lookupSeq){ return; }
+    }
+    if(matches.length===0){
+      completeLookupProgress(seq,"No OPA parcel found for this address or building name.",{error:true});
+      banner(`No OPA parcel matches "${esc(addr)}". Try a different spelling, building name, or use the OPA number directly.`,true);
       return;
     }
     if(matches.length===1){
@@ -1508,7 +1571,7 @@ $("#go").addEventListener("click",async()=>{
       html+=`<div style="margin-top:8px;color:var(--ink-mute);font-size:12px;font-family:'IBM Plex Mono',monospace">Showing first 12 of ${matches.length} matches. Add more address detail for a more accurate match.</div>`;
     }
     html+=`</div>`;
-    completeLookupProgress(lookupSeq,"Select one of the matching parcels.");
+    completeLookupProgress(seq,"Select one of the matching parcels.");
     banner(html);
     $("#banner").querySelectorAll("button[data-opa]").forEach(btn=>{
       btn.addEventListener("click",()=>{
@@ -1522,8 +1585,11 @@ $("#go").addEventListener("click",async()=>{
       });
     });
   }catch(err){
-    completeLookupProgress(lookupSeq,"Address resolution failed.",{error:true});
+    if(seq!==lookupSeq) return;
+    completeLookupProgress(seq,"Address resolution failed.",{error:true});
     banner(`Address resolution failed: ${esc(err.message)}`,true);
+  }finally{
+    if(seq===lookupSeq) setLookupBusy(false);
   }
 });
 
