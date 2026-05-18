@@ -70,6 +70,7 @@
   .field input:focus{border-color:var(--amber)}
   .btn{background:var(--amber);color:#1a1100;border:none;padding:0 18px;min-height:44px;font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .15s;touch-action:manipulation}
   .btn:hover{background:var(--amber-soft)}
+  .btn:active{transform:scale(.98)}
   .btn:disabled{cursor:not-allowed;opacity:.72}
   .btn.busy{background:var(--amber-soft)}
   .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line)}
@@ -102,9 +103,11 @@
   .star-btn.saved svg{fill:currentColor}
 
   /* Tabs */
-  .tabs{display:flex;gap:0;margin:22px 0 0;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .tab{background:transparent;border:none;color:var(--ink-mute);font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;padding:14px 16px;min-height:44px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;touch-action:manipulation}
+  .tabs{display:flex;gap:0;margin:22px 0 0;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{background:transparent;border:none;color:var(--ink-mute);font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;padding:14px 16px;min-height:44px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;touch-action:manipulation;transition:color .15s}
   .tab:hover{color:var(--ink-dim)}
+  .tab:active{color:var(--amber-soft)}
   .tab.active{color:var(--amber);border-bottom-color:var(--amber)}
 
   /* Panels */
@@ -114,7 +117,7 @@
   /* Grid — 2-col on mobile */
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   @media(min-width:600px){.grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:16px 18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:16px 18px;transition:border-color .15s}
   .card h3{margin:0 0 4px;font-family:"Archivo",sans-serif;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-mute)}
   .card .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:28px;color:var(--ink);letter-spacing:-.01em;line-height:1.1;margin-top:4px}
   .card .big.amber{color:var(--amber)}
@@ -206,25 +209,50 @@
 
   /* Bottom nav — removed; tabs always at top */
 
+  /* Table scroll hint */
+  .table-scroll{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .table-scroll::after{content:'';position:sticky;right:0;top:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--bg) 90%);display:block;margin-top:-100%;float:right;height:100%}
+
   /* Responsive overrides */
   @media(max-width:679px){
-    .wrap{padding:14px 14px calc(24px + env(safe-area-inset-bottom))}
-    .top{flex-direction:column;gap:14px}
+    .wrap{padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+    .top{flex-direction:column;gap:10px;padding-bottom:16px;margin-bottom:16px}
     .top-meta{text-align:left}
-    .brand-mark{font-size:24px}
-    .prophead{padding:14px 14px}
-    .prophead-inner{flex-direction:column;gap:12px}
-    .prophead-inner .star-btn{align-self:flex-end;margin-top:-8px}
+    .top .top-desc{display:none}
+    .brand-mark{font-size:26px}
+    .brand-tag{font-size:10px;letter-spacing:.14em}
+    .prophead{padding:14px;margin-top:16px;border-radius:6px}
+    .prophead h1{font-size:18px}
+    .prophead-inner{flex-direction:row;align-items:flex-start;gap:10px}
+    .prophead-inner > div:first-child{flex:1;min-width:0}
+    .prophead .sub{font-size:11px;gap:8px 12px}
     .search{gap:8px}
     .search > div:last-child{width:100%}
-    .search > div:last-child .btn{width:100%}
-    .grid{grid-template-columns:1fr}
-    .card{padding:14px}
-    .card .big{font-size:24px}
-    .tabs{gap:0;font-size:11px}
-    .tabs .tab{padding:10px 10px;font-size:11px;letter-spacing:.04em}
+    .search > div:last-child .btn{width:100%;min-height:48px;font-size:14px;border-radius:4px}
+    .field input{border-radius:4px;font-size:16px;min-height:48px}
+    .grid{grid-template-columns:repeat(2,1fr);gap:8px}
+    .card{padding:12px;border-radius:4px}
+    .card h3{font-size:10px;letter-spacing:.1em}
+    .card .big{font-size:20px}
+    .card .note{font-size:10px}
+    .tabs{margin:16px -12px 0;padding:0 12px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;background:var(--bg)}
+    .tabs .tab{padding:12px 14px;font-size:11px;letter-spacing:.04em}
+    .pane{padding:16px 0}
+    .sec{margin-top:20px}
+    .sec h2{font-size:12px;letter-spacing:.1em;margin-bottom:10px}
     table.dat{font-size:11px}
     table.dat th,table.dat td{padding:7px 6px}
+    .banner{padding:12px 14px;font-size:12px;border-radius:4px}
+    .brief .lede{font-size:17px}
+    .brief p{font-size:14px}
+    .brief .verdict{padding:14px;font-size:13px;border-radius:4px}
+    .brief .gap{padding:14px;border-radius:4px}
+    .limit-card{padding:14px;border-radius:4px}
+    .lookup-progress{border-radius:4px}
+    .footer{margin-top:40px;font-size:10px}
+    .pill{font-size:9px;padding:2px 6px}
+    .quick button{border-radius:4px;min-height:40px;padding:6px 10px}
+    .saved-chip{border-radius:4px}
   }
 </style>
 </head>
@@ -237,12 +265,12 @@
         <div class="brand-mark">4<span>PHILLY</span></div>
         <div class="brand-tag">Philadelphia property record</div>
       </div>
-      <div style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
+      <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
         One unified property record from Philadelphia's L&amp;I data — pulled live from <b>Eclipse</b> (authoritative for current state) and cross-checked against <b>Carto</b> (historical mirror). Flags drift between the two. Decodes status semantics. Surfaces what the public data <i>doesn't</i> tell you.
       </div>
     </div>
     <div class="top-meta">
-      <div>build <span class="mono">0.3.0</span></div>
+      <div>build <span class="mono">0.8.0</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -830,7 +858,7 @@ function renderLicense(licE,licC){
     return;
   }
   $("#lic-c").textContent=licE.length;
-  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>License #</th><th>Type</th><th>Status</th><th>Most recent issue</th><th>Expires</th><th>Inactive date</th><th>Units</th><th>Business name</th></tr></thead><tbody>`;
+  let html=`<div class="table-scroll"><table class="dat"><thead><tr><th>License #</th><th>Type</th><th>Status</th><th>Most recent issue</th><th>Expires</th><th>Inactive date</th><th>Units</th><th>Business name</th></tr></thead><tbody>`;
   licE.forEach(L=>{
     const meta=analyzeLicenseRow(L);
     const statusText=meta.isActive?"ACTIVE":(meta.displayStatus||"—");
@@ -857,7 +885,7 @@ function renderOpenViolations(ov){
   }
   const asMs=v=>{const d=v.violationdate;if(!d)return 0;return typeof d==='number'?d:(new Date(d).getTime()||0);};
   ov.sort((a,b)=>asMs(b)-asMs(a));
-  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Case</th><th>Date</th><th>Code</th><th>Description</th><th>Unit</th><th>Appeal</th></tr></thead><tbody>`;
+  let html=`<div class="table-scroll"><table class="dat"><thead><tr><th>Case</th><th>Date</th><th>Code</th><th>Description</th><th>Unit</th><th>Appeal</th></tr></thead><tbody>`;
   ov.forEach(V=>{
     const unfit=/^PM-?\d*-?109\.1$/i.test(V.violationcode||"");
     html+=`<tr>
@@ -932,7 +960,7 @@ function render311(rows){
     html+=`<div style="font-family:'IBM Plex Mono',monospace;font-size:12px"><span style="color:var(--amber)">${v}</span> <span style="color:var(--ink-dim)">${esc(k)}</span></div>`;
   });
   html+=`</div>`;
-  html+=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Date</th><th>Type</th><th>Status</th><th>Agency</th><th>Subject</th></tr></thead><tbody>`;
+  html+=`<div class="table-scroll"><table class="dat"><thead><tr><th>Date</th><th>Type</th><th>Status</th><th>Agency</th><th>Subject</th></tr></thead><tbody>`;
   rows.slice(0,40).forEach(r=>{
     html+=`<tr>
       <td>${fmtDate(r.requested_datetime)}</td>
@@ -1120,7 +1148,7 @@ function renderPermits(rows){
     $("#prm-body").innerHTML=`<div class="banner">No permit records in Eclipse for this OPA.</div>`;
     return;
   }
-  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Permit #</th><th>Type</th><th>Description</th><th>Issued</th><th>Status</th><th>Unit</th></tr></thead><tbody>`;
+  let html=`<div class="table-scroll"><table class="dat"><thead><tr><th>Permit #</th><th>Type</th><th>Description</th><th>Issued</th><th>Status</th><th>Unit</th></tr></thead><tbody>`;
   rows.forEach(p=>{
     const desc=(p.permitdescription||p.approvedscopeofwork||p.typeofwork||"—").slice(0,120);
     html+=`<tr>
@@ -1143,7 +1171,7 @@ function renderBuildingCerts(rows){
     return;
   }
   rows.sort((a,b)=>(b.inspectiondate||0)-(a.inspectiondate||0));
-  let html=`<div style="overflow-x:auto"><table class="dat"><thead><tr><th>Cert #</th><th>Type</th><th>Inspected</th><th>Expires</th><th>Result</th><th>Unit</th><th>Contractor</th></tr></thead><tbody>`;
+  let html=`<div class="table-scroll"><table class="dat"><thead><tr><th>Cert #</th><th>Type</th><th>Inspected</th><th>Expires</th><th>Result</th><th>Unit</th><th>Contractor</th></tr></thead><tbody>`;
   rows.forEach(c=>{
     const result=String(c.inspectionresult||"").toLowerCase();
     const pill=result.includes("certif")?"complied":result.includes("fail")||result.includes("defici")?"open":"admin";
