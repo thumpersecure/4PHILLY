@@ -1,0 +1,274 @@
+[
+  {
+    "district": 1,
+    "type": "district",
+    "name": "Mark Squilla",
+    "email": "mark.squilla@phila.gov",
+    "phone": "(215) 686-3458",
+    "office": "City Hall Room 332",
+    "leadership": null,
+    "committees": [
+      "Appropriations (Chair)",
+      "Commerce & Economic Development (Chair)",
+      "Rules",
+      "Licenses & Inspections",
+      "Finance"
+    ]
+  },
+  {
+    "district": 2,
+    "type": "district",
+    "name": "Kenyatta Johnson",
+    "email": "kenyatta.johnson@phila.gov",
+    "phone": "(215) 686-3412",
+    "office": "City Hall Room 494",
+    "leadership": "Council President",
+    "committees": [
+      "Committee of the Whole (Chair)",
+      "Ethics (Chair)",
+      "Fiscal Stability & Intergovernmental Cooperation (Chair)"
+    ]
+  },
+  {
+    "district": 3,
+    "type": "district",
+    "name": "Jamie Gauthier",
+    "email": "jamie.gauthier@phila.gov",
+    "phone": "(215) 686-0459",
+    "office": "City Hall Room 316",
+    "leadership": null,
+    "committees": [
+      "Housing, Neighborhood Development & the Homeless (Chair)",
+      "Environment (Chair)",
+      "Appropriations",
+      "Licenses & Inspections",
+      "Public Safety",
+      "Rules"
+    ]
+  },
+  {
+    "district": 4,
+    "type": "district",
+    "name": "Curtis Jones Jr.",
+    "email": "curtis.jones@phila.gov",
+    "phone": "(215) 686-3416",
+    "office": "City Hall Room 404",
+    "leadership": null,
+    "committees": [
+      "Public Safety (Chair)",
+      "Commerce & Economic Development",
+      "Finance",
+      "Licenses & Inspections",
+      "Rules"
+    ]
+  },
+  {
+    "district": 5,
+    "type": "district",
+    "name": "Jeffery Young Jr.",
+    "email": "jeffery.young@phila.gov",
+    "phone": "(215) 686-3442",
+    "office": "City Hall Room 586",
+    "leadership": null,
+    "committees": [
+      "Streets & Services (Chair)",
+      "Public Property & Public Works",
+      "Commerce & Economic Development",
+      "Transportation & Public Utilities",
+      "Public Safety"
+    ]
+  },
+  {
+    "district": 6,
+    "type": "district",
+    "name": "Michael Driscoll",
+    "email": "michael.driscoll@phila.gov",
+    "phone": "(215) 686-3444",
+    "office": "City Hall Room 313",
+    "leadership": null,
+    "committees": [
+      "Licenses & Inspections (Chair)",
+      "Transportation & Public Utilities (Chair)",
+      "Public Property & Public Works",
+      "Finance",
+      "Environment"
+    ]
+  },
+  {
+    "district": 7,
+    "type": "district",
+    "name": "Quetcy Lozada",
+    "email": "quetcy.lozada@phila.gov",
+    "phone": "(215) 686-3448",
+    "office": "City Hall Room 484",
+    "leadership": null,
+    "committees": [
+      "Public Property & Public Works (Chair)",
+      "Appropriations",
+      "Public Health & Human Services",
+      "Public Safety",
+      "Education"
+    ]
+  },
+  {
+    "district": 8,
+    "type": "district",
+    "name": "Cindy Bass",
+    "email": "cindy.bass@phila.gov",
+    "phone": "(215) 686-3424",
+    "office": "City Hall Room 508",
+    "leadership": "Deputy Majority Whip",
+    "committees": [
+      "Rules (Chair)",
+      "Finance",
+      "Appropriations",
+      "Streets & Services",
+      "Housing, Neighborhood Development & the Homeless"
+    ]
+  },
+  {
+    "district": 9,
+    "type": "district",
+    "name": "Anthony Phillips",
+    "email": "anthony.phillips@phila.gov",
+    "phone": "(215) 686-3455",
+    "office": "City Hall Room 594",
+    "leadership": null,
+    "committees": [
+      "Parks, Recreation & Cultural Affairs (Chair)",
+      "Children & Youth (Chair)",
+      "Licenses & Inspections",
+      "Labor & Civil Service",
+      "Law & Government"
+    ]
+  },
+  {
+    "district": 10,
+    "type": "district",
+    "name": "Brian J. O'Neill",
+    "email": "brian.oneill@phila.gov",
+    "phone": "(215) 686-3422",
+    "office": "City Hall Room 562",
+    "leadership": null,
+    "committees": [
+      "Neighborhood Services (Chair)",
+      "Rules",
+      "Appropriations",
+      "Law & Government",
+      "Labor & Civil Service"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Katherine Gilmore Richardson",
+    "email": "katherine.gilmorerichardson@phila.gov",
+    "phone": "(215) 686-0454",
+    "office": "City Hall Room 581",
+    "leadership": "Majority Leader",
+    "committees": [
+      "Finance (Chair)",
+      "Law & Government (Chair)",
+      "Rules",
+      "Appropriations",
+      "Licenses & Inspections"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Isaiah Thomas",
+    "email": "isaiah.thomas@phila.gov",
+    "phone": "(215) 686-3446",
+    "office": "City Hall Room 330A",
+    "leadership": "Majority Whip",
+    "committees": [
+      "Education (Chair)",
+      "Legislative Oversight (Chair)",
+      "Rules",
+      "Finance",
+      "Public Safety",
+      "Parks, Recreation & Cultural Affairs"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Jim Harrity",
+    "email": "jim.harrity@phila.gov",
+    "phone": "(215) 686-8295",
+    "office": "City Hall Room 408",
+    "leadership": null,
+    "committees": [
+      "Labor & Civil Service (Chair)",
+      "Public Property & Public Works",
+      "Streets & Services",
+      "Environment",
+      "Technology & Information Services"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Nina Ahmad",
+    "email": "nina.ahmad@phila.gov",
+    "phone": "(215) 686-3450",
+    "office": "City Hall Room 577",
+    "leadership": null,
+    "committees": [
+      "Public Health & Human Services (Chair)",
+      "Finance",
+      "Streets & Services",
+      "Education",
+      "Environment"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Rue Landau",
+    "email": "rue.landau@phila.gov",
+    "phone": "(215) 686-3420",
+    "office": "City Hall Room 592",
+    "leadership": null,
+    "committees": [
+      "Technology & Information Services (Chair)",
+      "Law & Government",
+      "Housing, Neighborhood Development & the Homeless",
+      "Parks, Recreation & Cultural Affairs",
+      "Public Health & Human Services"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Kendra Brooks",
+    "email": "kendra.brooks@phila.gov",
+    "phone": "(215) 686-0461",
+    "office": "City Hall Room 312",
+    "leadership": "Minority Leader",
+    "committees": [
+      "People With Disabilities & Special Needs (Chair)",
+      "Intergenerational Affairs & Aging (Chair)",
+      "Law & Government",
+      "Streets & Services",
+      "Transportation & Public Utilities"
+    ]
+  },
+  {
+    "district": null,
+    "type": "at-large",
+    "name": "Nicolas O'Rourke",
+    "email": "nicolas.orourke@phila.gov",
+    "phone": "(215) 686-3452",
+    "office": "City Hall Room 319A",
+    "leadership": "Minority Whip",
+    "committees": [
+      "Global Opportunities & the Creative/Innovative Economy (Chair)",
+      "Licenses & Inspections",
+      "Public Health & Human Services",
+      "Environment",
+      "Neighborhood Services"
+    ]
+  }
+]

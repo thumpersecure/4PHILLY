@@ -1,0 +1,22 @@
+{
+  "li_committee": {
+    "name": "Committee on Licenses & Inspections",
+    "chair": {
+      "name": "Michael Driscoll",
+      "district": 6,
+      "email": "michael.driscoll@phila.gov",
+      "phone": "(215) 686-3444"
+    },
+    "vice_chair": null,
+    "relevant_issue_types": [
+      "license_violation",
+      "rental_license_expired",
+      "unfit_structure",
+      "dangerous_building",
+      "zoning_violation",
+      "permit_violation"
+    ]
+  },
+  "last_updated": "2026-05-20",
+  "update_source": "phila.gov/council"
+}

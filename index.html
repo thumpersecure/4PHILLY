@@ -188,6 +188,43 @@
   .limit-card .severity.technical{background:rgba(100,181,246,.1);color:var(--blue);border:1px solid rgba(100,181,246,.3)}
   .limit-card .severity.policy{background:rgba(154,154,154,.08);color:var(--ink-dim);border:1px solid var(--line)}
 
+  /* Council tab */
+  .council-member{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:20px;margin-bottom:14px}
+  .council-member .cm-district{font-family:"IBM Plex Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);margin-bottom:2px}
+  .council-member .cm-name{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:2px}
+  .council-member .cm-role{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);margin-bottom:14px}
+  .council-member .cm-contact{display:flex;flex-direction:column;gap:8px}
+  .council-member .cm-row{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono",monospace;font-size:13px}
+  .council-member .cm-row a{color:var(--amber);border-bottom:1px dotted rgba(255,176,0,.4)}
+  .council-member .cm-row a:hover{color:var(--amber-soft)}
+  .council-member .cm-icon{width:18px;color:var(--ink-mute);flex-shrink:0;text-align:center;font-size:14px}
+  .council-member .cm-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .council-member .cm-actions a{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;min-height:44px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.25);color:var(--amber);font-family:"IBM Plex Mono",monospace;font-size:12px;border-radius:2px;text-decoration:none;touch-action:manipulation}
+  .council-member .cm-actions a:hover{background:rgba(255,176,0,.15);border-color:var(--amber)}
+  .council-flag{padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);font-size:13px;color:var(--ink-dim);border-radius:2px;margin-bottom:14px;line-height:1.6}
+  .council-flag.warn{border-left-color:var(--red)}
+  .council-flag.direct{border-left-color:var(--green)}
+  .council-flag b{color:var(--ink)}
+  .council-atlarge{display:grid;grid-template-columns:1fr;gap:8px}
+  @media(min-width:480px){.council-atlarge{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:768px){.council-atlarge{grid-template-columns:repeat(3,1fr)}}
+  .council-al-card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:12px 14px}
+  .council-al-card .al-name{font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;color:var(--ink);margin-bottom:2px}
+  .council-al-card .al-role{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);margin-bottom:6px}
+  .council-al-card .al-contact{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-dim);line-height:1.7}
+  .council-al-card .al-contact a{color:var(--amber);font-size:11px}
+  .council-committees{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-dim);margin-top:10px;line-height:1.8}
+  .council-committees .cm-pill{display:inline-block;background:rgba(100,181,246,.08);border:1px solid rgba(100,181,246,.2);color:var(--blue);font-size:10px;padding:2px 7px;border-radius:2px;margin:2px 3px 2px 0}
+  .council-committees .cm-pill.chair{background:rgba(255,176,0,.1);border-color:rgba(255,176,0,.35);color:var(--amber)}
+  @media(max-width:679px){
+    .council-member{padding:16px;border-radius:6px}
+    .council-member .cm-name{font-size:19px}
+    .council-member .cm-row{font-size:12px}
+    .council-member .cm-actions a{font-size:11px;padding:10px 12px;flex:1 1 0;justify-content:center;min-width:0}
+    .council-flag{padding:12px 14px;font-size:12px;border-radius:4px}
+    .council-al-card{padding:12px;border-radius:4px}
+  }
+
   /* Loading skeleton */
   .skel{display:inline-block;width:60px;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;vertical-align:middle}
   .skel-block{display:block;width:100%;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;margin-bottom:8px}
@@ -336,6 +373,7 @@
     <button class="tab" data-tab="brief">Brief</button>
     <button class="tab" data-tab="records">Records</button>
     <button class="tab" data-tab="limits">Limits</button>
+    <button class="tab" data-tab="council">Council</button>
   </nav>
 
   <div id="pane-container">
@@ -406,6 +444,11 @@
     </div>
   </section>
 
+  <!-- COUNCIL -->
+  <section id="pane-council" class="pane">
+    <div id="council-body"></div>
+  </section>
+
   </div><!-- /pane-container -->
 
   <footer class="footer">
@@ -423,7 +466,7 @@
 <script>
 const ECLIPSE = "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services";
 const CARTO   = "https://phl.carto.com/api/v2/sql";
-const TABS    = ['inspect','drift','brief','records','limits'];
+const TABS    = ['inspect','drift','brief','records','limits','council'];
 const PHILLY_TIME_ZONE = "America/New_York";
 const PHILLY_DATE_FORMAT = new Intl.DateTimeFormat("en-US",{
   timeZone: PHILLY_TIME_ZONE,
@@ -499,6 +542,7 @@ function clearRenderedPanels(){
   $("#t-c").textContent="";
   $("#prm-c").textContent="";
   $("#bcert-c").textContent="";
+  $("#council-body").innerHTML="";
 }
 
 // ---- Formatters ----
@@ -1252,6 +1296,137 @@ function renderLimitsTab(){
   $("#limits-body").innerHTML=html;
 }
 
+// ---- Council district data & rendering ----
+const COUNCIL_MEMBERS=[
+  {district:1,type:"district",name:"Mark Squilla",email:"mark.squilla@phila.gov",phone:"(215) 686-3458",office:"City Hall Room 332",leadership:null,committees:["Appropriations (Chair)","Commerce & Economic Development (Chair)","Rules","Licenses & Inspections","Finance"]},
+  {district:2,type:"district",name:"Kenyatta Johnson",email:"kenyatta.johnson@phila.gov",phone:"(215) 686-3412",office:"City Hall Room 494",leadership:"Council President",committees:["Committee of the Whole (Chair)","Ethics (Chair)","Fiscal Stability & Intergovernmental Cooperation (Chair)"]},
+  {district:3,type:"district",name:"Jamie Gauthier",email:"jamie.gauthier@phila.gov",phone:"(215) 686-0459",office:"City Hall Room 316",leadership:null,committees:["Housing, Neighborhood Development & the Homeless (Chair)","Environment (Chair)","Appropriations","Licenses & Inspections","Public Safety","Rules"]},
+  {district:4,type:"district",name:"Curtis Jones Jr.",email:"curtis.jones@phila.gov",phone:"(215) 686-3416",office:"City Hall Room 404",leadership:null,committees:["Public Safety (Chair)","Commerce & Economic Development","Finance","Licenses & Inspections","Rules"]},
+  {district:5,type:"district",name:"Jeffery Young Jr.",email:"jeffery.young@phila.gov",phone:"(215) 686-3442",office:"City Hall Room 586",leadership:null,committees:["Streets & Services (Chair)","Public Property & Public Works","Commerce & Economic Development","Transportation & Public Utilities","Public Safety"]},
+  {district:6,type:"district",name:"Michael Driscoll",email:"michael.driscoll@phila.gov",phone:"(215) 686-3444",office:"City Hall Room 313",leadership:null,committees:["Licenses & Inspections (Chair)","Transportation & Public Utilities (Chair)","Public Property & Public Works","Finance","Environment"]},
+  {district:7,type:"district",name:"Quetcy Lozada",email:"quetcy.lozada@phila.gov",phone:"(215) 686-3448",office:"City Hall Room 484",leadership:null,committees:["Public Property & Public Works (Chair)","Appropriations","Public Health & Human Services","Public Safety","Education"]},
+  {district:8,type:"district",name:"Cindy Bass",email:"cindy.bass@phila.gov",phone:"(215) 686-3424",office:"City Hall Room 508",leadership:"Deputy Majority Whip",committees:["Rules (Chair)","Finance","Appropriations","Streets & Services","Housing, Neighborhood Development & the Homeless"]},
+  {district:9,type:"district",name:"Anthony Phillips",email:"anthony.phillips@phila.gov",phone:"(215) 686-3455",office:"City Hall Room 594",leadership:null,committees:["Parks, Recreation & Cultural Affairs (Chair)","Children & Youth (Chair)","Licenses & Inspections","Labor & Civil Service","Law & Government"]},
+  {district:10,type:"district",name:"Brian J. O'Neill",email:"brian.oneill@phila.gov",phone:"(215) 686-3422",office:"City Hall Room 562",leadership:null,committees:["Neighborhood Services (Chair)","Rules","Appropriations","Law & Government","Labor & Civil Service"]},
+  {district:null,type:"at-large",name:"Katherine Gilmore Richardson",email:"katherine.gilmorerichardson@phila.gov",phone:"(215) 686-0454",office:"City Hall Room 581",leadership:"Majority Leader",committees:["Finance (Chair)","Law & Government (Chair)","Rules","Appropriations","Licenses & Inspections"]},
+  {district:null,type:"at-large",name:"Isaiah Thomas",email:"isaiah.thomas@phila.gov",phone:"(215) 686-3446",office:"City Hall Room 330A",leadership:"Majority Whip",committees:["Education (Chair)","Legislative Oversight (Chair)","Rules","Finance","Public Safety"]},
+  {district:null,type:"at-large",name:"Jim Harrity",email:"jim.harrity@phila.gov",phone:"(215) 686-8295",office:"City Hall Room 408",leadership:null,committees:["Labor & Civil Service (Chair)","Public Property & Public Works","Streets & Services","Environment"]},
+  {district:null,type:"at-large",name:"Nina Ahmad",email:"nina.ahmad@phila.gov",phone:"(215) 686-3450",office:"City Hall Room 577",leadership:null,committees:["Public Health & Human Services (Chair)","Finance","Streets & Services","Education","Environment"]},
+  {district:null,type:"at-large",name:"Rue Landau",email:"rue.landau@phila.gov",phone:"(215) 686-3420",office:"City Hall Room 592",leadership:null,committees:["Technology & Information Services (Chair)","Law & Government","Housing, Neighborhood Development & the Homeless","Parks, Recreation & Cultural Affairs"]},
+  {district:null,type:"at-large",name:"Kendra Brooks",email:"kendra.brooks@phila.gov",phone:"(215) 686-0461",office:"City Hall Room 312",leadership:"Minority Leader",committees:["People With Disabilities & Special Needs (Chair)","Intergenerational Affairs & Aging (Chair)","Law & Government","Streets & Services"]},
+  {district:null,type:"at-large",name:"Nicolas O'Rourke",email:"nicolas.orourke@phila.gov",phone:"(215) 686-3452",office:"City Hall Room 319A",leadership:"Minority Whip",committees:["Global Opportunities & the Creative/Innovative Economy (Chair)","Licenses & Inspections","Public Health & Human Services","Environment"]}
+];
+const LI_CHAIR={name:"Michael Driscoll",district:6,email:"michael.driscoll@phila.gov",phone:"(215) 686-3444"};
+const LI_ISSUE_TYPES=["license_violation","rental_license_expired","unfit_structure","dangerous_building","zoning_violation","permit_violation"];
+
+function detectIssueType(opaRow,openViol,lic){
+  const unfit=(openViol||[]).some(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
+  if(unfit) return "unfit_structure";
+  const rentalRows=(Array.isArray(lic)?lic:[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
+  if(rentalRows.length>0){
+    const allInactive=rentalRows.every(r=>{const m=analyzeLicenseRow(r);return !m.isActive;});
+    if(allInactive) return "rental_license_expired";
+  }
+  if((openViol||[]).length>0) return "license_violation";
+  return null;
+}
+
+function getCouncilMember(districtNum){
+  const d=parseInt(districtNum,10);
+  if(isNaN(d)||d<1||d>10) return null;
+  return COUNCIL_MEMBERS.find(m=>m.district===d&&m.type==="district")||null;
+}
+
+function renderCouncilTab(opaRow,openViol,lic){
+  const body=$("#council-body");
+  const distRaw=opaRow?.council_district_2024||opaRow?.council_district_2016;
+  const distNum=parseInt(distRaw,10);
+
+  if(!distRaw||isNaN(distNum)){
+    body.innerHTML=`<div class="banner err">Council district not available in the OPA record for this property.</div>`;
+    return;
+  }
+
+  const member=getCouncilMember(distNum);
+  const issueType=detectIssueType(opaRow,openViol,lic);
+  const atLarge=COUNCIL_MEMBERS.filter(m=>m.type==="at-large");
+
+  let html="";
+
+  // District councilmember card
+  if(member){
+    const roleLabel=member.leadership?esc(member.leadership):"District Councilmember";
+    html+=`<div class="council-member">
+      <div class="cm-district">District ${distNum}</div>
+      <div class="cm-name">${esc(member.name)}</div>
+      <div class="cm-role">${roleLabel}</div>
+      <div class="cm-contact">
+        <div class="cm-row"><span class="cm-icon">✉</span><a href="mailto:${esc(member.email)}">${esc(member.email)}</a></div>
+        <div class="cm-row"><span class="cm-icon">☎</span><a href="tel:${esc(member.phone.replace(/[^+\d]/g,''))}">${esc(member.phone)}</a></div>
+        <div class="cm-row"><span class="cm-icon">⌂</span><span style="color:var(--ink-dim)">${esc(member.office)}</span></div>
+      </div>
+      <div class="cm-actions">
+        <a href="mailto:${esc(member.email)}">Email office</a>
+        <a href="tel:${esc(member.phone.replace(/[^+\d]/g,''))}">Call office</a>
+      </div>
+      <div class="council-committees" style="margin-top:14px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-mute);margin-bottom:6px">Committee assignments</div>
+        ${member.committees.map(c=>{
+          const isChair=c.includes("(Chair)");
+          const label=c.replace(" (Chair)","");
+          return `<span class="cm-pill${isChair?" chair":""}">${esc(label)}${isChair?" ★":""}</span>`;
+        }).join("")}
+      </div>
+    </div>`;
+  }else{
+    html+=`<div class="banner">District ${distNum} — councilmember data not found in directory.</div>`;
+  }
+
+  // Committee flag
+  if(issueType&&LI_ISSUE_TYPES.includes(issueType)){
+    if(member&&member.name===LI_CHAIR.name){
+      html+=`<div class="council-flag direct">
+        <b>L&amp;I Committee:</b> Your councilmember, ${esc(member.name)}, chairs the Committee on Licenses &amp; Inspections — direct oversight of rental licensing, building violations, and code enforcement.
+      </div>`;
+    }else{
+      html+=`<div class="council-flag warn">
+        <b>L&amp;I Committee:</b> This property has ${issueType==="unfit_structure"?"unfit structure citations":issueType==="rental_license_expired"?"an expired rental license":"open violations"}. The L&amp;I Committee Chair is:
+        <div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:13px">
+          <b style="color:var(--ink)">${esc(LI_CHAIR.name)}</b> (District ${LI_CHAIR.district})<br>
+          <a href="mailto:${esc(LI_CHAIR.email)}">${esc(LI_CHAIR.email)}</a> &middot;
+          <a href="tel:${esc(LI_CHAIR.phone.replace(/[^+\d]/g,''))}">${esc(LI_CHAIR.phone)}</a>
+        </div>
+      </div>`;
+    }
+  }
+
+  // At-large members
+  html+=`<div class="sec">
+    <h2>At-large council members <span class="count">${atLarge.length}</span></h2>
+    <div class="council-atlarge">
+      ${atLarge.map(m=>{
+        const roleLabel=m.leadership?`<div class="al-role">${esc(m.leadership)}</div>`:"";
+        return `<div class="council-al-card">
+          <div class="al-name">${esc(m.name)}</div>
+          ${roleLabel}
+          <div class="al-contact">
+            <a href="mailto:${esc(m.email)}">${esc(m.email)}</a><br>
+            <a href="tel:${esc(m.phone.replace(/[^+\d]/g,''))}">${esc(m.phone)}</a><br>
+            <span>${esc(m.office)}</span>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+
+  // Data source note
+  html+=`<div style="margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);line-height:1.7">
+    District assignment from OPA field <code>council_district_2024</code>. Roster sourced from <a href="https://phlcouncil.com/" target="_blank" rel="noopener">phlcouncil.com</a> standing committees page. L&amp;I Committee Chair: ${esc(LI_CHAIR.name)} (District ${LI_CHAIR.district}). Data embedded 2026-05-20 — verify at source for changes.
+  </div>`;
+
+  body.innerHTML=html;
+}
+
 // ---- Saved properties ----
 const SAVED_KEY='4philly_saved';
 function getSaved(){
@@ -1418,6 +1593,7 @@ async function lookup(opa){
     renderBrief({opaRow,lic,licenseSummary,openViol:ovE,allViol,t311});
     renderPermits(permits);
     renderBuildingCerts(bcerts);
+    renderCouncilTab(opaRow,ovE,lic);
     $("#banner").style.display="none";
     completeLookupProgress(seq,"Property report ready.");
 
