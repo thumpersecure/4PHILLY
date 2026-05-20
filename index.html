@@ -752,12 +752,12 @@ async function getBuildingCerts(loc){
 // ---- OPA fallback: spatial + historical resolution ----
 async function nearestOPAByCoords(lat,lng){
   const d=0.0004;
-  const where=`lat>${lat-d} AND lat<${lat+d} AND lng>${lng-d} AND lng<${lng+d}`;
+  const where=`geocode_lat>${lat-d} AND geocode_lat<${lat+d} AND geocode_lon>${lng-d} AND geocode_lon<${lng+d}`;
   const rows=await eclipseQuery("opa_properties_public_pde",where,
-    "parcel_number,location,owner_1,market_value,year_built,zip_code,lat,lng,council_district_2024,council_district_2016,zoning,census_tract",
+    "parcel_number,location,owner_1,market_value,year_built,zip_code,geocode_lat,geocode_lon,council_district_2024,council_district_2016,zoning,census_tract",
     "&resultRecordCount=5").catch(()=>[]);
   if(!rows.length) return null;
-  rows.sort((a,b)=>Math.hypot((a.lat||0)-lat,(a.lng||0)-lng)-Math.hypot((b.lat||0)-lat,(b.lng||0)-lng));
+  rows.sort((a,b)=>Math.hypot((a.geocode_lat||0)-lat,(a.geocode_lon||0)-lng)-Math.hypot((b.geocode_lat||0)-lat,(b.geocode_lon||0)-lng));
   return rows[0];
 }
 
@@ -889,7 +889,7 @@ function renderProphead(opa, opaRow){
   $("#ph-val").textContent=fmtMoney(opaRow?.market_value);
   $("#ph-cd").textContent=opaRow?.council_district_2024||opaRow?.council_district_2016||"—";
   $("#ph-zip").textContent=opaRow?.zip_code||"—";
-  const lat=parseFloat(opaRow?.lat),lng=parseFloat(opaRow?.lng);
+  const lat=parseFloat(opaRow?.geocode_lat),lng=parseFloat(opaRow?.geocode_lon);
   lastLookupCoords=(!isNaN(lat)&&!isNaN(lng))?{lat,lng}:null;
   if(lastLookupCoords) updateSavedCoords(opa,lat,lng);
   const atlasAddr=encodeURIComponent(opaRow?.location||"");
@@ -1631,7 +1631,7 @@ async function lookup(opa){
       if(seq !== lookupSeq) return;
       if(resolved){
         const{opaRow:newRow,newOPA,method}=resolved;
-        updateSavedOPA(opa,newOPA,newRow.location,parseFloat(newRow.lat),parseFloat(newRow.lng));
+        updateSavedOPA(opa,newOPA,newRow.location,parseFloat(newRow.geocode_lat),parseFloat(newRow.geocode_lon));
         const methodLabel=method==="dor_parcel"?"DOR parcel geometry (Atlas)":method==="spatial"?"OPA coordinate proximity":"address re-resolution";
         banner(`<b>Parcel re-numbered.</b> OPA <code>${esc(opa)}</code> is no longer active. Resolved to <code>${esc(newOPA)}</code> via ${methodLabel}. <a href="https://atlas.phila.gov/${encodeURIComponent(newRow.location||"")}" target="_blank" rel="noopener" style="margin-left:6px">Verify on Atlas</a>`);
         opa=newOPA;
