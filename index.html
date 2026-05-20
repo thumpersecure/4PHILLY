@@ -1116,7 +1116,10 @@ function renderDriftLicense(eRows,cRows){
       const cV=fieldKey==="licensestatus"&&hasC?(cMeta.isActive?"ACTIVE":cMeta.displayStatus):(C[fieldKey]);
       const eNorm=(eV==null||eV==="")?null:(isDate?fmtDate(eV):String(eV).trim().toUpperCase());
       const cNorm=(cV==null||cV==="")?null:(isDate?fmtDate(cV):String(cV).trim().toUpperCase());
-      const same=eNorm===cNorm;
+      const eAbsent=eNorm===null, cAbsent=cNorm===null;
+      const same=eNorm===cNorm&&!(eAbsent&&cAbsent&&(hasE||hasC));
+      const oneSided=eAbsent!==cAbsent;
+      const statusLabel=same?'<span class="pill complied">match</span>':(oneSided?'<span class="pill amber">ABSENT</span>':'<span class="pill open">DRIFT</span>');
       const eDisplay=eNorm==null?"—":(isDate?eNorm:(eV!=null?String(eV):"—"));
       const cDisplay=cNorm==null?"—":(isDate?cNorm:(cV!=null?String(cV):"—"));
       html+=`<div class="drift-row ${same?"":"diverge"}">
@@ -1124,7 +1127,7 @@ function renderDriftLicense(eRows,cRows){
         <div class="drift-vals">
           <div class="dl-e">${esc(String(eDisplay))}</div>
           <div class="dl-c">${esc(String(cDisplay))}</div>
-          <div class="dl-s">${same?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>'}</div>
+          <div class="dl-s">${statusLabel}</div>
         </div>
       </div>`;
     });
