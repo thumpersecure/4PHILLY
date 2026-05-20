@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>4PHILLY — Philadelphia property record</title>
-<meta name="description" content="Unified Philadelphia property record — Eclipse vs Carto drift, L&amp;I business license status, open violations, 311 complaints. Installable on iOS and Android.">
+<meta name="description" content="Unified Philadelphia property record — Eclipse vs Carto drift, L&amp;I business license status, open violations, 311 complaints, council district resolution. Installable on iOS and Android.">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com; img-src 'self' data:;">
 <meta name="theme-color" content="#ffb000">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23ffb000'/><text x='50' y='70' font-size='54' font-family='Arial Black,sans-serif' font-weight='900' fill='%230a0a0a' text-anchor='middle'>4P</text></svg>">
 <link rel="manifest" href="manifest.json">
 <meta property="og:title" content="4PHILLY">
-<meta property="og:description" content="Philadelphia property record — violations, business license status, 311 complaints.">
+<meta property="og:description" content="Philadelphia property record — violations, business license status, 311 complaints, council district &amp; councilmember lookup.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://thumpersecure.github.io/4philly/">
 <meta property="og:image" content="https://thumpersecure.github.io/4philly/og-image.png">
@@ -303,11 +303,11 @@
         <div class="brand-tag">Philadelphia property record</div>
       </div>
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
-        One unified property record from Philadelphia's L&amp;I data — pulled live from <b>Eclipse</b> (authoritative for current state) and cross-checked against <b>Carto</b> (historical mirror). Flags drift between the two. Decodes status semantics. Surfaces what the public data <i>doesn't</i> tell you.
+        One unified property record from Philadelphia's L&amp;I data — pulled live from <b>Eclipse</b> (authoritative for current state) and cross-checked against <b>Carto</b> (historical mirror). Flags drift between the two. Decodes status semantics. Resolves your <b>council district</b> and councilmember. Surfaces what the public data <i>doesn't</i> tell you.
       </div>
     </div>
     <div class="top-meta">
-      <div>build <span class="mono">0.8.0</span></div>
+      <div>build <span class="mono">0.9.0</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -453,11 +453,11 @@
   </div><!-- /pane-container -->
 
   <footer class="footer">
-  <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer</div>
+  <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer · DOR Parcel layer · Council roster (phlcouncil.com)</div>
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
-  <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number, not address strings. Eclipse authoritative; Carto historical only. Business licenses include rental, high-rise, food service, and other trade types on file for the OPA. Only COMPLIED is real compliance.</div>
-  <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a></div>
-  <div class="footer-disc">4PHILLY — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
+  <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a></div>
+  <div class="footer-disc">4PHILLY v0.9.0 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
