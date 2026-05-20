@@ -9,7 +9,7 @@ export async function fetchPropertyByOPA(opaNumber) {
   const where = `parcel_number='${String(opaNumber).replace(/'/g, "''")}'`;
   const params = new URLSearchParams({
     where,
-    outFields: 'parcel_number,location,census_tract,lat,lng',
+    outFields: 'parcel_number,location,census_tract,geocode_lat,geocode_lon',
     returnGeometry: false,
     f: 'json',
     resultRecordCount: '1'
@@ -25,7 +25,7 @@ export async function fetchPropertyByAddress(address) {
   const where = `location LIKE '%${address.toUpperCase().replace(/'/g, "''").replace(/%/g, '').replace(/_/g, '\\_')}%'`;
   const params = new URLSearchParams({
     where,
-    outFields: 'parcel_number,location,census_tract,lat,lng',
+    outFields: 'parcel_number,location,census_tract,geocode_lat,geocode_lon',
     returnGeometry: false,
     f: 'json',
     resultRecordCount: '5'
@@ -39,8 +39,8 @@ export async function fetchPropertyByAddress(address) {
 
 export function extractCoordinates(opaRecord) {
   if (!opaRecord) return null;
-  const lat = parseFloat(opaRecord.lat);
-  const lng = parseFloat(opaRecord.lng);
+  const lat = parseFloat(opaRecord.geocode_lat);
+  const lng = parseFloat(opaRecord.geocode_lon);
   if (isNaN(lat) || isNaN(lng)) return null;
   if (lat < PHILLY_BOUNDS.lat.min || lat > PHILLY_BOUNDS.lat.max) return null;
   if (lng < PHILLY_BOUNDS.lon.min || lng > PHILLY_BOUNDS.lon.max) return null;
