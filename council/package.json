@@ -1,0 +1,14 @@
+{
+  "name": "4philly-council",
+  "version": "1.0.0",
+  "description": "Philadelphia City Council district resolution agent — property to councilmember lookup",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test tests/"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
