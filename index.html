@@ -359,6 +359,7 @@
           <span>Assessed <b id="ph-val">—</b></span>
           <span>Council Dist <b id="ph-cd">—</b></span>
           <span>ZIP <b id="ph-zip">—</b></span>
+          <span><a id="ph-atlas" href="https://atlas.phila.gov/" target="_blank" rel="noopener" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">verify on Atlas</a></span>
         </div>
       </div>
       <button class="star-btn" id="star-btn" aria-label="Save property" title="Save to quick access">
@@ -748,6 +749,50 @@ async function getBuildingCerts(loc){
   });
 }
 
+// ---- OPA fallback: spatial + historical resolution ----
+async function nearestOPAByCoords(lat,lng){
+  const d=0.0004;
+  const where=`lat>${lat-d} AND lat<${lat+d} AND lng>${lng-d} AND lng<${lng+d}`;
+  const rows=await eclipseQuery("opa_properties_public_pde",where,
+    "parcel_number,location,owner_1,market_value,year_built,zip_code,lat,lng,council_district_2024,council_district_2016,zoning,census_tract",
+    "&resultRecordCount=5").catch(()=>[]);
+  if(!rows.length) return null;
+  rows.sort((a,b)=>Math.hypot((a.lat||0)-lat,(a.lng||0)-lng)-Math.hypot((b.lat||0)-lat,(b.lng||0)-lng));
+  return rows[0];
+}
+
+async function dorParcelLookup(lat,lng){
+  const url=`${ECLIPSE}/DOR_Parcel/FeatureServer/0/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects&inSR=4326&outFields=BAESSION_NUMBER,ADDR_SOURCE,ADDR_STD&returnGeometry=false&f=json&resultRecordCount=1`;
+  const r=await fetch(url);
+  if(!r.ok) return null;
+  const j=await r.json();
+  if(!j.features||!j.features.length) return null;
+  const brt=String(j.features[0].attributes.BAESSION_NUMBER||"").trim();
+  return /^\d{6,12}$/.test(brt)?brt:null;
+}
+
+async function tryResolveStaleOPA(staleOPA,seq){
+  const saved=getSaved().find(s=>s.opa===staleOPA);
+  if(saved?.lat&&saved?.lng){
+    updateLookupProgress(seq,30,"OPA not found — trying coordinates from saved record...");
+    const dorOPA=await dorParcelLookup(saved.lat,saved.lng).catch(()=>null);
+    if(dorOPA&&dorOPA!==staleOPA){
+      const row=await getOPADetails(dorOPA).catch(()=>null);
+      if(row) return {opaRow:row,newOPA:dorOPA,method:"dor_parcel"};
+    }
+    const nearest=await nearestOPAByCoords(saved.lat,saved.lng);
+    if(nearest&&nearest.parcel_number!==staleOPA)
+      return {opaRow:nearest,newOPA:nearest.parcel_number,method:"spatial"};
+  }
+  if(saved?.addr){
+    updateLookupProgress(seq,45,"Trying address resolution...");
+    const addrMatches=await resolveAddress(saved.addr).catch(()=>[]);
+    if(addrMatches.length===1&&addrMatches[0].parcel_number!==staleOPA)
+      return {opaRow:addrMatches[0],newOPA:addrMatches[0].parcel_number,method:"address"};
+  }
+  return null;
+}
+
 // ---- Render helpers ----
 function statusPill(s){
   if(s==="OPEN") return `<span class="pill open">OPEN</span>`;
@@ -832,6 +877,7 @@ function renderBriefLicenseList(licenses){
   `;
 }
 
+let lastLookupCoords=null;
 function renderProphead(opa, opaRow){
   $("#prophead").style.display="block";
   $("#tabs").style.display="";
@@ -843,6 +889,12 @@ function renderProphead(opa, opaRow){
   $("#ph-val").textContent=fmtMoney(opaRow?.market_value);
   $("#ph-cd").textContent=opaRow?.council_district_2024||opaRow?.council_district_2016||"—";
   $("#ph-zip").textContent=opaRow?.zip_code||"—";
+  const lat=parseFloat(opaRow?.lat),lng=parseFloat(opaRow?.lng);
+  lastLookupCoords=(!isNaN(lat)&&!isNaN(lng))?{lat,lng}:null;
+  if(lastLookupCoords) updateSavedCoords(opa,lat,lng);
+  const atlasAddr=encodeURIComponent(opaRow?.location||"");
+  const atlasLink=$("#ph-atlas");
+  if(atlasLink) atlasLink.href=`https://atlas.phila.gov/${atlasAddr}`;
   updateStarBtn(opa);
   setActiveRecordState(true);
 }
@@ -1432,11 +1484,24 @@ const SAVED_KEY='4philly_saved';
 function getSaved(){
   try{ return JSON.parse(localStorage.getItem(SAVED_KEY)||'[]'); }catch(e){ return []; }
 }
-function saveProp(opa,addr){
+function saveProp(opa,addr,lat,lng){
   const s=getSaved().filter(x=>x.opa!==opa);
-  s.unshift({opa,addr:addr.slice(0,60)});
+  const entry={opa,addr:addr.slice(0,60)};
+  if(lat!=null&&lng!=null){entry.lat=lat;entry.lng=lng;}
+  s.unshift(entry);
   localStorage.setItem(SAVED_KEY,JSON.stringify(s.slice(0,20)));
   renderSavedBar();
+}
+function updateSavedCoords(opa,lat,lng){
+  if(lat==null||lng==null) return;
+  const s=getSaved();
+  const entry=s.find(x=>x.opa===opa);
+  if(entry&&!entry.lat){entry.lat=lat;entry.lng=lng;localStorage.setItem(SAVED_KEY,JSON.stringify(s));}
+}
+function updateSavedOPA(oldOPA,newOPA,addr,lat,lng){
+  const s=getSaved();
+  const idx=s.findIndex(x=>x.opa===oldOPA);
+  if(idx>=0){s[idx]={opa:newOPA,addr:(addr||s[idx].addr).slice(0,60),lat:lat||s[idx].lat,lng:lng||s[idx].lng};localStorage.setItem(SAVED_KEY,JSON.stringify(s));renderSavedBar();}
 }
 function removeSaved(opa){
   localStorage.setItem(SAVED_KEY,JSON.stringify(getSaved().filter(x=>x.opa!==opa)));
@@ -1522,7 +1587,7 @@ $("#star-btn").addEventListener('click',()=>{
   const addr=$("#ph-addr").textContent;
   if(!/^\d{6,12}$/.test(opa)) return;
   if(isSaved(opa)) removeSaved(opa);
-  else saveProp(opa,addr);
+  else saveProp(opa,addr,lastLookupCoords?.lat,lastLookupCoords?.lng);
   updateStarBtn(opa);
 });
 
@@ -1545,7 +1610,7 @@ async function lookup(opa){
   banner("Looking up records...");
 
   try{
-    const [opaRow,lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
+    let [opaRow,lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
       getOPADetails(opa),
       getBusinessLicenses(opa),
       getCartoBusinessLicenses(opa).catch(()=>[]),
@@ -1560,14 +1625,39 @@ async function lookup(opa){
     updateLookupProgress(seq,60,"Loading complaints and certifications...");
 
     if(!opaRow){
-      $("#prophead").style.display="none";
-      $("#tabs").style.display="none";
-      setActiveRecordState(false);
-      $$(".pane").forEach(p=>p.classList.remove("active"));
-      history.replaceState(null,'',location.pathname+location.search);
-      completeLookupProgress(seq,"No property record found.",{error:true});
-      banner(`No OPA record for parcel <code>${esc(opa)}</code>.`,true);
-      return;
+      if(seq !== lookupSeq) return;
+      updateLookupProgress(seq,25,"OPA not found — attempting parcel resolution...");
+      const resolved=await tryResolveStaleOPA(opa,seq);
+      if(seq !== lookupSeq) return;
+      if(resolved){
+        const{opaRow:newRow,newOPA,method}=resolved;
+        updateSavedOPA(opa,newOPA,newRow.location,parseFloat(newRow.lat),parseFloat(newRow.lng));
+        const methodLabel=method==="dor_parcel"?"DOR parcel geometry (Atlas)":method==="spatial"?"OPA coordinate proximity":"address re-resolution";
+        banner(`<b>Parcel re-numbered.</b> OPA <code>${esc(opa)}</code> is no longer active. Resolved to <code>${esc(newOPA)}</code> via ${methodLabel}. <a href="https://atlas.phila.gov/${encodeURIComponent(newRow.location||"")}" target="_blank" rel="noopener" style="margin-left:6px">Verify on Atlas</a>`);
+        opa=newOPA;
+        opaRow=newRow;
+        const newHash=`#opa=${newOPA}`;
+        if(location.hash!==newHash) history.replaceState(null,'',newHash);
+        $("#opa").value=newOPA;
+        [lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
+          getBusinessLicenses(newOPA),
+          getCartoBusinessLicenses(newOPA).catch(()=>[]),
+          getOpenViolations(newOPA),
+          getAllViolations(newOPA),
+          getCartoViolationCount(newOPA).catch(()=>[]),
+          getPermits(newOPA).catch(()=>[])
+        ]);
+        if(seq !== lookupSeq) return;
+      }else{
+        $("#prophead").style.display="none";
+        $("#tabs").style.display="none";
+        setActiveRecordState(false);
+        $$(".pane").forEach(p=>p.classList.remove("active"));
+        history.replaceState(null,'',location.pathname+location.search);
+        completeLookupProgress(seq,"No property record found.",{error:true});
+        banner(`No OPA record for parcel <code>${esc(opa)}</code>. The parcel may have been re-numbered, merged, or subdivided. Try searching by address, or <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">check Atlas</a> for the current parcel number.`,true);
+        return;
+      }
     }
     renderProphead(opa,opaRow);
     updateLookupProgress(seq,76,"Loading supplemental records...");
