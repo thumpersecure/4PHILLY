@@ -880,6 +880,7 @@ function completeLookupProgress(seq,label,opts={}){
   },opts.error?900:320);
 }
 
+// stub — reserved for future record-state UI
 function setActiveRecordState(nextState){}
 
 function clearRenderedPanels(){
@@ -1133,14 +1134,16 @@ async function nearestOPAByCoords(lat,lng){
 }
 
 async function dorParcelLookup(lat,lng){
-  const url=`${ECLIPSE}/DOR_Parcel/FeatureServer/0/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects&inSR=4326&outFields=BAESSION_NUMBER,ADDR_SOURCE,ADDR_STD&returnGeometry=false&f=json&resultRecordCount=1`;
+  // NOTE: BAESSION_NUMBER does not exist in DOR_Parcel; using "pin" field instead,
+  // which is the parcel identification number (closest match to BRT/OPA number).
+  const url=`${ECLIPSE}/DOR_Parcel/FeatureServer/0/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects&inSR=4326&outFields=pin,ADDR_SOURCE,ADDR_STD&returnGeometry=false&f=json&resultRecordCount=1`;
   let r;
   try{ r=await fetch(url); }catch(e){ return null; }
   if(!r.ok) return null;
   let j;
   try{ j=await r.json(); }catch(e){ return null; }
   if(!j.features||!j.features.length) return null;
-  const brt=String(j.features[0]?.attributes?.BAESSION_NUMBER||"").trim();
+  const brt=String(j.features[0]?.attributes?.pin||"").trim();
   return /^\d{6,12}$/.test(brt)?brt:null;
 }
 
@@ -1322,7 +1325,7 @@ function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
   `;
 }
 
-function renderLicense(licE,licC){
+function renderLicense(licE){
   if(!licE||licE.length===0){
     $("#lic-body").innerHTML=`<div class="banner">No business or trade license records on file in Eclipse for this OPA.</div>`;
     $("#lic-c").textContent="0";
@@ -2238,8 +2241,8 @@ function compute4PScoreFromLookup({lic, ovE, t311, allViol}){
   const twelveMonthsAgo=Date.now()-1000*60*60*24*365;
   const complaints12mo=safe311.filter(r=>new Date(r.requested_datetime).getTime()>=twelveMonthsAgo).length;
 
-  // Unfit structure: check all violations (open or historical) for Unfit code title
-  const hasUnfit=[...safeOvE,...safeAllViol].some(v=>
+  // Unfit structure: only check OPEN violations to avoid historical unfit inflating the score
+  const hasUnfit=safeOvE.some(v=>
     /unfit/i.test(String(v?.violationcodetitle||""))
   );
 
@@ -2330,7 +2333,7 @@ async function lookup(opa){
     const licenseSummary=summarizeLicenses(lic);
     const unfitOpen=ovE.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||"")).length;
     renderKPIs({licenseSummary,openCt:ovE.length,unfitCt:unfitOpen,t311Ct:t311.length,allViolCt:allViol.length});
-    renderLicense(lic,licC);
+    renderLicense(lic);
     renderOpenViolations(ovE);
     renderViolHistory(allViol);
     render311(t311);
@@ -2397,6 +2400,14 @@ function resetSearchState({focus=false,showPrompt=false}={}){
 
 // ---- Entry points ----
 $("#go").addEventListener("click",async()=>{
+  const goBtn=$("#go");
+  // Debounce: if already disabled from a recent click, ignore
+  if(goBtn.disabled) return;
+  goBtn.disabled=true;
+  // Re-enable after 2 seconds as a floor, but also re-enable on completion/failure below
+  const debounceTimer=setTimeout(()=>{ goBtn.disabled=false; },2000);
+
+  try{
   const opa=$("#opa").value.trim();
   const addrRaw=$("#addr").value.trim();
   if(opa){
@@ -2458,6 +2469,10 @@ $("#go").addEventListener("click",async()=>{
     banner(`Address resolution failed: ${esc(err.message)}`,true);
   }finally{
     if(seq===lookupSeq) setLookupBusy(false);
+  }
+  }finally{
+    clearTimeout(debounceTimer);
+    goBtn.disabled=false;
   }
 });
 
@@ -2598,14 +2613,14 @@ function switchToLookupByAddress(addr){
   }
 
   async function queryWorstProperties(){
-    const sql=`SELECT opa_account_num, address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
+    const sql=`SELECT opa_account_num, address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND address IS NOT NULL AND opa_account_num IS NOT NULL AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
     try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City violations query failed:",e.message); return []; }
   }
 
   async function query311Complaints(){
     const queries=[
-      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= NOW() - INTERVAL '12 months' GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
-      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= (current_date - 365) GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
+      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
+      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= (current_date - 365) AND address IS NOT NULL GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
     ];
     for(const sql of queries){
       try{
@@ -2778,7 +2793,11 @@ function switchToLookupByAddress(addr){
     body.innerHTML=html;
   }
 
+  let cityScanRunning=false;
   async function runCityScan(){
+    if(cityScanRunning) return;
+    cityScanRunning=true;
+
     const spinner=$("#scan-spinner");
     const timestamp=$("#scan-timestamp");
     const results=$("#scan-results");
@@ -2845,6 +2864,7 @@ function switchToLookupByAddress(addr){
       scanBtn.disabled=false;
       scanBtn.classList.remove("busy");
       scanBtn.textContent="Check Philly";
+      cityScanRunning=false;
     }
   }
 
@@ -3149,7 +3169,14 @@ function switchToLookupByAddress(addr){
     summary.style.display="block";
   }
 
+  let zipScanRunning=false;
   async function runZipScan(zip){
+    if(zipScanRunning) return;
+    zipScanRunning=true;
+
+    // Defense-in-depth: strip non-digits even though caller already validated 5-digit format
+    zip = zip.replace(/[^0-9]/g, '');
+
     const spinner=$("#zip-scan-spinner");
     const timestamp=$("#zip-scan-timestamp");
     const results=$("#zip-scan-results");
@@ -3275,6 +3302,7 @@ function switchToLookupByAddress(addr){
       scanBtn.disabled=false;
       scanBtn.classList.remove("busy");
       scanBtn.textContent="Scan";
+      zipScanRunning=false;
     }
   }
 
