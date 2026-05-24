@@ -94,6 +94,7 @@
   .prophead{margin-top:22px;padding:18px 20px;background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:3px}
   .prophead-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .prophead h1{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 4px}
+  .prophead .ph-owner-line{font-family:"Archivo",sans-serif;font-weight:600;font-size:15px;color:var(--amber);margin:2px 0 6px;letter-spacing:-.01em}
   .prophead .sub{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:14px}
   .prophead .sub span b{color:var(--amber);font-weight:500}
   .star-btn{background:transparent;border:1px solid var(--line);color:var(--ink-mute);width:44px;height:44px;min-width:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;transition:color .15s,border-color .15s}
@@ -335,16 +336,16 @@
   .scan-row-owner:last-child{border-bottom:none}
   .scan-row-owner:hover{background:rgba(255,176,0,.08);border-left-color:var(--amber)}
   .scan-row-owner .sr-rank{color:var(--ink-mute);font-size:10px;text-align:right}
-  .scan-row-owner .sr-name{color:var(--amber);font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:"Archivo",sans-serif;letter-spacing:-.01em}
+  .scan-row-owner .sr-name{color:var(--amber);font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;font-family:"Archivo",sans-serif;letter-spacing:-.01em;white-space:normal;word-break:break-word}
   .scan-row-owner .sr-meta{color:var(--ink-dim);text-align:right;font-size:11px}
   .scan-row-owner .sr-meta b{color:var(--red);font-weight:600}
 
-  .scan-row-lic{display:grid;grid-template-columns:1fr 140px 70px 100px 24px;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line-soft);font-family:"IBM Plex Mono",monospace;font-size:12px;cursor:pointer;border-left:2px solid transparent;transition:background .15s,border-color .15s}
+  .scan-row-lic{display:grid;grid-template-columns:minmax(180px,2fr) minmax(100px,1fr) 60px 90px 24px;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line-soft);font-family:"IBM Plex Mono",monospace;font-size:12px;cursor:pointer;border-left:2px solid transparent;transition:background .15s,border-color .15s}
   .scan-row-lic:last-child{border-bottom:none}
   .scan-row-lic:hover{background:rgba(255,176,0,.08);border-left-color:var(--amber)}
   .scan-row-lic:active{background:rgba(255,176,0,.12)}
-  .scan-row-lic .sr-name{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .scan-row-lic .sr-biz{color:var(--ink-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+  .scan-row-lic .sr-name{color:var(--ink);white-space:normal;word-break:break-word;line-height:1.35}
+  .scan-row-lic .sr-biz{color:var(--ink-dim);white-space:normal;word-break:break-word;font-size:11px;line-height:1.35}
   .scan-row-lic .sr-units{color:var(--ink-dim);text-align:right;font-size:11px}
   .scan-row-lic .sr-exp{color:var(--red);font-size:11px;text-align:right}
   .scan-row-lic .sr-arrow{color:var(--ink-mute);font-size:14px;transition:color .15s,transform .15s;text-align:center}
@@ -363,7 +364,7 @@
     .scan-row .sr-copy{opacity:1;pointer-events:auto;font-size:9px;padding:2px 5px}
     .scan-row-owner{grid-template-columns:24px 1fr 70px 70px;padding:9px 10px;font-size:11px}
     .scan-row-owner .sr-name{font-size:12px}
-    .scan-row-lic{grid-template-columns:1fr 100px 50px 80px 20px;padding:9px 10px;font-size:11px}
+    .scan-row-lic{grid-template-columns:minmax(120px,2fr) minmax(80px,1fr) 45px 70px 20px;padding:9px 10px;font-size:11px}
   }
 
   /* Loading skeleton */
@@ -401,6 +402,7 @@
     .brand-tag{font-size:10px;letter-spacing:.14em}
     .prophead{padding:14px;margin-top:16px;border-radius:6px}
     .prophead h1{font-size:18px}
+    .prophead .ph-owner-line{font-size:13px}
     .prophead-inner{flex-direction:row;align-items:flex-start;gap:10px}
     .prophead-inner > div:first-child{flex:1;min-width:0}
     .prophead .sub{font-size:11px;gap:8px 12px}
@@ -667,9 +669,9 @@
     <div class="prophead-inner">
       <div>
         <h1 id="ph-addr">—</h1>
+        <div class="ph-owner-line" id="ph-owner-line"></div>
         <div class="sub">
           <span>OPA <b id="ph-opa">—</b></span>
-          <span>Owner <b id="ph-owner">—</b></span>
           <span>Built <b id="ph-built">—</b></span>
           <span>Assessed <b id="ph-val">—</b></span>
           <span>Council Dist <b id="ph-cd">—</b></span>
@@ -1255,7 +1257,9 @@ function renderProphead(opa, opaRow){
   switchTab(currentTab);
   $("#ph-addr").textContent=opaRow?.location||`OPA ${opa}`;
   $("#ph-opa").textContent=opa;
-  $("#ph-owner").textContent=opaRow?.owner_1||"—";
+  const ownerName=opaRow?.owner_1||"—";
+  const ownerLine=$("#ph-owner-line");
+  if(ownerLine) ownerLine.textContent=ownerName!=="—"?`Owner: ${ownerName}`:"";
   $("#ph-built").textContent=opaRow?.year_built||"—";
   $("#ph-val").textContent=fmtMoney(opaRow?.market_value);
   $("#ph-cd").textContent=opaRow?.council_district_2024||opaRow?.council_district_2016||"—";
@@ -2594,7 +2598,7 @@ function switchToLookupByAddress(addr){
   }
 
   async function queryWorstProperties(){
-    const sql=`SELECT opa_account_num, address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 25`;
+    const sql=`SELECT opa_account_num, address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
     try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City violations query failed:",e.message); return []; }
   }
 
@@ -2613,13 +2617,21 @@ function switchToLookupByAddress(addr){
   }
 
   async function queryExpiredLicenses(){
-    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' ORDER BY numberofunits DESC NULLS LAST LIMIT 25`;
+    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
     try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City licenses query failed:",e.message); return []; }
   }
 
   async function queryRepeatOffenders(){
-    const sql=`SELECT p.owner_1 as ownername, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
-    try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City repeat offenders query failed:",e.message); return []; }
+    // First try with management company join
+    const sqlWithMgmt=`SELECT p.owner_1 as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    const sqlSimple=`SELECT p.owner_1 as ownername, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    try{
+      const rows=await cityCartoQuery(sqlWithMgmt);
+      if(rows.length>0) return rows;
+      return await cityCartoQuery(sqlSimple);
+    }catch(e){
+      try{ return await cityCartoQuery(sqlSimple); }catch(e2){ console.warn("City repeat offenders query failed:",e2.message); return []; }
+    }
   }
 
   function renderCityViolations(rows){
@@ -2751,11 +2763,13 @@ function switchToLookupByAddress(addr){
     let html=`<div class="scan-list">`;
     rows.forEach((r,i)=>{
       const name=r.ownername||"Unknown";
+      const mgmt=r.mgmt_company||"";
+      const showMgmt=mgmt&&mgmt.toUpperCase()!==name.toUpperCase();
       const propCt=Number(r.property_count)||0;
       const violCt=Number(r.total_violations)||0;
       html+=`<div class="scan-row-owner">
         <span class="sr-rank">${i+1}</span>
-        <span class="sr-name">${esc(String(name))}</span>
+        <span class="sr-name">${esc(String(name))}${showMgmt?'<span style="display:block;font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--ink-dim);font-weight:400;margin-top:2px">mgmt: '+esc(String(mgmt))+'</span>':''}</span>
         <span class="sr-meta">${propCt} prop${propCt===1?"":"s"}</span>
         <span class="sr-meta"><b>${violCt}</b> violations</span>
       </div>`;
@@ -2865,7 +2879,7 @@ function switchToLookupByAddress(addr){
   async function queryWorstProperties(zip){
     // violations.address is the location column (not "violationlocation")
     // violations.zip is ZIP+4 format (e.g. "19107-4205"), use LIKE prefix match
-    const sql=`SELECT opa_account_num, address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND zip LIKE '${zip}%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 25`;
+    const sql=`SELECT opa_account_num, COALESCE(address, opa_account_num) as address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND (zip LIKE '${zip}%' OR SUBSTRING(zip FROM 1 FOR 5) = '${zip}') AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_account_num, COALESCE(address, opa_account_num) ORDER BY violation_count DESC LIMIT 50`;
     try{
       return await zipCartoQuery(sql);
     }catch(e){
@@ -2876,7 +2890,7 @@ function switchToLookupByAddress(addr){
 
   async function query311Complaints(zip){
     // public_cases_fc.zipcode is plain 5-digit (e.g. "19107"), exact match works
-    const sql=`SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zipcode = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' GROUP BY address ORDER BY complaint_count DESC LIMIT 25`;
+    const sql=`SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zipcode = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' GROUP BY address ORDER BY complaint_count DESC LIMIT 50`;
     try{
       return await zipCartoQuery(sql);
     }catch(e){
@@ -2887,7 +2901,7 @@ function switchToLookupByAddress(addr){
 
   async function queryExpiredLicenses(zip){
     // business_licenses.zip is ZIP+4 format (e.g. "19107-6007"), use LIKE prefix match
-    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip LIKE '${zip}%' ORDER BY numberofunits DESC NULLS LAST LIMIT 25`;
+    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip LIKE '${zip}%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
     try{
       return await zipCartoQuery(sql);
     }catch(e){
@@ -2898,12 +2912,15 @@ function switchToLookupByAddress(addr){
 
   async function queryRepeatOffenders(zip){
     // violations.opa_owner has owner name; violations.zip is ZIP+4 format, use LIKE prefix
-    const sql=`SELECT opa_owner as ownername, COUNT(DISTINCT opa_account_num) as property_count, COUNT(*) as total_violations FROM violations WHERE violationstatus = 'OPEN' AND zip LIKE '${zip}%' AND opa_owner IS NOT NULL AND opa_owner != '' GROUP BY opa_owner HAVING COUNT(DISTINCT opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    // Try with management company join first, fall back to simple query
+    const sqlWithMgmt=`SELECT v.opa_owner as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' AND zip LIKE '${zip}%' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND v.zip LIKE '${zip}%' AND v.opa_owner IS NOT NULL AND v.opa_owner != '' AND UPPER(v.opa_owner) NOT LIKE '%UNKNOWN%' AND UPPER(v.opa_owner) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(v.opa_owner) NOT LIKE '%CITY OF PHILA%' AND UPPER(v.opa_owner) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(v.opa_owner) NOT LIKE '%REDEVELOPMENT%' AND UPPER(v.opa_owner) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(v.opa_owner) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY v.opa_owner HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    const sqlSimple=`SELECT opa_owner as ownername, COUNT(DISTINCT opa_account_num) as property_count, COUNT(*) as total_violations FROM violations WHERE violationstatus = 'OPEN' AND zip LIKE '${zip}%' AND opa_owner IS NOT NULL AND opa_owner != '' AND UPPER(opa_owner) NOT LIKE '%UNKNOWN%' AND UPPER(opa_owner) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(opa_owner) NOT LIKE '%CITY OF PHILA%' AND UPPER(opa_owner) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(opa_owner) NOT LIKE '%REDEVELOPMENT%' AND UPPER(opa_owner) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(opa_owner) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_owner HAVING COUNT(DISTINCT opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
     try{
-      return await zipCartoQuery(sql);
+      const rows=await zipCartoQuery(sqlWithMgmt);
+      if(rows.length>0) return rows;
+      return await zipCartoQuery(sqlSimple);
     }catch(e){
-      console.warn("Repeat offenders query failed:",e.message);
-      return [];
+      try{ return await zipCartoQuery(sqlSimple); }catch(e2){ console.warn("Repeat offenders query failed:",e2.message); return []; }
     }
   }
 
@@ -3040,11 +3057,13 @@ function switchToLookupByAddress(addr){
     let html=`<div class="scan-list">`;
     rows.forEach((r,i)=>{
       const name=r.ownername||"Unknown";
+      const mgmt=r.mgmt_company||"";
+      const showMgmt=mgmt&&mgmt.toUpperCase()!==name.toUpperCase();
       const propCt=Number(r.property_count)||0;
       const violCt=Number(r.total_violations)||0;
       html+=`<div class="scan-row-owner">
         <span class="sr-rank">${i+1}</span>
-        <span class="sr-name">${esc(String(name))}</span>
+        <span class="sr-name">${esc(String(name))}${showMgmt?'<span style="display:block;font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--ink-dim);font-weight:400;margin-top:2px">mgmt: '+esc(String(mgmt))+'</span>':''}</span>
         <span class="sr-meta">${propCt} prop${propCt===1?"":"s"}</span>
         <span class="sr-meta"><b>${violCt}</b> violations</span>
       </div>`;
