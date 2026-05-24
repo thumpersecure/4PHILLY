@@ -1160,8 +1160,8 @@ function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
   let licenseClass="red";
   if(licenseSummary.count){
     if(licenseSummary.count===1&&licenseSummary.primary){
-      const meta=licenseSummary.primary.meta;
-      const row=licenseSummary.primary.row;
+      const meta=licenseSummary.primary.meta||{};
+      const row=licenseSummary.primary.row||{};
       licenseBig=meta.isActive?"ACTIVE":meta.displayStatus||"Unknown";
       licenseClass=meta.isActive?"green":"red";
       licenseNote=row.expirationdate?`exp ${fmtDate(row.expirationdate)}`:"1 license on file";
@@ -1433,9 +1433,12 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
   const rentalSummary=summarizeLicenses(rentalRows);
   const primaryRental=rentalSummary.primary;
   const expDate=primaryRental?.row?.expirationdate?fmtDate(primaryRental.row.expirationdate):null;
-  const openCt=openViol.length;
-  const unfit=openViol.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
-  const recent311=t311.filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
+  const safeOpenViol=Array.isArray(openViol)?openViol:[];
+  const safeAllViol=Array.isArray(allViol)?allViol:[];
+  const safe311=Array.isArray(t311)?t311:[];
+  const openCt=safeOpenViol.length;
+  const unfit=safeOpenViol.filter(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
+  const recent311=safe311.filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
 
   let verdict="",vclass="";
   if(allSummary.count===0){
@@ -1470,8 +1473,8 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
     <div class="verdict ${vclass}">${verdict}</div>
     ${renderBriefLicenseList(lic)}
     ${openSection}
-    <p>Over the last 12 months this address shows <b>${recent311.length} 311 complaint${recent311.length===1?"":"s"}</b> in the Philly311 public feed. Over the last 24 months: <b>${t311.length}</b>. Tenant identity on those complaints is not public.</p>
-    <p>All time, Eclipse has <b>${allViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${allViol.filter(v=>v.violationstatus==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
+    <p>Over the last 12 months this address shows <b>${recent311.length} 311 complaint${recent311.length===1?"":"s"}</b> in the Philly311 public feed. Over the last 24 months: <b>${safe311.length}</b>. Tenant identity on those complaints is not public.</p>
+    <p>All time, Eclipse has <b>${safeAllViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${safeAllViol.filter(v=>v.violationstatus==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
     <p>Owner of record: <b>${esc(owner)}</b>.</p>
     <div class="gap">
       <h4>What this record DOES NOT tell you</h4>
@@ -1667,20 +1670,20 @@ function renderCouncilTab(opaRow,openViol,lic){
     const roleLabel=member.leadership?esc(member.leadership):"District Councilmember";
     html+=`<div class="council-member">
       <div class="cm-district">District ${distNum}</div>
-      <div class="cm-name">${esc(member.name)}</div>
+      <div class="cm-name">${esc(member.name||"Unknown")}</div>
       <div class="cm-role">${roleLabel}</div>
       <div class="cm-contact">
-        <div class="cm-row"><span class="cm-icon">✉</span><a href="mailto:${esc(member.email)}">${esc(member.email)}</a></div>
-        <div class="cm-row"><span class="cm-icon">☎</span><a href="tel:${esc(member.phone.replace(/[^+\d]/g,''))}">${esc(member.phone)}</a></div>
-        <div class="cm-row"><span class="cm-icon">⌂</span><span style="color:var(--ink-dim)">${esc(member.office)}</span></div>
+        <div class="cm-row"><span class="cm-icon">✉</span><a href="mailto:${esc(member.email||"")}">${esc(member.email||"—")}</a></div>
+        <div class="cm-row"><span class="cm-icon">☎</span><a href="tel:${esc((member.phone||"").replace(/[^+\d]/g,''))}">${esc(member.phone||"—")}</a></div>
+        <div class="cm-row"><span class="cm-icon">⌂</span><span style="color:var(--ink-dim)">${esc(member.office||"—")}</span></div>
       </div>
       <div class="cm-actions">
-        <a href="mailto:${esc(member.email)}">Email office</a>
-        <a href="tel:${esc(member.phone.replace(/[^+\d]/g,''))}">Call office</a>
+        <a href="mailto:${esc(member.email||"")}">Email office</a>
+        <a href="tel:${esc((member.phone||"").replace(/[^+\d]/g,''))}">Call office</a>
       </div>
       <div class="council-committees" style="margin-top:14px">
         <div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-mute);margin-bottom:6px">Committee assignments</div>
-        ${member.committees.map(c=>{
+        ${(member.committees||[]).map(c=>{
           const isChair=c.includes("(Chair)");
           const label=c.replace(" (Chair)","");
           return `<span class="cm-pill${isChair?" chair":""}">${esc(label)}${isChair?" ★":""}</span>`;
@@ -1693,7 +1696,7 @@ function renderCouncilTab(opaRow,openViol,lic){
 
   // Committee flag
   if(issueType&&LI_ISSUE_TYPES.includes(issueType)){
-    if(member&&member.name===LI_CHAIR.name){
+    if(member&&member.name&&member.name===LI_CHAIR.name){
       html+=`<div class="council-flag direct">
         <b>L&amp;I Committee:</b> Your councilmember, ${esc(member.name)}, chairs the Committee on Licenses &amp; Inspections — direct oversight of rental licensing, building violations, and code enforcement.
       </div>`;
@@ -1716,12 +1719,12 @@ function renderCouncilTab(opaRow,openViol,lic){
       ${atLarge.map(m=>{
         const roleLabel=m.leadership?`<div class="al-role">${esc(m.leadership)}</div>`:"";
         return `<div class="council-al-card">
-          <div class="al-name">${esc(m.name)}</div>
+          <div class="al-name">${esc(m.name||"Unknown")}</div>
           ${roleLabel}
           <div class="al-contact">
-            <a href="mailto:${esc(m.email)}">${esc(m.email)}</a><br>
-            <a href="tel:${esc(m.phone.replace(/[^+\d]/g,''))}">${esc(m.phone)}</a><br>
-            <span>${esc(m.office)}</span>
+            <a href="mailto:${esc(m.email||"")}">${esc(m.email||"—")}</a><br>
+            <a href="tel:${esc((m.phone||"").replace(/[^+\d]/g,''))}">${esc(m.phone||"—")}</a><br>
+            <span>${esc(m.office||"—")}</span>
           </div>
         </div>`;
       }).join("")}
@@ -1942,8 +1945,11 @@ function render4PScore(scoreData){
 }
 
 function compute4PScoreFromLookup({lic, ovE, t311, allViol}){
+  const safeOvE=Array.isArray(ovE)?ovE:[];
+  const safe311=Array.isArray(t311)?t311:[];
+  const safeAllViol=Array.isArray(allViol)?allViol:[];
   // Open violations count
-  const openViolCount=ovE.length;
+  const openViolCount=safeOvE.length;
 
   // Rental license status
   const rentalRows=(Array.isArray(lic)?lic:[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
@@ -1955,11 +1961,11 @@ function compute4PScoreFromLookup({lic, ovE, t311, allViol}){
 
   // 311 complaints in last 12 months
   const twelveMonthsAgo=Date.now()-1000*60*60*24*365;
-  const complaints12mo=t311.filter(r=>new Date(r.requested_datetime).getTime()>=twelveMonthsAgo).length;
+  const complaints12mo=safe311.filter(r=>new Date(r.requested_datetime).getTime()>=twelveMonthsAgo).length;
 
   // Unfit structure: check all violations (open or historical) for Unfit code title
-  const hasUnfit=[...ovE,...(allViol||[])].some(v=>
-    /unfit/i.test(String(v.violationcodetitle||""))
+  const hasUnfit=[...safeOvE,...safeAllViol].some(v=>
+    /unfit/i.test(String(v?.violationcodetitle||""))
   );
 
   return calc4PScore({openViolCount, rentalLicenseStatus, complaints12mo, hasUnfit});
