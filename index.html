@@ -836,15 +836,17 @@ async function eclipseQuery(layer, where, fields="*", extra=""){
   const url=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json&resultRecordCount=2000${extra}`;
   const r=await fetch(url);
   if(!r.ok) throw new Error(`Eclipse ${layer} HTTP ${r.status}`);
-  const j=await r.json();
-  if(j.error) throw new Error(`Eclipse ${layer}: ${j.error.message||j.error.code||'unknown error'}`);
+  let j;
+  try{ j=await r.json(); }catch(e){ throw new Error(`Eclipse ${layer}: invalid JSON response`); }
+  if(j.error) throw new Error(`Eclipse ${layer}: ${j.error?.message||j.error?.code||'unknown error'}`);
   return (j.features||[]).map(f=>f.attributes);
 }
 async function cartoQuery(sql){
   const url=`${CARTO}?q=${encodeURIComponent(sql)}&format=json`;
   const r=await fetch(url);
   if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
-  const j=await r.json();
+  let j;
+  try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
   if(j.error) throw new Error(`Carto: ${Array.isArray(j.error)?j.error[0]:String(j.error)}`);
   return j.rows||[];
 }
@@ -1013,11 +1015,13 @@ async function nearestOPAByCoords(lat,lng){
 
 async function dorParcelLookup(lat,lng){
   const url=`${ECLIPSE}/DOR_Parcel/FeatureServer/0/query?geometry=${lng},${lat}&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects&inSR=4326&outFields=BAESSION_NUMBER,ADDR_SOURCE,ADDR_STD&returnGeometry=false&f=json&resultRecordCount=1`;
-  const r=await fetch(url);
+  let r;
+  try{ r=await fetch(url); }catch(e){ return null; }
   if(!r.ok) return null;
-  const j=await r.json();
+  let j;
+  try{ j=await r.json(); }catch(e){ return null; }
   if(!j.features||!j.features.length) return null;
-  const brt=String(j.features[0].attributes.BAESSION_NUMBER||"").trim();
+  const brt=String(j.features[0]?.attributes?.BAESSION_NUMBER||"").trim();
   return /^\d{6,12}$/.test(brt)?brt:null;
 }
 
@@ -2296,7 +2300,8 @@ function switchToLookupByAddress(addr){
     const url=`${CARTO_SQL}?q=${encodeURIComponent(sql)}&format=json`;
     const r=await fetch(url);
     if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
-    const j=await r.json();
+    let j;
+    try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
     if(j.error) throw new Error(`Carto: ${Array.isArray(j.error)?j.error[0]:String(j.error)}`);
     return j.rows||[];
   }
@@ -2561,7 +2566,8 @@ function switchToLookupByAddress(addr){
     const url=`${CARTO_SQL}?q=${encodeURIComponent(sql)}&format=json`;
     const r=await fetch(url);
     if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
-    const j=await r.json();
+    let j;
+    try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
     if(j.error) throw new Error(`Carto: ${Array.isArray(j.error)?j.error[0]:String(j.error)}`);
     return j.rows||[];
   }
