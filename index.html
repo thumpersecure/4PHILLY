@@ -320,7 +320,9 @@
   .scan-row:hover{background:rgba(255,176,0,.08);border-left-color:var(--amber)}
   .scan-row:active{background:rgba(255,176,0,.12)}
   .scan-row .sr-rank{color:var(--ink-mute);font-size:10px;min-width:22px;text-align:right;flex-shrink:0}
-  .scan-row .sr-addr{color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .scan-row .sr-addr{color:var(--ink);flex:1;min-width:0;overflow:hidden;white-space:normal;line-height:1.35}
+  .scan-row .sr-addr .sr-addr-line{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .scan-row .sr-addr .sr-owner-line{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;color:var(--ink-mute);margin-top:1px}
   .scan-row .sr-arrow{color:var(--ink-mute);flex-shrink:0;font-size:14px;transition:color .15s,transform .15s;margin-left:4px}
   .scan-row:hover .sr-arrow{color:var(--amber);transform:translateX(2px)}
   .scan-row .sr-copy{background:transparent;border:1px solid var(--line-soft);color:var(--ink-mute);font-size:10px;font-family:"IBM Plex Mono",monospace;padding:2px 6px;border-radius:2px;cursor:pointer;flex-shrink:0;transition:color .15s,border-color .15s,opacity .15s;opacity:0;pointer-events:none}
@@ -2613,7 +2615,7 @@ function switchToLookupByAddress(addr){
   }
 
   async function queryWorstProperties(){
-    const sql=`SELECT opa_account_num, address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND address IS NOT NULL AND opa_account_num IS NOT NULL AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
+    const sql=`SELECT opa_account_num, address, MAX(opa_owner) as opa_owner, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND address IS NOT NULL AND opa_account_num IS NOT NULL AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
     try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City violations query failed:",e.message); return []; }
   }
 
@@ -2632,14 +2634,14 @@ function switchToLookupByAddress(addr){
   }
 
   async function queryExpiredLicenses(){
-    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
+    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND (rentalcategory IS NULL OR rentalcategory NOT LIKE '%Hotel%') AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HILTON WORLDWIDE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WYNDHAM%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%RESIDENCE INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HAMPTON INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%COURTYARD BY MARRIOTT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
     try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City licenses query failed:",e.message); return []; }
   }
 
   async function queryRepeatOffenders(){
     // First try with management company join
-    const sqlWithMgmt=`SELECT p.owner_1 as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
-    const sqlSimple=`SELECT p.owner_1 as ownername, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    const sqlWithMgmt=`SELECT p.owner_1 as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(p.owner_1) NOT LIKE '%HOUSING AUTH%' AND UPPER(p.owner_1) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(p.owner_1) NOT LIKE '%UNIVERSITY%' AND UPPER(p.owner_1) NOT LIKE '%COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%TEMPLE%' AND UPPER(p.owner_1) NOT LIKE '%DREXEL%' AND UPPER(p.owner_1) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%CHURCH%' AND UPPER(p.owner_1) NOT LIKE '%HOSPITAL%' AND UPPER(p.owner_1) NOT LIKE '%CITY HALL%' AND UPPER(p.owner_1) NOT LIKE '%COMMONWEALTH%' AND UPPER(p.owner_1) NOT LIKE '%STATE OF PENN%' AND UPPER(p.owner_1) NOT LIKE '%UNITED STATES%' AND UPPER(p.owner_1) NOT LIKE '%FEDERAL%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    const sqlSimple=`SELECT p.owner_1 as ownername, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(p.owner_1) NOT LIKE '%HOUSING AUTH%' AND UPPER(p.owner_1) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(p.owner_1) NOT LIKE '%UNIVERSITY%' AND UPPER(p.owner_1) NOT LIKE '%COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%TEMPLE%' AND UPPER(p.owner_1) NOT LIKE '%DREXEL%' AND UPPER(p.owner_1) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%CHURCH%' AND UPPER(p.owner_1) NOT LIKE '%HOSPITAL%' AND UPPER(p.owner_1) NOT LIKE '%CITY HALL%' AND UPPER(p.owner_1) NOT LIKE '%COMMONWEALTH%' AND UPPER(p.owner_1) NOT LIKE '%STATE OF PENN%' AND UPPER(p.owner_1) NOT LIKE '%UNITED STATES%' AND UPPER(p.owner_1) NOT LIKE '%FEDERAL%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
     try{
       const rows=await cityCartoQuery(sqlWithMgmt);
       if(rows.length>0) return rows;
@@ -2659,15 +2661,19 @@ function switchToLookupByAddress(addr){
     }
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
+    let rank=0;
     rows.forEach((r,i)=>{
+      if(!r.address || String(r.address).trim() === '') return;
+      rank++;
       const addr=r.violationlocation||r.address||r.opa_account_num||"Unknown";
       const ct=Number(r.violation_count)||0;
       const colorClass=violationCountClass(ct);
       const opa=(r.opa_account_num||"").trim();
       const hasOpa=/^\d{6,12}$/.test(opa);
+      const ownerLabel=r.opa_owner&&r.opa_owner.trim()?r.opa_owner.trim():'';
       html+=`<div class="scan-row" ${hasOpa?`data-city-opa="${esc(opa)}"`:""} data-addr="${esc(String(addr))}" title="Click to view property">
-        <span class="sr-rank">${i+1}</span>
-        <span class="sr-addr">${esc(String(addr))}</span>
+        <span class="sr-rank">${rank}</span>
+        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span>${ownerLabel?'<span class="sr-owner-line">'+esc(ownerLabel)+'</span>':''}</span>
         <button class="sr-copy" data-copy="${esc(String(addr))}" title="Copy address">copy</button>
         <span class="sr-count ${colorClass}">${ct}</span>
         <span class="sr-arrow">&rsaquo;</span>
@@ -2702,13 +2708,16 @@ function switchToLookupByAddress(addr){
     }
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
+    let rank=0;
     rows.forEach((r,i)=>{
+      if(!r.address || r.address.trim() === '') return;
+      rank++;
       const addr=r.address||"Unknown";
       const ct=Number(r.complaint_count)||0;
       const colorClass=ct>=10?"red":ct>=5?"orange":ct>=3?"yellow":"muted";
       html+=`<div class="scan-row" data-addr="${esc(String(addr))}" title="Click to look up property">
-        <span class="sr-rank">${i+1}</span>
-        <span class="sr-addr">${esc(String(addr))}</span>
+        <span class="sr-rank">${rank}</span>
+        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span></span>
         <button class="sr-copy" data-copy="${esc(String(addr))}" title="Copy address">copy</button>
         <span class="sr-count ${colorClass}">${ct}</span>
         <span class="sr-arrow">&rsaquo;</span>
@@ -2739,6 +2748,7 @@ function switchToLookupByAddress(addr){
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
     rows.forEach(r=>{
+      if(!r.legalname || r.legalname.trim() === '') return;
       const name=r.legalname||r.business_name||"Unknown";
       const biz=r.business_name||"";
       const units=r.numberofunits!=null&&r.numberofunits!==""?String(r.numberofunits):"--";
@@ -2776,14 +2786,17 @@ function switchToLookupByAddress(addr){
     }
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
+    let rank=0;
     rows.forEach((r,i)=>{
+      if(!r.ownername || r.ownername.trim() === '') return;
+      rank++;
       const name=r.ownername||"Unknown";
       const mgmt=r.mgmt_company||"";
       const showMgmt=mgmt&&mgmt.toUpperCase()!==name.toUpperCase();
       const propCt=Number(r.property_count)||0;
       const violCt=Number(r.total_violations)||0;
       html+=`<div class="scan-row-owner">
-        <span class="sr-rank">${i+1}</span>
+        <span class="sr-rank">${rank}</span>
         <span class="sr-name">${esc(String(name))}${showMgmt?'<span style="display:block;font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--ink-dim);font-weight:400;margin-top:2px">mgmt: '+esc(String(mgmt))+'</span>':''}</span>
         <span class="sr-meta">${propCt} prop${propCt===1?"":"s"}</span>
         <span class="sr-meta"><b>${violCt}</b> violations</span>
@@ -2899,7 +2912,7 @@ function switchToLookupByAddress(addr){
   async function queryWorstProperties(zip){
     // violations.address is the location column (not "violationlocation")
     // violations.zip is ZIP+4 format (e.g. "19107-4205"), use LIKE prefix match
-    const sql=`SELECT opa_account_num, COALESCE(address, opa_account_num) as address, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND (zip LIKE '${zip}%' OR SUBSTRING(zip FROM 1 FOR 5) = '${zip}') AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_account_num, COALESCE(address, opa_account_num) ORDER BY violation_count DESC LIMIT 50`;
+    const sql=`SELECT opa_account_num, COALESCE(address, opa_account_num) as address, MAX(opa_owner) as opa_owner, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND (zip LIKE '${zip}%' OR SUBSTRING(zip FROM 1 FOR 5) = '${zip}') AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' GROUP BY opa_account_num, COALESCE(address, opa_account_num) ORDER BY violation_count DESC LIMIT 50`;
     try{
       return await zipCartoQuery(sql);
     }catch(e){
@@ -2921,7 +2934,7 @@ function switchToLookupByAddress(addr){
 
   async function queryExpiredLicenses(zip){
     // business_licenses.zip is ZIP+4 format (e.g. "19107-6007"), use LIKE prefix match
-    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip LIKE '${zip}%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
+    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip LIKE '${zip}%' AND (rentalcategory IS NULL OR rentalcategory NOT LIKE '%Hotel%') AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HILTON WORLDWIDE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WYNDHAM%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%RESIDENCE INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HAMPTON INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%COURTYARD BY MARRIOTT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
     try{
       return await zipCartoQuery(sql);
     }catch(e){
@@ -2933,8 +2946,8 @@ function switchToLookupByAddress(addr){
   async function queryRepeatOffenders(zip){
     // violations.opa_owner has owner name; violations.zip is ZIP+4 format, use LIKE prefix
     // Try with management company join first, fall back to simple query
-    const sqlWithMgmt=`SELECT v.opa_owner as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' AND zip LIKE '${zip}%' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND v.zip LIKE '${zip}%' AND v.opa_owner IS NOT NULL AND v.opa_owner != '' AND UPPER(v.opa_owner) NOT LIKE '%UNKNOWN%' AND UPPER(v.opa_owner) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(v.opa_owner) NOT LIKE '%CITY OF PHILA%' AND UPPER(v.opa_owner) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(v.opa_owner) NOT LIKE '%REDEVELOPMENT%' AND UPPER(v.opa_owner) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(v.opa_owner) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY v.opa_owner HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
-    const sqlSimple=`SELECT opa_owner as ownername, COUNT(DISTINCT opa_account_num) as property_count, COUNT(*) as total_violations FROM violations WHERE violationstatus = 'OPEN' AND zip LIKE '${zip}%' AND opa_owner IS NOT NULL AND opa_owner != '' AND UPPER(opa_owner) NOT LIKE '%UNKNOWN%' AND UPPER(opa_owner) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(opa_owner) NOT LIKE '%CITY OF PHILA%' AND UPPER(opa_owner) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(opa_owner) NOT LIKE '%REDEVELOPMENT%' AND UPPER(opa_owner) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(opa_owner) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' GROUP BY opa_owner HAVING COUNT(DISTINCT opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    const sqlWithMgmt=`SELECT v.opa_owner as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' AND zip LIKE '${zip}%' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND v.zip LIKE '${zip}%' AND v.opa_owner IS NOT NULL AND v.opa_owner != '' AND UPPER(v.opa_owner) NOT LIKE '%UNKNOWN%' AND UPPER(v.opa_owner) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(v.opa_owner) NOT LIKE '%CITY OF PHILA%' AND UPPER(v.opa_owner) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(v.opa_owner) NOT LIKE '%REDEVELOPMENT%' AND UPPER(v.opa_owner) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(v.opa_owner) NOT LIKE '%LAND BANK%' AND UPPER(v.opa_owner) NOT LIKE '%HOUSING AUTH%' AND UPPER(v.opa_owner) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(v.opa_owner) NOT LIKE '%UNIVERSITY%' AND UPPER(v.opa_owner) NOT LIKE '%COLLEGE%' AND UPPER(v.opa_owner) NOT LIKE '%TEMPLE%' AND UPPER(v.opa_owner) NOT LIKE '%DREXEL%' AND UPPER(v.opa_owner) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(v.opa_owner) NOT LIKE '%CHURCH%' AND UPPER(v.opa_owner) NOT LIKE '%HOSPITAL%' AND UPPER(v.opa_owner) NOT LIKE '%CITY HALL%' AND UPPER(v.opa_owner) NOT LIKE '%COMMONWEALTH%' AND UPPER(v.opa_owner) NOT LIKE '%STATE OF PENN%' AND UPPER(v.opa_owner) NOT LIKE '%UNITED STATES%' AND UPPER(v.opa_owner) NOT LIKE '%FEDERAL%' AND UPPER(v.opa_owner) NOT LIKE '%SCHOOL BOARD%' GROUP BY v.opa_owner HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
+    const sqlSimple=`SELECT opa_owner as ownername, COUNT(DISTINCT opa_account_num) as property_count, COUNT(*) as total_violations FROM violations WHERE violationstatus = 'OPEN' AND zip LIKE '${zip}%' AND opa_owner IS NOT NULL AND opa_owner != '' AND UPPER(opa_owner) NOT LIKE '%UNKNOWN%' AND UPPER(opa_owner) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(opa_owner) NOT LIKE '%CITY OF PHILA%' AND UPPER(opa_owner) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(opa_owner) NOT LIKE '%REDEVELOPMENT%' AND UPPER(opa_owner) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(opa_owner) NOT LIKE '%LAND BANK%' AND UPPER(opa_owner) NOT LIKE '%HOUSING AUTH%' AND UPPER(opa_owner) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(opa_owner) NOT LIKE '%UNIVERSITY%' AND UPPER(opa_owner) NOT LIKE '%COLLEGE%' AND UPPER(opa_owner) NOT LIKE '%TEMPLE%' AND UPPER(opa_owner) NOT LIKE '%DREXEL%' AND UPPER(opa_owner) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(opa_owner) NOT LIKE '%CHURCH%' AND UPPER(opa_owner) NOT LIKE '%HOSPITAL%' AND UPPER(opa_owner) NOT LIKE '%CITY HALL%' AND UPPER(opa_owner) NOT LIKE '%COMMONWEALTH%' AND UPPER(opa_owner) NOT LIKE '%STATE OF PENN%' AND UPPER(opa_owner) NOT LIKE '%UNITED STATES%' AND UPPER(opa_owner) NOT LIKE '%FEDERAL%' AND UPPER(opa_owner) NOT LIKE '%SCHOOL BOARD%' GROUP BY opa_owner HAVING COUNT(DISTINCT opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
     try{
       const rows=await zipCartoQuery(sqlWithMgmt);
       if(rows.length>0) return rows;
@@ -2954,15 +2967,19 @@ function switchToLookupByAddress(addr){
     }
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
+    let rank=0;
     rows.forEach((r,i)=>{
+      if(!r.address || String(r.address).trim() === '') return;
+      rank++;
       const addr=r.violationlocation||r.address||r.opa_account_num||"Unknown";
       const ct=Number(r.violation_count)||0;
       const colorClass=violationCountClass(ct);
       const opa=(r.opa_account_num||"").trim();
       const hasOpa=/^\d{6,12}$/.test(opa);
+      const ownerLabel=r.opa_owner&&r.opa_owner.trim()?r.opa_owner.trim():'';
       html+=`<div class="scan-row" ${hasOpa?`data-zip-opa="${esc(opa)}"`:""} data-addr="${esc(String(addr))}" title="Click to view property">
-        <span class="sr-rank">${i+1}</span>
-        <span class="sr-addr">${esc(String(addr))}</span>
+        <span class="sr-rank">${rank}</span>
+        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span>${ownerLabel?'<span class="sr-owner-line">'+esc(ownerLabel)+'</span>':''}</span>
         <button class="sr-copy" data-copy="${esc(String(addr))}" title="Copy address">copy</button>
         <span class="sr-count ${colorClass}">${ct}</span>
         <span class="sr-arrow">&rsaquo;</span>
@@ -2999,13 +3016,16 @@ function switchToLookupByAddress(addr){
     }
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
+    let rank=0;
     rows.forEach((r,i)=>{
+      if(!r.address || r.address.trim() === '') return;
+      rank++;
       const addr=r.address||"Unknown";
       const ct=Number(r.complaint_count)||0;
       const colorClass=ct>=10?"red":ct>=5?"orange":ct>=3?"yellow":"muted";
       html+=`<div class="scan-row" data-addr="${esc(String(addr))}" title="Click to look up property">
-        <span class="sr-rank">${i+1}</span>
-        <span class="sr-addr">${esc(String(addr))}</span>
+        <span class="sr-rank">${rank}</span>
+        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span></span>
         <button class="sr-copy" data-copy="${esc(String(addr))}" title="Copy address">copy</button>
         <span class="sr-count ${colorClass}">${ct}</span>
         <span class="sr-arrow">&rsaquo;</span>
@@ -3038,6 +3058,7 @@ function switchToLookupByAddress(addr){
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
     rows.forEach(r=>{
+      if(!r.legalname || r.legalname.trim() === '') return;
       const name=r.legalname||r.business_name||"Unknown";
       const biz=r.business_name||"";
       const units=r.numberofunits!=null&&r.numberofunits!==""?String(r.numberofunits):"--";
@@ -3075,14 +3096,17 @@ function switchToLookupByAddress(addr){
     }
     count.textContent=rows.length;
     let html=`<div class="scan-list">`;
+    let rank=0;
     rows.forEach((r,i)=>{
+      if(!r.ownername || r.ownername.trim() === '') return;
+      rank++;
       const name=r.ownername||"Unknown";
       const mgmt=r.mgmt_company||"";
       const showMgmt=mgmt&&mgmt.toUpperCase()!==name.toUpperCase();
       const propCt=Number(r.property_count)||0;
       const violCt=Number(r.total_violations)||0;
       html+=`<div class="scan-row-owner">
-        <span class="sr-rank">${i+1}</span>
+        <span class="sr-rank">${rank}</span>
         <span class="sr-name">${esc(String(name))}${showMgmt?'<span style="display:block;font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--ink-dim);font-weight:400;margin-top:2px">mgmt: '+esc(String(mgmt))+'</span>':''}</span>
         <span class="sr-meta">${propCt} prop${propCt===1?"":"s"}</span>
         <span class="sr-meta"><b>${violCt}</b> violations</span>
