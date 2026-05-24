@@ -102,6 +102,12 @@
   .star-btn svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none}
   .star-btn.saved svg{fill:currentColor}
 
+  .share-btn{background:transparent;border:1px solid var(--line);color:var(--ink-mute);width:44px;height:44px;min-width:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;transition:color .15s,border-color .15s}
+  .share-btn:hover{color:var(--amber-soft);border-color:var(--amber-soft)}
+  .share-btn:active{color:var(--amber);border-color:var(--amber)}
+  .share-btn svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none}
+  .prophead-actions{display:flex;gap:8px;flex-shrink:0}
+
   /* Tabs */
   .tabs{display:flex;gap:0;margin:22px 0 0;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
@@ -426,6 +432,79 @@
     .quick button{border-radius:4px;min-height:40px;padding:6px 10px}
     .saved-chip{border-radius:4px}
   }
+  .modal-311-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal-311-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow);position:relative}
+  .modal-311-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--line-soft)}
+  .modal-311-header h3{margin:0;font-family:"Archivo",sans-serif;font-weight:800;font-size:16px;color:var(--ink);letter-spacing:-.01em}
+  .modal-311-close{background:transparent;border:1px solid var(--line);color:var(--ink-mute);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;transition:color .15s,border-color .15s;flex-shrink:0}
+  .modal-311-close:hover{color:var(--ink);border-color:var(--amber)}
+  .modal-311-body{padding:16px 20px 20px}
+  .modal-311-body textarea{width:100%;min-height:180px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:12px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;resize:vertical;outline:none;box-sizing:border-box}
+  .modal-311-body textarea:focus{border-color:var(--amber)}
+  .modal-311-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .modal-311-actions button,.modal-311-actions a{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;min-height:44px;font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase;border-radius:3px;cursor:pointer;touch-action:manipulation;text-decoration:none;border:none;flex:1 1 0;min-width:0}
+  .modal-311-copy{background:var(--amber);color:#1a1100;transition:background .15s}
+  .modal-311-copy:hover{background:var(--amber-soft)}
+  .modal-311-open311{background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.25) !important;color:var(--amber);transition:background .15s}
+  .modal-311-open311:hover{background:rgba(255,176,0,.15)}
+  .modal-311-note{margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);line-height:1.6}
+  @media(max-width:679px){
+    .modal-311-card{max-width:100%;border-radius:8px}
+    .modal-311-header{padding:14px 16px 12px}
+    .modal-311-header h3{font-size:15px}
+    .modal-311-body{padding:12px 16px 16px}
+    .modal-311-body textarea{font-size:11px;min-height:160px}
+    .modal-311-actions button,.modal-311-actions a{font-size:12px;padding:10px 14px}
+  }
+  /* Print / PDF — brief tab only */
+  .print-brief-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--ink-dim);border:1px solid var(--line);padding:0 14px;min-height:38px;font-family:"Archivo",sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:color .15s,border-color .15s;touch-action:manipulation;margin-bottom:18px}
+  .print-brief-btn:hover{color:var(--amber);border-color:var(--amber)}
+  .print-brief-btn:active{transform:scale(.98)}
+  .print-brief-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+  @media print{
+    body.print-brief{background:#fff!important;color:#000!important;font-size:12pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body.print-brief *{color:#000!important;background:transparent!important;box-shadow:none!important;text-shadow:none!important}
+    body.print-brief a{color:#000!important;border-bottom:none!important;text-decoration:underline!important}
+    body.print-brief #mode-toggle,
+    body.print-brief .search,
+    body.print-brief .quick,
+    body.print-brief .saved-bar,
+    body.print-brief #banner,
+    body.print-brief #lookup-progress,
+    body.print-brief .tabs,
+    body.print-brief .star-btn,
+    body.print-brief .share-btn,
+    body.print-brief .print-brief-btn,
+    body.print-brief #scanner-panel,
+    body.print-brief .top-meta,
+    body.print-brief .top-desc,
+    body.print-brief .brand-tag,
+    body.print-brief .footer,
+    body.print-brief .no-print{display:none!important}
+    body.print-brief #pane-inspect,
+    body.print-brief #pane-drift,
+    body.print-brief #pane-records,
+    body.print-brief #pane-limits{display:none!important}
+    body.print-brief #prophead{display:block!important;border:1px solid #ccc!important;padding:14px 18px!important;margin-top:12px!important;page-break-inside:avoid}
+    body.print-brief #score-card{display:block!important;border:1px solid #ccc!important;padding:14px 18px!important;margin-top:12px!important;page-break-inside:avoid}
+    body.print-brief .score-bar{border:1px solid #ccc!important}
+    body.print-brief .score-bar-fill{background:var(--amber)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body.print-brief #pane-brief{display:block!important;padding-top:8px!important}
+    body.print-brief #pane-council{display:block!important;padding-top:8px!important;page-break-before:auto}
+    body.print-brief .brief .lede{font-size:14pt!important;font-weight:700!important}
+    body.print-brief .brief p{font-size:11pt!important;line-height:1.5!important}
+    body.print-brief .brief .verdict{border:1px solid #999!important;border-left:3px solid #000!important;padding:10px 14px!important;page-break-inside:avoid}
+    body.print-brief .brief .verdict.bad{border-left-color:#c00!important}
+    body.print-brief .brief .verdict.good{border-left-color:#080!important}
+    body.print-brief .brief .gap{border:1px dashed #aaa!important;padding:10px 14px!important;page-break-inside:avoid}
+    body.print-brief .prophead .sub b{color:#000!important;font-weight:600!important}
+    body.print-brief .prophead h1{font-size:16pt!important}
+    body.print-brief .wrap{max-width:100%!important;padding:0!important;margin:0!important}
+    body.print-brief .top{border-bottom:1px solid #ccc!important;padding-bottom:8px!important;margin-bottom:12px!important}
+    body.print-brief .brand-mark{font-size:18pt!important}
+    body.print-brief .brand-mark span{color:#000!important}
+    @page{margin:0.6in 0.5in}
+  }
 </style>
 </head>
 <body>
@@ -479,6 +558,7 @@
       </div>
       <div class="scan-section" id="scan-sec-licenses">
         <h2>Expired Rental Licenses <span class="scan-count" id="scan-lic-count"></span></h2>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);margin-bottom:8px">Historical record (Carto mirror) — verify current status via property lookup (Eclipse)</div>
         <div id="scan-lic-body"></div>
       </div>
       <div class="scan-section" id="scan-sec-owners">
@@ -537,6 +617,7 @@
       </div>
       <div class="scan-section" id="zip-sec-licenses">
         <h2>Expired Rental Licenses <span class="scan-count" id="zip-lic-count"></span></h2>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);margin-bottom:8px">Historical record (Carto mirror) — verify current status via property lookup (Eclipse)</div>
         <div id="zip-lic-body"></div>
       </div>
       <div class="scan-section" id="zip-sec-owners">
@@ -596,9 +677,14 @@
           <span><a id="ph-atlas" href="https://atlas.phila.gov/" target="_blank" rel="noopener" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">verify on Atlas</a></span>
         </div>
       </div>
-      <button class="star-btn" id="star-btn" aria-label="Save property" title="Save to quick access">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </button>
+      <div class="prophead-actions">
+        <button class="share-btn" id="share-btn" aria-label="Share this property report" title="Share this property report">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+        </button>
+        <button class="star-btn" id="star-btn" aria-label="Save property" title="Save to quick access">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -669,6 +755,7 @@
 
   <!-- BRIEF -->
   <section id="pane-brief" class="pane">
+    <button class="print-brief-btn no-print" id="print-brief" aria-label="Print report" title="Print or save as PDF"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Report</button>
     <div class="brief" id="brief-body"></div>
   </section>
 
@@ -709,6 +796,24 @@
 </footer>
 
 </div><!-- /wrap -->
+
+<!-- 311 Complaint Modal -->
+<div id="modal-311" class="modal-311-overlay no-print" style="display:none" role="dialog" aria-modal="true" aria-label="File 311 Complaint">
+  <div class="modal-311-card">
+    <div class="modal-311-header">
+      <h3>File 311 Complaint</h3>
+      <button class="modal-311-close" id="modal-311-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-311-body">
+      <textarea id="modal-311-text" readonly></textarea>
+      <div class="modal-311-actions">
+        <button class="modal-311-copy" id="modal-311-copy">Copy text</button>
+        <a class="modal-311-open311" href="https://www.phila.gov/services/property-lots-housing/report-a-property-code-violation/" target="_blank" rel="noopener" id="modal-311-open">Open 311 site</a>
+      </div>
+      <div class="modal-311-note">Copy the complaint text first, then open the 311 site and paste it into the description field.</div>
+    </div>
+  </div>
+</div>
 
 <!-- bottom-nav removed; tabs are always at top -->
 
@@ -834,7 +939,8 @@ setNow();
 // ---- API ----
 async function eclipseQuery(layer, where, fields="*", extra=""){
   const url=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json&resultRecordCount=2000${extra}`;
-  const r=await fetch(url);
+  let r;
+  try{ r=await fetch(url); }catch(e){ throw new Error(`Eclipse ${layer}: network error (${e.message})`); }
   if(!r.ok) throw new Error(`Eclipse ${layer} HTTP ${r.status}`);
   let j;
   try{ j=await r.json(); }catch(e){ throw new Error(`Eclipse ${layer}: invalid JSON response`); }
@@ -843,7 +949,8 @@ async function eclipseQuery(layer, where, fields="*", extra=""){
 }
 async function cartoQuery(sql){
   const url=`${CARTO}?q=${encodeURIComponent(sql)}&format=json`;
-  const r=await fetch(url);
+  let r;
+  try{ r=await fetch(url); }catch(e){ throw new Error(`Carto: network error (${e.message})`); }
   if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
   let j;
   try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
@@ -860,6 +967,16 @@ const ADDR_ABBR={
   'DR':'DRIVE','CT':'COURT','LN':'LANE','PL':'PLACE',
   'N':'NORTH','S':'SOUTH','E':'EAST','W':'WEST'
 };
+const ADDR_WHITELIST=/^[0-9A-Za-z\s.\-#\/&',]+$/;
+function validateInput(raw,fieldLabel){
+  const trimmed=(raw||"").trim();
+  if(!trimmed) return trimmed;
+  if(!ADDR_WHITELIST.test(trimmed)){
+    banner(`<b>Invalid characters in ${esc(fieldLabel)}.</b> Only letters, numbers, spaces, and . - # / & ' , are allowed.`,true);
+    return null;
+  }
+  return trimmed;
+}
 function normalizeAddr(raw){
   return raw.trim().toUpperCase()
     .replace(/[.,#%_]/g,'')
@@ -884,7 +1001,7 @@ function assertOPA(opa){ if(!/^\d{6,12}$/.test(opa)) throw new Error("Invalid OP
 async function resolveAddress(addr){
   const patterns=addrVariants(addr);
   const results=await Promise.all(patterns.map(p=>{
-    const where=`UPPER(location) LIKE '${p.replace(/'/g,"''")}'`;
+    const where=`UPPER(location) LIKE '${sqlSafeStr(p)}'`;
     return eclipseQuery("opa_properties_public_pde",where,
       "parcel_number,location,owner_1,market_value,year_built,zip_code,zoning,census_tract",
       "&resultRecordCount=15").catch(()=>[]);
@@ -989,7 +1106,7 @@ async function getBuildingCerts(loc){
   if(!base) return [];
   const patterns=addrVariants(base);
   const results=await Promise.all(patterns.map(p=>
-    eclipseQuery("BUILDING_CERTS",`UPPER(address) LIKE '${p.replace(/'/g,"''")}'`,
+    eclipseQuery("BUILDING_CERTS",`UPPER(address) LIKE '${sqlSafeStr(p)}'`,
       "buildingcertnumber,buildingcerttype,inspectiondate,inspectionresult,expirationdate,unit_num,contractorname,address",
       "&resultRecordCount=200&orderByFields=inspectiondate+DESC").catch(e=>{console.warn('BUILDING_CERTS query failed:',e);return [];})
   ));
@@ -1351,7 +1468,19 @@ function renderDriftLicense(eRows,cRows){
     ["mostrecentissuedate","Most recent issue",true],
     ["numberofunits","Units"]
   ];
+  const eclipseOnly=keys.filter(k=>eMap.has(k)&&!cMap.has(k)).length;
+  const cartoOnly=keys.filter(k=>!eMap.has(k)&&cMap.has(k)).length;
   let html="";
+  if(eclipseOnly>0||cartoOnly>0){
+    html+=`<div class="drift-row diverge" style="margin-bottom:12px;padding:10px 12px;border:1px solid rgba(255,69,58,.3);border-radius:3px">
+      <div class="dl-label" style="color:var(--red);font-weight:600">Missing rows detected</div>
+      <div class="drift-vals">
+        <div class="dl-e">${eclipseOnly>0?eclipseOnly+' Eclipse-only':''}</div>
+        <div class="dl-c">${cartoOnly>0?cartoOnly+' Carto-only':''}</div>
+        <div class="dl-s"><span class="pill open">DRIFT</span></div>
+      </div>
+    </div>`;
+  }
   keys.forEach((key,idx)=>{
     const hasE=eMap.has(key);
     const hasC=cMap.has(key);
@@ -1413,6 +1542,18 @@ function renderDriftViolations(eAll,cartoDist){
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
   const statuses=[...KNOWN_STATUSES,
     ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])].filter(s=>eDist[s]>0||cDist[s]>0);
+  const eOnlyViolS=statuses.filter(s=>eDist[s]>0&&(!cDist[s]));
+  const cOnlyViolS=statuses.filter(s=>(!eDist[s])&&cDist[s]>0);
+  if(eOnlyViolS.length>0||cOnlyViolS.length>0){
+    html+=`<div class="drift-row diverge" style="padding:10px 12px;border:1px solid rgba(255,69,58,.3);border-radius:3px;margin-bottom:6px">
+      <div class="dl-label" style="color:var(--red);font-weight:600">Missing rows</div>
+      <div class="drift-vals">
+        <div class="dl-e">${eOnlyViolS.length>0?eOnlyViolS.length+' status(es) Eclipse-only':''}</div>
+        <div class="dl-c">${cOnlyViolS.length>0?cOnlyViolS.length+' status(es) Carto-only':''}</div>
+        <div class="dl-s"><span class="pill open">DRIFT</span></div>
+      </div>
+    </div>`;
+  }
 
   statuses.forEach(s=>{
     const same=eDist[s]===cDist[s];
@@ -1505,9 +1646,77 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
         <li>If the landlord is unlicensed during a rent collection period, see <i>Frempong v. Richardson</i>, 209 A.3d 1001 (Pa. Super. 2019). Note: subsequent 2024 proceedings in this case may have modified the practical scope of this holding — consult a housing attorney for current guidance.</li>
       </ul>
     </div>
+    <div class="cm-actions" style="margin-top:20px">
+      <a href="#" id="brief-file311-btn" style="font-weight:700;font-size:13px">File 311 Complaint</a>
+    </div>
   `;
   $("#brief-body").innerHTML=html;
+
+  // Wire up 311 complaint modal button
+  const file311Btn=$("#brief-file311-btn");
+  if(file311Btn){
+    file311Btn.addEventListener("click",e=>{
+      e.preventDefault();
+      const violCodes=safeOpenViol.map(v=>v.violationcode).filter(Boolean);
+      const uniqueCodes=[...new Set(violCodes)];
+      const licStatus=allSummary.count===0?"No licenses on file":(allSummary.activeCount===allSummary.count?"All "+allSummary.count+" license(s) active":allSummary.activeCount+"/"+allSummary.count+" license(s) active");
+      let text="PROPERTY CODE VIOLATION COMPLAINT\n";
+      text+="==================================\n\n";
+      text+="Address: "+addr+"\n";
+      text+="OPA Account #: "+(opaRow?.parcel_number||"N/A")+"\n";
+      text+="Owner: "+owner+"\n";
+      text+="ZIP: "+(opaRow?.zip_code||"N/A")+"\n\n";
+      text+="Open Violations: "+openCt+"\n";
+      if(uniqueCodes.length>0) text+="Violation Codes: "+uniqueCodes.join(", ")+"\n";
+      if(unfit.length>0) text+="Unfit Structure Citations (PM15-109.1): "+unfit.length+"\n";
+      text+="License Status: "+licStatus+"\n";
+      text+="311 Complaints (12 mo): "+recent311.length+"\n";
+      text+="311 Complaints (24 mo): "+safe311.length+"\n\n";
+      text+="Source: 4PHILLY property record (Eclipse L&I data)\n";
+      text+="Generated: "+new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";
+      open311Modal(text);
+    });
+  }
 }
+
+// ---- 311 Complaint Modal ----
+function open311Modal(text){
+  const modal=document.getElementById("modal-311");
+  const ta=document.getElementById("modal-311-text");
+  if(!modal||!ta) return;
+  ta.value=text;
+  modal.style.display="flex";
+  document.body.style.overflow="hidden";
+}
+function close311Modal(){
+  const modal=document.getElementById("modal-311");
+  if(!modal) return;
+  modal.style.display="none";
+  document.body.style.overflow="";
+}
+(function init311Modal(){
+  document.addEventListener("click",e=>{
+    if(e.target.id==="modal-311-close") close311Modal();
+    if(e.target.id==="modal-311") close311Modal();
+    if(e.target.id==="modal-311-copy"){
+      const ta=document.getElementById("modal-311-text");
+      if(!ta) return;
+      navigator.clipboard.writeText(ta.value).then(()=>{
+        showCopyToast("Complaint text copied to clipboard");
+      }).catch(()=>{
+        ta.select();
+        document.execCommand("copy");
+        showCopyToast("Complaint text copied");
+      });
+    }
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      const modal=document.getElementById("modal-311");
+      if(modal&&modal.style.display!=="none") close311Modal();
+    }
+  });
+})();
 
 function renderPermits(rows){
   $("#prm-c").textContent=rows.length;
@@ -1660,7 +1869,28 @@ function getCouncilMember(districtNum){
   return COUNCIL_MEMBERS.find(m=>m.district===d&&m.type==="district")||null;
 }
 
-function renderCouncilTab(opaRow,openViol,lic){
+function buildCouncilMailto(member,opaRow,openViol,lic,t311,allViol){
+  const addr=opaRow?.location||"Unknown Address";
+  const opa=opaRow?.parcel_number||opaRow?.opa_account_num||"";
+  const pageURL=`${location.origin}${location.pathname}#opa=${opa}`;
+  const scoreData=compute4PScoreFromLookup({lic,ovE:openViol,t311,allViol});
+  const level=get4PScoreLevel(scoreData.total);
+  const openCt=(Array.isArray(openViol)?openViol:[]).length;
+  const rentalRows=(Array.isArray(lic)?lic:[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
+  let licStatus="No rental license on file";
+  if(rentalRows.length>0){
+    const hasActive=rentalRows.some(r=>analyzeLicenseRow(r).isActive);
+    licStatus=hasActive?"Active rental license":"Expired / inactive rental license";
+  }
+  const subject=`L&I Issues at ${addr} (OPA ${opa})`;
+  let mbody=`Dear Councilmember ${member.name},\n\nI am writing about ongoing L&I issues at ${addr} (OPA ${opa}).\n\n4P Risk Score: ${scoreData.total}/100 (${level.label})\nOpen violations: ${openCt}\nRental license: ${licStatus}\n311 complaints (12 mo): ${scoreData.complaints12mo}\n\nI request your office look into this matter and ensure code enforcement action is taken.\n\nFull details: ${pageURL}\n\nThank you.`;
+  if(mbody.length>800){
+    mbody=`Re: L&I issues at ${addr} (OPA ${opa})\n\n4P Score: ${scoreData.total}/100 (${level.label})\nOpen violations: ${openCt}\nLicense: ${licStatus}\n311 complaints (12 mo): ${scoreData.complaints12mo}\n\nFull details: ${pageURL}`;
+  }
+  return `mailto:${encodeURIComponent(member.email||"")}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mbody)}`;
+}
+
+function renderCouncilTab(opaRow,openViol,lic,t311,allViol){
   const body=$("#council-body");
   const distRaw=opaRow?.council_district_2024||opaRow?.council_district_2016;
   const distNum=parseInt(distRaw,10);
@@ -1678,6 +1908,7 @@ function renderCouncilTab(opaRow,openViol,lic){
 
   // District councilmember card
   if(member){
+    const mailtoHref=buildCouncilMailto(member,opaRow,openViol,lic,t311,allViol);
     const roleLabel=member.leadership?esc(member.leadership):"District Councilmember";
     html+=`<div class="council-member">
       <div class="cm-district">District ${distNum}</div>
@@ -1691,6 +1922,7 @@ function renderCouncilTab(opaRow,openViol,lic){
       <div class="cm-actions">
         <a href="mailto:${esc(member.email||"")}">Email office</a>
         <a href="tel:${esc((member.phone||"").replace(/[^+\d]/g,''))}">Call office</a>
+        <a href="${mailtoHref}">Draft Complaint Email</a>
       </div>
       <div class="council-committees" style="margin-top:14px">
         <div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-mute);margin-bottom:6px">Committee assignments</div>
@@ -1707,7 +1939,7 @@ function renderCouncilTab(opaRow,openViol,lic){
 
   // Committee flag
   if(issueType&&LI_ISSUE_TYPES.includes(issueType)){
-    if(member&&member.name&&member.name===LI_CHAIR.name){
+    if(member&&member.name&&member.name===LI_CHAIR?.name){
       html+=`<div class="council-flag direct">
         <b>L&amp;I Committee:</b> Your councilmember, ${esc(member.name)}, chairs the Committee on Licenses &amp; Inspections — direct oversight of rental licensing, building violations, and code enforcement.
       </div>`;
@@ -1715,9 +1947,9 @@ function renderCouncilTab(opaRow,openViol,lic){
       html+=`<div class="council-flag warn">
         <b>L&amp;I Committee:</b> This property has ${issueType==="unfit_structure"?"unfit structure citations":issueType==="rental_license_expired"?"an expired rental license":"open violations"}. The L&amp;I Committee Chair is:
         <div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:13px">
-          <b style="color:var(--ink)">${esc(LI_CHAIR.name)}</b> (District ${LI_CHAIR.district})<br>
-          <a href="mailto:${esc(LI_CHAIR.email)}">${esc(LI_CHAIR.email)}</a> &middot;
-          <a href="tel:${esc(LI_CHAIR.phone.replace(/[^+\d]/g,''))}">${esc(LI_CHAIR.phone)}</a>
+          <b style="color:var(--ink)">${esc(LI_CHAIR?.name||"—")}</b> (District ${LI_CHAIR?.district||"—"})<br>
+          <a href="mailto:${esc(LI_CHAIR?.email||"")}">${esc(LI_CHAIR?.email||"—")}</a> &middot;
+          <a href="tel:${esc((LI_CHAIR?.phone||"").replace(/[^+\d]/g,''))}">${esc(LI_CHAIR?.phone||"—")}</a>
         </div>
       </div>`;
     }
@@ -1744,7 +1976,7 @@ function renderCouncilTab(opaRow,openViol,lic){
 
   // Data source note
   html+=`<div style="margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);line-height:1.7">
-    District assignment from OPA field <code>council_district_2024</code>. Roster sourced from <a href="https://phlcouncil.com/" target="_blank" rel="noopener">phlcouncil.com</a> standing committees page. L&amp;I Committee Chair: ${esc(LI_CHAIR.name)} (District ${LI_CHAIR.district}). Data embedded 2026-05-20 — verify at source for changes.
+    District assignment from OPA field <code>council_district_2024</code>. Roster sourced from <a href="https://phlcouncil.com/" target="_blank" rel="noopener">phlcouncil.com</a> standing committees page. L&amp;I Committee Chair: ${esc(LI_CHAIR?.name||"—")} (District ${LI_CHAIR?.district||"—"}). Data embedded 2026-05-20 — verify at source for changes.
   </div>`;
 
   body.innerHTML=html;
@@ -1760,22 +1992,22 @@ function saveProp(opa,addr,lat,lng){
   const entry={opa,addr:addr.slice(0,60)};
   if(lat!=null&&lng!=null){entry.lat=lat;entry.lng=lng;}
   s.unshift(entry);
-  localStorage.setItem(SAVED_KEY,JSON.stringify(s.slice(0,20)));
+  try{ localStorage.setItem(SAVED_KEY,JSON.stringify(s.slice(0,20))); }catch(e){ /* storage full or disabled */ }
   renderSavedBar();
 }
 function updateSavedCoords(opa,lat,lng){
   if(lat==null||lng==null) return;
   const s=getSaved();
   const entry=s.find(x=>x.opa===opa);
-  if(entry&&!entry.lat){entry.lat=lat;entry.lng=lng;localStorage.setItem(SAVED_KEY,JSON.stringify(s));}
+  if(entry&&!entry.lat){entry.lat=lat;entry.lng=lng;try{ localStorage.setItem(SAVED_KEY,JSON.stringify(s)); }catch(e){}}
 }
 function updateSavedOPA(oldOPA,newOPA,addr,lat,lng){
   const s=getSaved();
   const idx=s.findIndex(x=>x.opa===oldOPA);
-  if(idx>=0){s[idx]={opa:newOPA,addr:(addr||s[idx].addr).slice(0,60),lat:lat||s[idx].lat,lng:lng||s[idx].lng};localStorage.setItem(SAVED_KEY,JSON.stringify(s));renderSavedBar();}
+  if(idx>=0){s[idx]={opa:newOPA,addr:(addr||s[idx].addr).slice(0,60),lat:lat||s[idx].lat,lng:lng||s[idx].lng};try{ localStorage.setItem(SAVED_KEY,JSON.stringify(s)); }catch(e){} renderSavedBar();}
 }
 function removeSaved(opa){
-  localStorage.setItem(SAVED_KEY,JSON.stringify(getSaved().filter(x=>x.opa!==opa)));
+  try{ localStorage.setItem(SAVED_KEY,JSON.stringify(getSaved().filter(x=>x.opa!==opa))); }catch(e){}
   renderSavedBar();
 }
 function isSaved(opa){ return getSaved().some(s=>s.opa===opa); }
@@ -1860,6 +2092,34 @@ $("#star-btn").addEventListener('click',()=>{
   if(isSaved(opa)) removeSaved(opa);
   else saveProp(opa,addr,lastLookupCoords?.lat,lastLookupCoords?.lng);
   updateStarBtn(opa);
+});
+
+// ---- Share button ----
+$("#share-btn").addEventListener('click', async ()=>{
+  try {
+    await navigator.share({ title: document.title, url: location.href });
+    showCopyToast('Shared successfully');
+  } catch(err) {
+    if (err.name === 'AbortError') return;
+    try {
+      await navigator.clipboard.writeText(location.href);
+      showCopyToast('Link copied to clipboard');
+    } catch(e2) {
+      showCopyToast('Could not share');
+    }
+  }
+});
+
+// ---- Print Brief button ----
+$("#print-brief").addEventListener("click",()=>{
+  switchTab("brief");
+  document.body.classList.add("print-brief");
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      window.print();
+      document.body.classList.remove("print-brief");
+    });
+  });
 });
 
 // ---- 4P Score ----
@@ -2075,7 +2335,7 @@ async function lookup(opa){
     renderBrief({opaRow,lic,licenseSummary,openViol:ovE,allViol,t311});
     renderPermits(permits);
     renderBuildingCerts(bcerts);
-    renderCouncilTab(opaRow,ovE,lic);
+    renderCouncilTab(opaRow,ovE,lic,t311,allViol);
 
     // 4P Score
     const scoreData=compute4PScoreFromLookup({lic,ovE,t311,allViol});
@@ -2134,13 +2394,15 @@ function resetSearchState({focus=false,showPrompt=false}={}){
 // ---- Entry points ----
 $("#go").addEventListener("click",async()=>{
   const opa=$("#opa").value.trim();
-  const addr=$("#addr").value.trim();
+  const addrRaw=$("#addr").value.trim();
   if(opa){
     if(!/^\d+$/.test(opa)){ banner("OPA account must use digits only (6–12 digits).",true); return; }
     if(!/^\d{6,12}$/.test(opa)){ banner("OPA account must be 6–12 digits.",true); return; }
     lookup(opa); return;
   }
-  if(!addr){ banner("Enter an address or an OPA account number.",true); return; }
+  if(!addrRaw){ banner("Enter an address or an OPA account number.",true); return; }
+  const addr=validateInput(addrRaw,"address");
+  if(addr===null) return;
   const seq = ++lookupSeq;
   setLookupBusy(true);
   hideLookupProgressNow();
@@ -2315,7 +2577,8 @@ function switchToLookupByAddress(addr){
 
   async function cityCartoQuery(sql){
     const url=`${CARTO_SQL}?q=${encodeURIComponent(sql)}&format=json`;
-    const r=await fetch(url);
+    let r;
+    try{ r=await fetch(url); }catch(e){ throw new Error(`Carto: network error (${e.message})`); }
     if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
     let j;
     try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
@@ -2456,9 +2719,11 @@ function switchToLookupByAddress(addr){
       const expStr=expRaw?fmtDate(expRaw):"--";
       const opa=(r.opa_account_num||"").trim();
       const hasOpa=/^\d{6,12}$/.test(opa);
-      html+=`<div class="scan-row-lic" ${hasOpa?`data-lic-opa="${esc(opa)}"`:""} title="${hasOpa?"Click to view property":""}">
+      const statusRaw=String(r.licensestatus||"").trim();
+      const statusLabel=statusRaw?esc(statusRaw):"Unknown";
+      html+=`<div class="scan-row-lic" ${hasOpa?`data-lic-opa="${esc(opa)}"`:""} title="${hasOpa?"Click to view property — verify current status via Eclipse":"Historical record (Carto)"}">
         <span class="sr-name">${esc(String(name))}</span>
-        <span class="sr-biz">${esc(String(biz))}</span>
+        <span class="sr-biz">${esc(String(biz))}${statusRaw?' <span class="pill admin" title="Historical record — Carto mirror, not current. Verify via property lookup (Eclipse).">'+statusLabel+' (Historical)</span>':''}</span>
         <span class="sr-units">${esc(units)} units</span>
         <span class="sr-exp">${esc(expStr)}</span>
         <span class="sr-arrow">${hasOpa?"&rsaquo;":""}</span>
@@ -2581,7 +2846,8 @@ function switchToLookupByAddress(addr){
 
   async function zipCartoQuery(sql){
     const url=`${CARTO_SQL}?q=${encodeURIComponent(sql)}&format=json`;
-    const r=await fetch(url);
+    let r;
+    try{ r=await fetch(url); }catch(e){ throw new Error(`Carto: network error (${e.message})`); }
     if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
     let j;
     try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
@@ -2742,9 +3008,11 @@ function switchToLookupByAddress(addr){
       const expStr=expRaw?fmtDate(expRaw):"--";
       const opa=(r.opa_account_num||"").trim();
       const hasOpa=/^\d{6,12}$/.test(opa);
-      html+=`<div class="scan-row-lic" ${hasOpa?`data-lic-opa="${esc(opa)}"`:""} title="${hasOpa?"Click to view property":""}">
+      const statusRaw=String(r.licensestatus||"").trim();
+      const statusLabel=statusRaw?esc(statusRaw):"Unknown";
+      html+=`<div class="scan-row-lic" ${hasOpa?`data-lic-opa="${esc(opa)}"`:""} title="${hasOpa?"Click to view property — verify current status via Eclipse":"Historical record (Carto)"}">
         <span class="sr-name">${esc(String(name))}</span>
-        <span class="sr-biz">${esc(String(biz))}</span>
+        <span class="sr-biz">${esc(String(biz))}${statusRaw?' <span class="pill admin" title="Historical record — Carto mirror, not current. Verify via property lookup (Eclipse).">'+statusLabel+' (Historical)</span>':''}</span>
         <span class="sr-units">${esc(units)} units</span>
         <span class="sr-exp">${esc(expStr)}</span>
         <span class="sr-arrow">${hasOpa?"&rsaquo;":""}</span>
@@ -3031,5 +3299,142 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 </script>
+
+<!-- Get Help — emergency hotlines button + modal -->
+<style>
+  @media print{.no-print{display:none!important}}
+  .help-fab{
+    position:fixed;bottom:env(safe-area-inset-bottom,16px);left:16px;z-index:9999;
+    min-width:48px;min-height:48px;padding:10px 18px;
+    background:var(--red);color:#fff;border:none;border-radius:4px;
+    font-family:"Archivo",sans-serif;font-weight:700;font-size:15px;
+    cursor:pointer;touch-action:manipulation;
+    box-shadow:0 2px 12px rgba(255,69,58,.45);
+    transition:background .15s,transform .1s;
+    display:flex;align-items:center;gap:8px;line-height:1;
+  }
+  .help-fab:hover{background:#e03e35}
+  .help-fab:active{transform:scale(.96)}
+  .help-fab svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+  .help-overlay{
+    position:fixed;inset:0;z-index:10000;
+    background:rgba(0,0,0,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;
+  }
+  .help-overlay.open{opacity:1;visibility:visible}
+
+  .help-modal{
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    width:92vw;max-width:420px;max-height:90vh;overflow-y:auto;
+    padding:28px 24px 20px;position:relative;
+    box-shadow:0 12px 40px rgba(0,0,0,.6);
+  }
+  .help-modal h2{
+    font-family:"Archivo",sans-serif;font-weight:800;font-size:20px;
+    color:var(--ink);margin:0 0 4px;
+  }
+  .help-modal .help-sub{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;
+    color:var(--ink-mute);margin-bottom:18px;
+  }
+  .help-close{
+    position:absolute;top:12px;right:12px;
+    background:transparent;border:1px solid var(--line);color:var(--ink-dim);
+    width:36px;height:36px;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;line-height:1;transition:color .15s,border-color .15s;
+  }
+  .help-close:hover{color:var(--ink);border-color:var(--ink-dim)}
+
+  .help-list{list-style:none;margin:0;padding:0}
+  .help-list li{border-bottom:1px solid var(--line-soft)}
+  .help-list li:last-child{border-bottom:none}
+  .help-list a,.help-list span.help-link{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 8px;min-height:48px;
+    font-family:"IBM Plex Mono",monospace;font-size:14px;
+    color:var(--ink);text-decoration:none;border-bottom:none;
+    transition:background .15s;cursor:pointer;
+  }
+  .help-list a:hover,.help-list span.help-link:hover{background:rgba(255,69,58,.06)}
+  .help-list .hl-icon{width:22px;text-align:center;flex-shrink:0;font-size:16px}
+  .help-list .hl-name{flex:1;min-width:0}
+  .help-list .hl-name small{display:block;font-size:11px;color:var(--ink-mute);margin-top:2px}
+  .help-list .hl-num{color:var(--amber);font-weight:600;flex-shrink:0;white-space:nowrap}
+
+  .help-disc{
+    margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);
+    font-family:"IBM Plex Mono",monospace;font-size:10px;
+    color:var(--ink-mute);line-height:1.6;
+  }
+  @media(max-width:679px){
+    .help-modal{padding:22px 16px 16px}
+    .help-modal h2{font-size:18px}
+    .help-list a,.help-list span.help-link{padding:12px 6px;font-size:13px}
+  }
+</style>
+
+<button class="help-fab no-print" id="help-fab" type="button"
+        aria-label="Emergency help and tenant hotlines">
+  <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  Get Help
+</button>
+
+<div class="help-overlay" id="help-overlay" role="dialog" aria-modal="true"
+     aria-label="Emergency hotlines">
+  <div class="help-modal">
+    <button class="help-close" id="help-close" aria-label="Close">&times;</button>
+    <h2>Emergency Hotlines</h2>
+    <div class="help-sub">Tap any number to call directly.</div>
+    <ul class="help-list">
+      <li><a href="tel:911"><span class="hl-icon">&#128680;</span><span class="hl-name">911<small>Police / Fire / Medical</small></span><span class="hl-num">911</span></a></li>
+      <li><a href="tel:+18002221222"><span class="hl-icon">&#9763;</span><span class="hl-name">Poison Control</span><span class="hl-num">1-800-222-1222</span></a></li>
+      <li><a href="tel:+12156869500"><span class="hl-icon">&#127969;</span><span class="hl-name">Philadelphia Tenant Hotline<small>City of Philadelphia</small></span><span class="hl-num">215-686-9500</span></a></li>
+      <li><a href="tel:+12159813700"><span class="hl-icon">&#9878;</span><span class="hl-name">Community Legal Services<small>Free legal help for tenants</small></span><span class="hl-num">215-981-3700</span></a></li>
+      <li><a href="https://phillytenant.org" target="_blank" rel="noopener"><span class="hl-icon">&#9994;</span><span class="hl-name">Philadelphia Tenants Union<small>phillytenant.org</small></span><span class="hl-num">&rarr;</span></a></li>
+      <li><a href="tel:+18007997233"><span class="hl-icon">&#128156;</span><span class="hl-name">National DV Hotline<small>Text START to 88788</small></span><span class="hl-num">1-800-799-7233</span></a></li>
+    </ul>
+    <div class="help-disc">This app does not provide emergency services. For immediate danger, call 911.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var fab=document.getElementById("help-fab");
+  var overlay=document.getElementById("help-overlay");
+  var closeBtn=document.getElementById("help-close");
+  var modal=overlay.querySelector(".help-modal");
+  var prevFocus=null;
+
+  function openHelp(){
+    prevFocus=document.activeElement;
+    overlay.classList.add("open");
+    closeBtn.focus();
+    document.body.style.overflow="hidden";
+  }
+  function closeHelp(){
+    overlay.classList.remove("open");
+    document.body.style.overflow="";
+    if(prevFocus) prevFocus.focus();
+  }
+  fab.addEventListener("click",openHelp);
+  closeBtn.addEventListener("click",closeHelp);
+  overlay.addEventListener("click",function(e){if(e.target===overlay) closeHelp();});
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"&&overlay.classList.contains("open")) closeHelp();
+    if(!overlay.classList.contains("open")) return;
+    if(e.key==="Tab"){
+      var focusable=modal.querySelectorAll('a[href],button,[tabindex]:not([tabindex="-1"])');
+      if(!focusable.length) return;
+      var first=focusable[0],last=focusable[focusable.length-1];
+      if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+      else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
