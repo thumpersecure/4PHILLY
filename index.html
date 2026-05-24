@@ -1297,6 +1297,13 @@ function renderViolHistory(all){
 }
 
 function render311(rows){
+  // Enforce 24-month window client-side as a safety net (SQL already filters, but
+  // Carto can return stale rows due to timezone drift or query edge cases)
+  const cutoff24mo=Date.now()-1000*60*60*24*730;
+  rows=(Array.isArray(rows)?rows:[]).filter(r=>{
+    const t=new Date(r.requested_datetime).getTime();
+    return !isNaN(t)&&t>=cutoff24mo;
+  });
   $("#t-c").textContent=rows.length;
   if(rows.length===0){
     $("#t-body").innerHTML=`<div class="banner">No 311 complaints in the last 24 months at this address pattern.</div>`;
@@ -1326,6 +1333,8 @@ function render311(rows){
 }
 
 function renderDriftLicense(eRows,cRows){
+  eRows=Array.isArray(eRows)?eRows:[];
+  cRows=Array.isArray(cRows)?cRows:[];
   if(eRows.length===0&&cRows.length===0){
     $("#drift-lic").innerHTML=`<div class="banner">No business license rows in either system for this OPA.</div>`;
     return;
@@ -1391,6 +1400,8 @@ function renderDriftLicense(eRows,cRows){
 }
 
 function renderDriftViolations(eAll,cartoDist){
+  eAll=Array.isArray(eAll)?eAll:[];
+  cartoDist=Array.isArray(cartoDist)?cartoDist:[];
   const KNOWN_STATUSES=["OPEN","COMPLIED","COMPEXCP","CMPLY","CLOSED","CLOSEDCASE","RESOLVE","DEMOLISH","SVN ISSUED","CVN ISSUED","WARNING ISSUED","STOP WORK","ERROR"];
   const eDist={OTHER:0}; KNOWN_STATUSES.forEach(s=>eDist[s]=0);
   eAll.forEach(v=>{ const s=v.violationstatus; if(s!=null&&eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
