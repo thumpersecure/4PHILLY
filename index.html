@@ -251,6 +251,77 @@
     .score-item{padding:10px 12px;border-radius:4px}
   }
 
+  /* 4P City Scanner */
+  .scanner-toggle{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .scanner-toggle button{flex:1;background:transparent;color:var(--ink-dim);border:none;font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.06em;padding:12px 16px;min-height:44px;cursor:pointer;transition:background .15s,color .15s;touch-action:manipulation}
+  .scanner-toggle button:not(:last-child){border-right:1px solid var(--line)}
+  .scanner-toggle button.active{background:var(--amber);color:#1a1100}
+  .scanner-toggle button:hover:not(.active){background:rgba(255,176,0,.06);color:var(--ink)}
+  #scanner-panel{display:none}
+  #scanner-panel.active{display:block}
+  #zip-scanner-panel{display:none}
+  #zip-scanner-panel.active{display:block}
+  #lookup-panel.hidden{display:none}
+
+  .scan-btn{background:var(--amber);color:#1a1100;border:none;padding:16px 32px;min-height:56px;font-family:"Archivo",sans-serif;font-weight:800;font-size:18px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:background .15s,transform .1s;touch-action:manipulation;display:block;width:100%;max-width:400px;margin:0 auto}
+  .scan-btn:hover{background:var(--amber-soft)}
+  .scan-btn:active{transform:scale(.98)}
+  .scan-btn:disabled{cursor:not-allowed;opacity:.72}
+
+  .scan-spinner{display:flex;align-items:center;justify-content:center;gap:12px;padding:24px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-dim)}
+  .scan-spinner .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:scan-pulse 1.4s infinite ease-in-out both}
+  .scan-spinner .dot:nth-child(1){animation-delay:-.32s}
+  .scan-spinner .dot:nth-child(2){animation-delay:-.16s}
+  @keyframes scan-pulse{0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+  .scan-timestamp{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);margin-top:8px;margin-bottom:20px}
+
+  .scan-section{margin-top:28px}
+  .scan-section h2{font-family:"Archivo",sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-dim);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:10px}
+  .scan-section h2 .scan-count{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--amber)}
+  .scan-section .scan-unavail{padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--ink-mute);background:var(--panel);font-size:13px;color:var(--ink-dim);border-radius:2px;font-family:"IBM Plex Mono",monospace}
+
+  .scan-list{max-height:420px;overflow-y:auto;border:1px solid var(--line);border-radius:3px;scrollbar-width:thin;scrollbar-color:var(--line) var(--panel)}
+  .scan-list::-webkit-scrollbar{width:6px}
+  .scan-list::-webkit-scrollbar-track{background:var(--panel)}
+  .scan-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+  .scan-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .12s;font-family:"IBM Plex Mono",monospace;font-size:12px}
+  .scan-row:last-child{border-bottom:none}
+  .scan-row:hover{background:rgba(255,176,0,.04)}
+  .scan-row .sr-rank{color:var(--ink-mute);font-size:10px;min-width:22px;text-align:right;flex-shrink:0}
+  .scan-row .sr-addr{color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .scan-row .sr-count{font-weight:600;flex-shrink:0;padding:2px 8px;border-radius:2px;font-size:11px}
+  .scan-row .sr-count.red{background:rgba(255,69,58,.12);color:var(--red);border:1px solid rgba(255,69,58,.35)}
+  .scan-row .sr-count.orange{background:rgba(255,149,0,.12);color:#ff9500;border:1px solid rgba(255,149,0,.35)}
+  .scan-row .sr-count.yellow{background:rgba(255,214,10,.1);color:#ffd60a;border:1px solid rgba(255,214,10,.3)}
+  .scan-row .sr-count.muted{background:rgba(154,154,154,.08);color:var(--ink-dim);border:1px solid var(--line)}
+
+  .scan-row-owner{display:grid;grid-template-columns:30px 1fr 90px 90px;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line-soft);font-family:"IBM Plex Mono",monospace;font-size:12px}
+  .scan-row-owner:last-child{border-bottom:none}
+  .scan-row-owner:hover{background:rgba(255,176,0,.04)}
+  .scan-row-owner .sr-rank{color:var(--ink-mute);font-size:10px;text-align:right}
+  .scan-row-owner .sr-name{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .scan-row-owner .sr-meta{color:var(--ink-dim);text-align:right;font-size:11px}
+  .scan-row-owner .sr-meta b{color:var(--red);font-weight:600}
+
+  .scan-row-lic{display:grid;grid-template-columns:1fr 140px 70px 100px;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line-soft);font-family:"IBM Plex Mono",monospace;font-size:12px}
+  .scan-row-lic:last-child{border-bottom:none}
+  .scan-row-lic .sr-name{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .scan-row-lic .sr-biz{color:var(--ink-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+  .scan-row-lic .sr-units{color:var(--ink-dim);text-align:right;font-size:11px}
+  .scan-row-lic .sr-exp{color:var(--red);font-size:11px;text-align:right}
+
+  @media(max-width:679px){
+    .scanner-toggle button{font-size:12px;padding:10px 12px;letter-spacing:.04em}
+    .scan-btn{font-size:15px;padding:14px 24px;border-radius:4px}
+    .scan-section h2{font-size:12px;letter-spacing:.08em}
+    .scan-list{max-height:340px}
+    .scan-row{padding:9px 10px;font-size:11px}
+    .scan-row-owner{grid-template-columns:24px 1fr 70px 70px;padding:9px 10px;font-size:11px}
+    .scan-row-lic{grid-template-columns:1fr 100px 50px 80px;padding:9px 10px;font-size:11px}
+  }
+
   /* Loading skeleton */
   .skel{display:inline-block;width:60px;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;vertical-align:middle}
   .skel-block{display:block;width:100%;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;margin-bottom:8px}
@@ -338,7 +409,87 @@
     </div>
   </header>
 
-  <section>
+  <div class="scanner-toggle" id="mode-toggle">
+    <button class="active" data-mode="lookup">Property Lookup</button>
+    <button data-mode="scanner">4P City Scanner</button>
+    <button data-mode="zip">4P</button>
+  </div>
+
+  <div id="scanner-panel">
+    <div style="text-align:center;padding:20px 0 8px">
+      <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">Check Philly</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Scan the entire city for the worst properties, most 311 complaints, expired rental licenses, and repeat offender owners using Philadelphia open data.</div>
+    </div>
+    <div style="padding:20px 0">
+      <button class="scan-btn" id="scan-go">Check Philly</button>
+    </div>
+    <div id="scan-spinner" style="display:none">
+      <div class="scan-spinner">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span id="scan-status-text">Scanning city-wide data...</span>
+      </div>
+    </div>
+    <div id="scan-timestamp" class="scan-timestamp" style="display:none"></div>
+    <div id="scan-results" style="display:none">
+      <div class="scan-section" id="scan-sec-violations">
+        <h2>Worst Properties — Open Violations <span class="scan-count" id="scan-viol-count"></span></h2>
+        <div id="scan-viol-body"></div>
+      </div>
+      <div class="scan-section" id="scan-sec-311">
+        <h2>Most 311 Complaints (12 months) <span class="scan-count" id="scan-311-count"></span></h2>
+        <div id="scan-311-body"></div>
+      </div>
+      <div class="scan-section" id="scan-sec-licenses">
+        <h2>Expired Rental Licenses <span class="scan-count" id="scan-lic-count"></span></h2>
+        <div id="scan-lic-body"></div>
+      </div>
+      <div class="scan-section" id="scan-sec-owners">
+        <h2>Repeat Offender Owners <span class="scan-count" id="scan-owner-count"></span></h2>
+        <div id="scan-owner-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="zip-scanner-panel" style="display:none">
+    <div style="text-align:center;padding:20px 0 8px">
+      <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">4P Zip Code Scanner</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Scan a Philadelphia zip code for the worst properties, most 311 complaints, expired rental licenses, and repeat offender owners.</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;align-items:flex-end;padding:16px 0;flex-wrap:wrap">
+      <div class="field" style="flex:0 0 180px">
+        <label for="zip-input">Zip code</label>
+        <input id="zip-input" type="text" placeholder="Enter ZIP code" maxlength="5" inputmode="numeric" autocomplete="off" pattern="\d{5}">
+      </div>
+      <button class="btn" id="zip-scan-go" style="min-height:44px;padding:0 24px">Scan</button>
+    </div>
+    <div id="zip-scan-spinner" style="display:none">
+      <div class="scan-spinner">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span id="zip-scan-status-text">Scanning zip code data...</span>
+      </div>
+    </div>
+    <div id="zip-scan-timestamp" class="scan-timestamp" style="display:none"></div>
+    <div id="zip-scan-results" style="display:none">
+      <div class="scan-section" id="zip-sec-violations">
+        <h2>Worst Properties — Open Violations <span class="scan-count" id="zip-viol-count"></span></h2>
+        <div id="zip-viol-body"></div>
+      </div>
+      <div class="scan-section" id="zip-sec-311">
+        <h2>Most 311 Complaints (12 months) <span class="scan-count" id="zip-311-count"></span></h2>
+        <div id="zip-311-body"></div>
+      </div>
+      <div class="scan-section" id="zip-sec-licenses">
+        <h2>Expired Rental Licenses <span class="scan-count" id="zip-lic-count"></span></h2>
+        <div id="zip-lic-body"></div>
+      </div>
+      <div class="scan-section" id="zip-sec-owners">
+        <h2>Repeat Offender Owners <span class="scan-count" id="zip-owner-count"></span></h2>
+        <div id="zip-owner-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="lookup-panel">
     <div class="search">
       <div class="field">
         <label for="addr">Address or building name</label>
@@ -1988,6 +2139,350 @@ $$(".quick button").forEach(b=>{
     }
   });
 });
+
+// ---- Mode toggle (Property Lookup / City Scanner / 4P Zip Scanner) ----
+$("#mode-toggle").addEventListener("click",e=>{
+  const btn=e.target.closest("button[data-mode]");
+  if(!btn) return;
+  const mode=btn.dataset.mode;
+  $$("#mode-toggle button").forEach(b=>b.classList.toggle("active",b===btn));
+  const lookup=$("#lookup-panel");
+  const scanner=$("#scanner-panel");
+  const zipScanner=$("#zip-scanner-panel");
+  // Also hide property results when switching modes
+  const prophead=$("#prophead");
+  const tabs=$("#tabs");
+  const scoreCard=$("#score-card");
+  const paneContainer=$("#pane-container");
+  if(mode==="lookup"){
+    lookup.classList.remove("hidden");
+    scanner.classList.remove("active");
+    zipScanner.classList.remove("active");
+    zipScanner.style.display="none";
+    prophead.style.display=prophead.dataset.wasVisible==="true"?"block":"none";
+    if(tabs.dataset.wasVisible==="true") tabs.style.display="";
+    if(scoreCard.dataset.wasVisible==="true") scoreCard.style.display="block";
+    paneContainer.style.display="";
+  } else if(mode==="scanner"){
+    lookup.classList.add("hidden");
+    scanner.classList.add("active");
+    zipScanner.classList.remove("active");
+    zipScanner.style.display="none";
+    prophead.dataset.wasVisible=prophead.style.display!=="none"?"true":"false";
+    tabs.dataset.wasVisible=tabs.style.display!=="none"?"true":"false";
+    scoreCard.dataset.wasVisible=scoreCard.style.display!=="none"?"true":"false";
+    prophead.style.display="none";
+    tabs.style.display="none";
+    scoreCard.style.display="none";
+    paneContainer.style.display="none";
+  } else if(mode==="zip"){
+    lookup.classList.add("hidden");
+    scanner.classList.remove("active");
+    zipScanner.classList.add("active");
+    zipScanner.style.display="block";
+    prophead.dataset.wasVisible=prophead.style.display!=="none"?"true":"false";
+    tabs.dataset.wasVisible=tabs.style.display!=="none"?"true":"false";
+    scoreCard.dataset.wasVisible=scoreCard.style.display!=="none"?"true":"false";
+    prophead.style.display="none";
+    tabs.style.display="none";
+    scoreCard.style.display="none";
+    paneContainer.style.display="none";
+  }
+});
+
+// ---- 4P Zip Code Scanner ----
+(function initZipScanner(){
+  const CARTO_SQL="https://phl.carto.com/api/v2/sql";
+
+  async function zipCartoQuery(sql){
+    const url=`${CARTO_SQL}?q=${encodeURIComponent(sql)}&format=json`;
+    const r=await fetch(url);
+    if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
+    const j=await r.json();
+    if(j.error) throw new Error(`Carto: ${Array.isArray(j.error)?j.error[0]:String(j.error)}`);
+    return j.rows||[];
+  }
+
+  function violationCountClass(n){
+    if(n>=10) return "red";
+    if(n>=5) return "orange";
+    if(n>=3) return "yellow";
+    return "muted";
+  }
+
+  async function queryWorstProperties(zip){
+    // Try primary query with zip column
+    const queries=[
+      `SELECT opa_account_num, violationlocation, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND zip = '${zip}' GROUP BY opa_account_num, violationlocation ORDER BY violation_count DESC LIMIT 25`,
+      `SELECT opa_account_num, violationlocation, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND violationlocation LIKE '%${zip}%' GROUP BY opa_account_num, violationlocation ORDER BY violation_count DESC LIMIT 25`,
+      `SELECT v.opa_account_num, v.violationlocation, COUNT(*) as violation_count FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' AND p.zip_code = '${zip}' GROUP BY v.opa_account_num, v.violationlocation ORDER BY violation_count DESC LIMIT 25`
+    ];
+    for(const sql of queries){
+      try{
+        const rows=await zipCartoQuery(sql);
+        if(rows.length>0) return rows;
+      }catch(e){
+        console.warn("Violations query variant failed:",e.message);
+      }
+    }
+    return [];
+  }
+
+  async function query311Complaints(zip){
+    const queries=[
+      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zipcode = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
+      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zip_code = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
+    ];
+    for(const sql of queries){
+      try{
+        const rows=await zipCartoQuery(sql);
+        if(rows.length>0) return rows;
+      }catch(e){
+        console.warn("311 query variant failed:",e.message);
+      }
+    }
+    return [];
+  }
+
+  async function queryExpiredLicenses(zip){
+    const queries=[
+      `SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip = '${zip}' ORDER BY numberofunits DESC NULLS LAST LIMIT 25`,
+      `SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip_code = '${zip}' ORDER BY numberofunits DESC NULLS LAST LIMIT 25`
+    ];
+    for(const sql of queries){
+      try{
+        const rows=await zipCartoQuery(sql);
+        if(rows.length>0) return rows;
+      }catch(e){
+        console.warn("Licenses query variant failed:",e.message);
+      }
+    }
+    return [];
+  }
+
+  async function queryRepeatOffenders(zip){
+    const queries=[
+      `SELECT p.owner_1 as ownername, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' AND p.zip_code = '${zip}' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`
+    ];
+    for(const sql of queries){
+      try{
+        const rows=await zipCartoQuery(sql);
+        if(rows.length>0) return rows;
+      }catch(e){
+        console.warn("Repeat offenders query variant failed:",e.message);
+      }
+    }
+    return [];
+  }
+
+  function renderZipViolations(rows){
+    const body=$("#zip-viol-body");
+    const count=$("#zip-viol-count");
+    if(!rows||rows.length===0){
+      count.textContent="";
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No open violations found in this zip code.</div>`;
+      return;
+    }
+    count.textContent=rows.length;
+    let html=`<div class="scan-list">`;
+    rows.forEach((r,i)=>{
+      const addr=r.violationlocation||r.opa_account_num||"Unknown";
+      const ct=Number(r.violation_count)||0;
+      const colorClass=violationCountClass(ct);
+      const opa=(r.opa_account_num||"").trim();
+      html+=`<div class="scan-row" ${opa?`data-zip-opa="${esc(opa)}"`:""}style="cursor:${opa?"pointer":"default"}">
+        <span class="sr-rank">${i+1}</span>
+        <span class="sr-addr">${esc(String(addr))}</span>
+        <span class="sr-count ${colorClass}">${ct}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+    body.innerHTML=html;
+    // Click handler — switch to property lookup
+    body.querySelectorAll(".scan-row[data-zip-opa]").forEach(row=>{
+      row.addEventListener("click",()=>{
+        const opa=row.dataset.zipOpa;
+        if(!/^\d{6,12}$/.test(opa)) return;
+        // Switch to lookup mode
+        const lookupBtn=$('#mode-toggle button[data-mode="lookup"]');
+        if(lookupBtn) lookupBtn.click();
+        $("#opa").value=opa;
+        $("#addr").value="";
+        lookup(opa);
+      });
+    });
+  }
+
+  function renderZip311(rows){
+    const body=$("#zip-311-body");
+    const count=$("#zip-311-count");
+    if(!rows||rows.length===0){
+      count.textContent="";
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No 311 complaints found in this zip code (last 12 months).</div>`;
+      return;
+    }
+    count.textContent=rows.length;
+    let html=`<div class="scan-list">`;
+    rows.forEach((r,i)=>{
+      const addr=r.address||"Unknown";
+      const ct=Number(r.complaint_count)||0;
+      const colorClass=ct>=10?"red":ct>=5?"orange":ct>=3?"yellow":"muted";
+      html+=`<div class="scan-row" style="cursor:default">
+        <span class="sr-rank">${i+1}</span>
+        <span class="sr-addr">${esc(String(addr))}</span>
+        <span class="sr-count ${colorClass}">${ct}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+    body.innerHTML=html;
+  }
+
+  function renderZipLicenses(rows){
+    const body=$("#zip-lic-body");
+    const count=$("#zip-lic-count");
+    if(!rows||rows.length===0){
+      count.textContent="";
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No expired rental licenses found in this zip code.</div>`;
+      return;
+    }
+    count.textContent=rows.length;
+    let html=`<div class="scan-list">`;
+    rows.forEach(r=>{
+      const name=r.legalname||r.business_name||"Unknown";
+      const biz=r.business_name||"";
+      const units=r.numberofunits!=null&&r.numberofunits!==""?String(r.numberofunits):"--";
+      const expRaw=r.expirationdate;
+      const expStr=expRaw?fmtDate(expRaw):"--";
+      html+=`<div class="scan-row-lic">
+        <span class="sr-name">${esc(String(name))}</span>
+        <span class="sr-biz">${esc(String(biz))}</span>
+        <span class="sr-units">${esc(units)} units</span>
+        <span class="sr-exp">${esc(expStr)}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+    body.innerHTML=html;
+  }
+
+  function renderZipOwners(rows){
+    const body=$("#zip-owner-body");
+    const count=$("#zip-owner-count");
+    if(!rows||rows.length===0){
+      count.textContent="";
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No repeat offender owners found in this zip code.</div>`;
+      return;
+    }
+    count.textContent=rows.length;
+    let html=`<div class="scan-list">`;
+    rows.forEach((r,i)=>{
+      const name=r.ownername||"Unknown";
+      const propCt=Number(r.property_count)||0;
+      const violCt=Number(r.total_violations)||0;
+      html+=`<div class="scan-row-owner">
+        <span class="sr-rank">${i+1}</span>
+        <span class="sr-name">${esc(String(name))}</span>
+        <span class="sr-meta">${propCt} prop${propCt===1?"":"s"}</span>
+        <span class="sr-meta"><b>${violCt}</b> violations</span>
+      </div>`;
+    });
+    html+=`</div>`;
+    body.innerHTML=html;
+  }
+
+  async function runZipScan(zip){
+    const spinner=$("#zip-scan-spinner");
+    const timestamp=$("#zip-scan-timestamp");
+    const results=$("#zip-scan-results");
+    const statusText=$("#zip-scan-status-text");
+    const scanBtn=$("#zip-scan-go");
+
+    // Reset
+    results.style.display="none";
+    timestamp.style.display="none";
+    spinner.style.display="block";
+    scanBtn.disabled=true;
+    scanBtn.classList.add("busy");
+    scanBtn.textContent="Scanning...";
+    statusText.textContent=`Scanning ZIP ${zip}...`;
+
+    try{
+      const [violations,complaints,licenses,owners]=await Promise.allSettled([
+        queryWorstProperties(zip),
+        query311Complaints(zip),
+        queryExpiredLicenses(zip),
+        queryRepeatOffenders(zip)
+      ]);
+
+      // Render each section
+      if(violations.status==="fulfilled"){
+        renderZipViolations(violations.value);
+      } else {
+        $("#zip-viol-count").textContent="";
+        $("#zip-viol-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
+      }
+
+      if(complaints.status==="fulfilled"){
+        renderZip311(complaints.value);
+      } else {
+        $("#zip-311-count").textContent="";
+        $("#zip-311-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
+      }
+
+      if(licenses.status==="fulfilled"){
+        renderZipLicenses(licenses.value);
+      } else {
+        $("#zip-lic-count").textContent="";
+        $("#zip-lic-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
+      }
+
+      if(owners.status==="fulfilled"){
+        renderZipOwners(owners.value);
+      } else {
+        $("#zip-owner-count").textContent="";
+        $("#zip-owner-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
+      }
+
+      // Show results and timestamp
+      results.style.display="block";
+      const now=new Date();
+      timestamp.textContent=`Results for ZIP ${zip} — scanned ${now.toISOString().replace("T"," ").slice(0,19)} UTC`;
+      timestamp.style.display="block";
+
+    }catch(err){
+      console.error("Zip scan error:",err);
+      results.style.display="block";
+      timestamp.textContent=`Scan failed: ${err.message}`;
+      timestamp.style.display="block";
+    }finally{
+      spinner.style.display="none";
+      scanBtn.disabled=false;
+      scanBtn.classList.remove("busy");
+      scanBtn.textContent="Scan";
+    }
+  }
+
+  // Event listeners
+  $("#zip-scan-go").addEventListener("click",()=>{
+    const input=$("#zip-input");
+    const zip=input.value.trim();
+    if(!/^\d{5}$/.test(zip)){
+      input.style.borderColor="var(--red)";
+      input.focus();
+      setTimeout(()=>input.style.borderColor="",1500);
+      return;
+    }
+    runZipScan(zip);
+  });
+
+  $("#zip-input").addEventListener("keydown",e=>{
+    if(e.key==="Enter") $("#zip-scan-go").click();
+  });
+
+  // Restrict input to digits only
+  $("#zip-input").addEventListener("input",e=>{
+    e.target.value=e.target.value.replace(/\D/g,"").slice(0,5);
+  });
+})();
 
 window.addEventListener("DOMContentLoaded",()=>{
   renderLimitsTab();
