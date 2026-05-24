@@ -225,6 +225,32 @@
     .council-al-card{padding:12px;border-radius:4px}
   }
 
+  /* 4P Score */
+  .score-card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:3px;padding:22px 24px;margin-top:22px}
+  .score-card h2{font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-dim);margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  .score-card h2 .score-badge{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;text-transform:uppercase}
+  .score-card .score-desc{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);margin-bottom:18px}
+  .score-hero{display:flex;align-items:center;gap:18px;margin-bottom:20px}
+  .score-number{font-family:"Archivo",sans-serif;font-weight:800;font-size:56px;line-height:1;letter-spacing:-.02em}
+  .score-label{font-family:"Archivo",sans-serif;font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
+  .score-sublabel{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);margin-top:4px}
+  .score-bar{height:8px;background:var(--line-soft);border-radius:99px;overflow:hidden;margin-bottom:20px}
+  .score-bar-fill{height:100%;border-radius:99px;transition:width .4s ease}
+  .score-breakdown{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media(min-width:600px){.score-breakdown{grid-template-columns:repeat(4,1fr)}}
+  .score-item{background:var(--panel);border:1px solid var(--line-soft);border-radius:3px;padding:12px 14px}
+  .score-item h4{margin:0 0 4px;font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-mute)}
+  .score-item .si-val{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-dim);margin-bottom:4px}
+  .score-item .si-pts{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600}
+  @media(max-width:679px){
+    .score-card{padding:16px;margin-top:16px;border-radius:6px}
+    .score-hero{gap:14px}
+    .score-number{font-size:42px}
+    .score-label{font-size:14px}
+    .score-breakdown{grid-template-columns:repeat(2,1fr);gap:8px}
+    .score-item{padding:10px 12px;border-radius:4px}
+  }
+
   /* Loading skeleton */
   .skel{display:inline-block;width:60px;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;vertical-align:middle}
   .skel-block{display:block;width:100%;height:14px;background:linear-gradient(90deg,var(--line) 0%,var(--line-soft) 50%,var(--line) 100%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:2px;margin-bottom:8px}
@@ -366,6 +392,20 @@
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </button>
     </div>
+  </div>
+
+  <div id="score-card" class="score-card" style="display:none">
+    <h2>4P Score <span class="score-badge" id="score-badge">—</span></h2>
+    <div class="score-desc">Composite tenant risk assessment using Philadelphia public records</div>
+    <div class="score-hero">
+      <div class="score-number" id="score-number">—</div>
+      <div>
+        <div class="score-label" id="score-label">—</div>
+        <div class="score-sublabel">out of 100 · higher = worse for tenants</div>
+      </div>
+    </div>
+    <div class="score-bar"><div class="score-bar-fill" id="score-bar-fill"></div></div>
+    <div class="score-breakdown" id="score-breakdown"></div>
   </div>
 
   <nav class="tabs" id="tabs" style="display:none">
@@ -544,6 +584,8 @@ function clearRenderedPanels(){
   $("#prm-c").textContent="";
   $("#bcert-c").textContent="";
   $("#council-body").innerHTML="";
+  $("#score-card").style.display="none";
+  $("#score-breakdown").innerHTML="";
 }
 
 // ---- Formatters ----
@@ -1594,6 +1636,123 @@ $("#star-btn").addEventListener('click',()=>{
   updateStarBtn(opa);
 });
 
+// ---- 4P Score ----
+function calc4PScore({openViolCount, rentalLicenseStatus, complaints12mo, hasUnfit}){
+  // 1. Open L&I Violations (max 50)
+  let violPts=0;
+  if(openViolCount>=16) violPts=50;
+  else if(openViolCount>=9) violPts=40;
+  else if(openViolCount>=4) violPts=25;
+  else if(openViolCount>=1) violPts=10;
+
+  // 2. Rental License Status (max 25)
+  let licPts=0;
+  if(rentalLicenseStatus==="none") licPts=25;
+  else if(rentalLicenseStatus==="expired") licPts=20;
+  // "active" = 0
+
+  // 3. 311 Complaints last 12 months (max 15)
+  let t311Pts=0;
+  if(complaints12mo>=9) t311Pts=15;
+  else if(complaints12mo>=4) t311Pts=10;
+  else if(complaints12mo>=1) t311Pts=5;
+
+  // 4. Unfit Structure (max 10)
+  let unfitPts=hasUnfit?10:0;
+
+  const total=Math.min(100, violPts+licPts+t311Pts+unfitPts);
+  return {total, violPts, licPts, t311Pts, unfitPts, openViolCount, rentalLicenseStatus, complaints12mo, hasUnfit};
+}
+
+function get4PScoreLevel(score){
+  if(score<=20) return {label:"Low Risk",color:"var(--green)",bg:"rgba(48,209,88,.12)",border:"rgba(48,209,88,.3)"};
+  if(score<=45) return {label:"Moderate",color:"var(--amber)",bg:"rgba(255,176,0,.12)",border:"rgba(255,176,0,.35)"};
+  if(score<=70) return {label:"Elevated",color:"#ff9500",bg:"rgba(255,149,0,.12)",border:"rgba(255,149,0,.35)"};
+  return {label:"High Risk",color:"var(--red)",bg:"rgba(255,69,58,.12)",border:"rgba(255,69,58,.35)"};
+}
+
+function render4PScore(scoreData){
+  const card=$("#score-card");
+  if(!card) return;
+  card.style.display="block";
+
+  const level=get4PScoreLevel(scoreData.total);
+
+  // Badge
+  const badge=$("#score-badge");
+  badge.textContent=level.label;
+  badge.style.background=level.bg;
+  badge.style.color=level.color;
+  badge.style.border=`1px solid ${level.border}`;
+
+  // Hero number
+  const num=$("#score-number");
+  num.textContent=scoreData.total;
+  num.style.color=level.color;
+
+  // Label
+  $("#score-label").textContent=level.label;
+  $("#score-label").style.color=level.color;
+
+  // Bar
+  const fill=$("#score-bar-fill");
+  fill.style.width=`${scoreData.total}%`;
+  fill.style.background=level.color;
+
+  // Breakdown
+  const licStatusDisplay=scoreData.rentalLicenseStatus==="active"?"Active":scoreData.rentalLicenseStatus==="expired"?"Expired":"No license found";
+  const licStatusColor=scoreData.rentalLicenseStatus==="active"?"var(--green)":scoreData.rentalLicenseStatus==="expired"?"var(--red)":"var(--red)";
+  const unfitDisplay=scoreData.hasUnfit?"Yes":"No";
+  const unfitColor=scoreData.hasUnfit?"var(--red)":"var(--green)";
+
+  $("#score-breakdown").innerHTML=`
+    <div class="score-item">
+      <h4>Open Violations</h4>
+      <div class="si-val">${scoreData.openViolCount} violation${scoreData.openViolCount===1?"":"s"}</div>
+      <div class="si-pts" style="color:${scoreData.violPts>0?"var(--red)":"var(--green)"}">+${scoreData.violPts} pts</div>
+    </div>
+    <div class="score-item">
+      <h4>Rental License</h4>
+      <div class="si-val" style="color:${licStatusColor}">${esc(licStatusDisplay)}</div>
+      <div class="si-pts" style="color:${scoreData.licPts>0?"var(--red)":"var(--green)"}">+${scoreData.licPts} pts</div>
+    </div>
+    <div class="score-item">
+      <h4>311 Complaints</h4>
+      <div class="si-val">${scoreData.complaints12mo} in 12 mo.</div>
+      <div class="si-pts" style="color:${scoreData.t311Pts>0?"var(--amber)":"var(--green)"}">+${scoreData.t311Pts} pts</div>
+    </div>
+    <div class="score-item">
+      <h4>Unfit Structure</h4>
+      <div class="si-val" style="color:${unfitColor}">${unfitDisplay}</div>
+      <div class="si-pts" style="color:${scoreData.unfitPts>0?"var(--red)":"var(--green)"}">+${scoreData.unfitPts} pts</div>
+    </div>
+  `;
+}
+
+function compute4PScoreFromLookup({lic, ovE, t311, allViol}){
+  // Open violations count
+  const openViolCount=ovE.length;
+
+  // Rental license status
+  const rentalRows=(Array.isArray(lic)?lic:[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
+  let rentalLicenseStatus="none";
+  if(rentalRows.length>0){
+    const hasActive=rentalRows.some(r=>analyzeLicenseRow(r).isActive);
+    rentalLicenseStatus=hasActive?"active":"expired";
+  }
+
+  // 311 complaints in last 12 months
+  const twelveMonthsAgo=Date.now()-1000*60*60*24*365;
+  const complaints12mo=t311.filter(r=>new Date(r.requested_datetime).getTime()>=twelveMonthsAgo).length;
+
+  // Unfit structure: check all violations (open or historical) for Unfit code title
+  const hasUnfit=[...ovE,...(allViol||[])].some(v=>
+    /unfit/i.test(String(v.violationcodetitle||""))
+  );
+
+  return calc4PScore({openViolCount, rentalLicenseStatus, complaints12mo, hasUnfit});
+}
+
 // ---- Main lookup ----
 async function lookup(opa){
   if(!/^\d{6,12}$/.test(opa)){ banner("Invalid OPA account number.",true); return; }
@@ -1653,6 +1812,7 @@ async function lookup(opa){
         if(seq !== lookupSeq) return;
       }else{
         $("#prophead").style.display="none";
+        $("#score-card").style.display="none";
         $("#tabs").style.display="none";
         setActiveRecordState(false);
         $$(".pane").forEach(p=>p.classList.remove("active"));
@@ -1687,6 +1847,11 @@ async function lookup(opa){
     renderPermits(permits);
     renderBuildingCerts(bcerts);
     renderCouncilTab(opaRow,ovE,lic);
+
+    // 4P Score
+    const scoreData=compute4PScoreFromLookup({lic,ovE,t311,allViol});
+    render4PScore(scoreData);
+
     $("#banner").style.display="none";
     completeLookupProgress(seq,"Property report ready.");
 
@@ -1694,6 +1859,7 @@ async function lookup(opa){
     if(seq !== lookupSeq) return;
     console.error(err);
     $("#prophead").style.display="none";
+    $("#score-card").style.display="none";
     $("#tabs").style.display="none";
     setActiveRecordState(false);
     $$(".pane").forEach(p=>p.classList.remove("active"));
@@ -1721,6 +1887,7 @@ function resetSearchState({focus=false,showPrompt=false}={}){
   $("#addr").value="";
   switchTab("inspect");
   $("#prophead").style.display="none";
+  $("#score-card").style.display="none";
   $("#tabs").style.display="none";
   setActiveRecordState(false);
   clearRenderedPanels();
