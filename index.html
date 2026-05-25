@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>4PHILLY — Philadelphia property record</title>
 <meta name="description" content="Unified Philadelphia property record — Eclipse vs Carto drift, L&amp;I business license status, open violations, 311 complaints, council district resolution. Installable on iOS and Android.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com; img-src 'self' data:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com; img-src 'self' data:;">
 <meta name="theme-color" content="#ffb000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -623,6 +623,63 @@
     .zr-table th, .zr-table td { padding:6px 6px; }
     .zr-reason { display:none; }
   }
+  .zr-zip-link { color:var(--amber); cursor:pointer; border-bottom:1px dotted rgba(255,176,0,.4); }
+  .zr-zip-link:hover { color:var(--amber-soft); }
+  @media print {
+    body.print-rankings * { display:none!important; }
+    body.print-rankings #zip-rankings { display:block!important; }
+    body.print-rankings #zip-rankings * { display:revert!important; }
+    body.print-rankings #zip-rankings { padding:0!important; max-width:100%!important; }
+    body.print-rankings .zr-header h2 { color:#000!important; }
+    body.print-rankings .zr-table { font-size:10pt!important; }
+    body.print-rankings .zr-table th { background:#eee!important; color:#000!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    body.print-rankings .zr-table td { color:#000!important; border-bottom:1px solid #ccc!important; }
+    body.print-rankings .zr-container { max-height:none!important; overflow:visible!important; border:none!important; }
+    body.print-rankings .zr-actions { display:none!important; }
+    body.print-rankings .zr-score { color:#000!important; }
+    body.print-rankings .zr-level { border:1px solid #999!important; }
+    body.print-rankings .zr-zip-link { color:#000!important; border-bottom:none!important; text-decoration:none!important; }
+    @page { margin:0.5in; }
+  }
+
+  /* AI Assistant */
+  .ai-fab { position:fixed; bottom:16px; left:72px; z-index:998; background:var(--blue); color:#fff; border:none; border-radius:50%; width:48px; height:48px; font-size:22px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:none; }
+  .ai-fab.visible { display:flex; align-items:center; justify-content:center; }
+  .ai-fab:hover { background:#90caf9; }
+
+  .ai-panel { display:none; position:fixed; bottom:80px; left:16px; width:380px; max-height:500px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); z-index:999; flex-direction:column; overflow:hidden; }
+  .ai-panel.open { display:flex; }
+
+  .ai-panel-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--panel-2); border-bottom:1px solid var(--line); }
+  .ai-panel-header h3 { font-size:14px; color:var(--blue); margin:0; font-family:Archivo,sans-serif; }
+  .ai-panel-close { background:none; border:none; color:var(--ink-mute); font-size:18px; cursor:pointer; padding:0 4px; }
+  .ai-panel-close:hover { color:var(--ink); }
+
+  .ai-messages { flex:1; overflow-y:auto; padding:12px 16px; max-height:320px; }
+  .ai-msg { margin-bottom:12px; font-size:13px; line-height:1.6; }
+  .ai-msg.user { text-align:right; }
+  .ai-msg.user .ai-bubble { background:var(--blue); color:#fff; display:inline-block; padding:8px 12px; border-radius:12px 12px 4px 12px; max-width:85%; text-align:left; }
+  .ai-msg.assistant .ai-bubble { background:var(--panel-2); color:var(--ink); display:inline-block; padding:8px 12px; border-radius:12px 12px 12px 4px; max-width:85%; }
+  .ai-msg.system .ai-bubble { background:rgba(255,176,0,0.1); color:var(--amber); font-size:12px; text-align:center; padding:6px 12px; border-radius:8px; font-style:italic; }
+
+  .ai-input-row { display:flex; padding:8px 12px; border-top:1px solid var(--line); gap:8px; }
+  .ai-input { flex:1; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:8px 10px; color:var(--ink); font-size:13px; resize:none; min-height:36px; max-height:80px; font-family:inherit; }
+  .ai-input:focus { border-color:var(--blue); outline:none; }
+  .ai-send { background:var(--blue); color:#fff; border:none; border-radius:6px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .ai-send:hover { background:#90caf9; }
+  .ai-send:disabled { background:var(--line); color:var(--ink-mute); cursor:not-allowed; }
+
+  .ai-setup { padding:16px; }
+  .ai-setup label { display:block; font-size:12px; color:var(--ink-dim); margin-bottom:4px; }
+  .ai-setup select, .ai-setup input { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:13px; margin-bottom:10px; }
+  .ai-setup select:focus, .ai-setup input:focus { border-color:var(--blue); outline:none; }
+  .ai-setup .ai-setup-btn { width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; }
+  .ai-setup .ai-note { font-size:11px; color:var(--ink-mute); margin-top:8px; line-height:1.5; }
+
+  @media(max-width:679px) {
+    .ai-panel { left:8px; right:8px; width:auto; bottom:72px; max-height:60vh; }
+    .ai-fab { left:16px; bottom:16px; width:44px; height:44px; font-size:20px; }
+  }
 </style>
 </head>
 <body>
@@ -632,6 +689,7 @@
     <div>
       <div class="brand">
         <div class="brand-mark">4<span>PHILLY</span></div>
+        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v1.0</span>
         <div class="brand-tag">Philadelphia property record</div>
       </div>
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
@@ -639,7 +697,7 @@
       </div>
     </div>
     <div class="top-meta">
-      <div>build <span class="mono">0.9.0</span></div>
+      <div>build <span class="mono">1.0</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -919,7 +977,7 @@
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a></div>
-  <div class="footer-disc">4PHILLY v0.9.5 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-disc">4PHILLY v1.0 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
@@ -2192,6 +2250,57 @@ var LEGAL_AID = [
   {name:"Fair Housing Commission", phone:"215-686-4670", url:"https://www.phila.gov/departments/fair-housing-commission/", issues:["discrimination","housing"]},
   {name:"Commission on Human Relations", phone:"215-686-4670", url:"https://www.phila.gov/departments/commission-on-human-relations/", issues:["discrimination"]}
 ];
+
+var ZIP_RANKINGS = [
+  {r:1,z:"19144",s:70.0,l:"high",v:3440,c:7745,e:6139,p:13439,reason:"Moderate violation density (25.6 per 100 properties), 7745 311 complaints (57.6/100), 6139 expired licenses (45.7/100)"},
+  {r:2,z:"19104",s:66.6,l:"elevated",v:2687,c:6901,e:5309,p:11812,reason:"Moderate violation density (22.8 per 100 properties), 6901 311 complaints (58.4/100), 5309 expired licenses (45.0/100)"},
+  {r:3,z:"19139",s:66.2,l:"elevated",v:3644,c:8598,e:8009,p:16468,reason:"Moderate violation density (22.1 per 100 properties), 8598 311 complaints (52.2/100), 8009 expired licenses (48.6/100)"},
+  {r:4,z:"19140",s:65.6,l:"elevated",v:5847,c:9575,e:9797,p:22778,reason:"Moderate violation density (25.7 per 100 properties), 9575 311 complaints (42.0/100), 9797 expired licenses (43.0/100)"},
+  {r:5,z:"19134",s:64.1,l:"elevated",v:5498,c:10350,e:13353,p:25762,reason:"Moderate violation density (21.3 per 100 properties), 10350 311 complaints (40.2/100), 13353 expired licenses (51.8/100)"},
+  {r:6,z:"19121",s:60.8,l:"elevated",v:3568,c:7430,e:6378,p:15812,reason:"Moderate violation density (22.6 per 100 properties), 7430 311 complaints (47.0/100), 6378 expired licenses (40.3/100)"},
+  {r:7,z:"19132",s:60.7,l:"elevated",v:5544,c:7312,e:7653,p:20603,reason:"High violation density (26.9 per 100 properties), 7312 311 complaints (35.5/100), 7653 expired licenses (37.1/100)"},
+  {r:8,z:"19141",s:60.4,l:"elevated",v:2342,c:5219,e:3818,p:10109,reason:"Moderate violation density (23.2 per 100 properties), 5219 311 complaints (51.6/100), 3818 expired licenses (37.8/100)"},
+  {r:9,z:"19142",s:59.9,l:"elevated",v:2625,c:4224,e:6111,p:11347,reason:"Moderate violation density (23.1 per 100 properties), 4224 311 complaints (37.2/100), 6111 expired licenses (53.9/100)"},
+  {r:10,z:"19143",s:59.3,l:"elevated",v:4625,c:11921,e:10324,p:25442,reason:"Moderate violation density (18.2 per 100 properties), 11921 311 complaints (46.9/100), 10324 expired licenses (40.6/100)"},
+  {r:11,z:"19138",s:56.1,l:"elevated",v:2826,c:5873,e:4313,p:12814,reason:"Moderate violation density (22.1 per 100 properties), 5873 311 complaints (45.8/100), 4313 expired licenses (33.7/100)"},
+  {r:12,z:"19131",s:55.8,l:"elevated",v:2638,c:7937,e:5180,p:15091,reason:"Moderate violation density (17.5 per 100 properties), 7937 311 complaints (52.6/100), 5180 expired licenses (34.3/100)"},
+  {r:13,z:"19124",s:54.7,l:"elevated",v:3677,c:9075,e:10942,p:23168,reason:"Moderate violation density (15.9 per 100 properties), 9075 311 complaints (39.2/100), 10942 expired licenses (47.2/100)"},
+  {r:14,z:"19107",s:53.6,l:"elevated",v:804,c:2945,e:1207,p:4737,reason:"Moderate violation density (17.0 per 100 properties), 2945 311 complaints (62.2/100), 1207 expired licenses (25.5/100)"},
+  {r:15,z:"19151",s:50.0,l:"elevated",v:1410,c:6347,e:3432,p:11356,reason:"Moderate violation density (12.4 per 100 properties), 6347 311 complaints (55.9/100), 3432 expired licenses (30.2/100)"},
+  {r:16,z:"19112",s:47.4,l:"elevated",v:52,c:14,e:1,p:98,reason:"High violation density (53.1 per 100 properties), 14 311 complaints (14.3/100), 1 expired licenses (1.0/100)"},
+  {r:17,z:"19146",s:47.0,l:"elevated",v:1589,c:10050,e:8676,p:20934,reason:"Low violation density (7.6 per 100 properties), 10050 311 complaints (48.0/100), 8676 expired licenses (41.4/100)"},
+  {r:18,z:"19102",s:46.5,l:"elevated",v:531,c:898,e:412,p:2165,reason:"Moderate violation density (24.5 per 100 properties), 898 311 complaints (41.5/100), 412 expired licenses (19.0/100)"},
+  {r:19,z:"19153",s:45.4,l:"elevated",v:587,c:1961,e:1384,p:4286,reason:"Moderate violation density (13.7 per 100 properties), 1961 311 complaints (45.8/100), 1384 expired licenses (32.3/100)"},
+  {r:20,z:"19120",s:45.3,l:"elevated",v:2562,c:8198,e:7958,p:21586,reason:"Moderate violation density (11.9 per 100 properties), 8198 311 complaints (38.0/100), 7958 expired licenses (36.9/100)"},
+  {r:21,z:"19135",s:44.8,l:"moderate",v:1479,c:4501,e:4980,p:12137,reason:"Moderate violation density (12.2 per 100 properties), 4501 311 complaints (37.1/100), 4980 expired licenses (41.0/100)"},
+  {r:22,z:"19123",s:44.5,l:"moderate",v:621,c:4029,e:1709,p:7018,reason:"Low violation density (8.8 per 100 properties), 4029 311 complaints (57.4/100), 1709 expired licenses (24.4/100)"},
+  {r:23,z:"19122",s:42.7,l:"moderate",v:964,c:4486,e:2238,p:9057,reason:"Moderate violation density (10.6 per 100 properties), 4486 311 complaints (49.5/100), 2238 expired licenses (24.7/100)"},
+  {r:24,z:"19127",s:42.3,l:"moderate",v:253,c:1404,e:1229,p:3161,reason:"Low violation density (8.0 per 100 properties), 1404 311 complaints (44.4/100), 1229 expired licenses (38.9/100)"},
+  {r:25,z:"19145",s:40.5,l:"moderate",v:1474,c:7301,e:6675,p:18727,reason:"Low violation density (7.9 per 100 properties), 7301 311 complaints (39.0/100), 6675 expired licenses (35.6/100)"},
+  {r:26,z:"19125",s:40.5,l:"moderate",v:946,c:6541,e:3911,p:13681,reason:"Low violation density (6.9 per 100 properties), 6541 311 complaints (47.8/100), 3911 expired licenses (28.6/100)"},
+  {r:27,z:"19148",s:40.1,l:"moderate",v:1501,c:9061,e:6834,p:21436,reason:"Low violation density (7.0 per 100 properties), 9061 311 complaints (42.3/100), 6834 expired licenses (31.9/100)"},
+  {r:28,z:"19126",s:40.1,l:"moderate",v:620,c:2336,e:1074,p:5109,reason:"Moderate violation density (12.1 per 100 properties), 2336 311 complaints (45.7/100), 1074 expired licenses (21.0/100)"},
+  {r:29,z:"19147",s:39.7,l:"moderate",v:1049,c:8113,e:4521,p:16837,reason:"Low violation density (6.2 per 100 properties), 8113 311 complaints (48.2/100), 4521 expired licenses (26.9/100)"},
+  {r:30,z:"19133",s:39.0,l:"moderate",v:2149,c:4463,e:3482,p:14360,reason:"Moderate violation density (15.0 per 100 properties), 4463 311 complaints (31.1/100), 3482 expired licenses (24.2/100)"},
+  {r:31,z:"19137",s:38.8,l:"moderate",v:468,c:1799,e:772,p:3968,reason:"Moderate violation density (11.8 per 100 properties), 1799 311 complaints (45.3/100), 772 expired licenses (19.5/100)"},
+  {r:32,z:"19136",s:38.7,l:"moderate",v:1071,c:4268,e:3445,p:11249,reason:"Low violation density (9.5 per 100 properties), 4268 311 complaints (37.9/100), 3445 expired licenses (30.6/100)"},
+  {r:33,z:"19103",s:38.1,l:"moderate",v:805,c:3629,e:1416,p:7847,reason:"Low violation density (10.3 per 100 properties), 3629 311 complaints (46.2/100), 1416 expired licenses (18.1/100)"},
+  {r:34,z:"19119",s:38.0,l:"moderate",v:1116,c:4138,e:1976,p:9909,reason:"Moderate violation density (11.3 per 100 properties), 4138 311 complaints (41.8/100), 1976 expired licenses (19.9/100)"},
+  {r:35,z:"19149",s:37.9,l:"moderate",v:1373,c:5312,e:8032,p:18501,reason:"Low violation density (7.4 per 100 properties), 5312 311 complaints (28.7/100), 8032 expired licenses (43.4/100)"},
+  {r:36,z:"19130",s:36.7,l:"moderate",v:833,c:4622,e:2830,p:11067,reason:"Low violation density (7.5 per 100 properties), 4622 311 complaints (41.8/100), 2830 expired licenses (25.6/100)"},
+  {r:37,z:"19129",s:35.8,l:"moderate",v:394,c:1539,e:1177,p:4206,reason:"Low violation density (9.4 per 100 properties), 1539 311 complaints (36.6/100), 1177 expired licenses (28.0/100)"},
+  {r:38,z:"19111",s:32.1,l:"moderate",v:1117,c:6324,e:5090,p:19154,reason:"Low violation density (5.8 per 100 properties), 6324 311 complaints (33.0/100), 5090 expired licenses (26.6/100)"},
+  {r:39,z:"19150",s:31.4,l:"moderate",v:864,c:3020,e:1734,p:9205,reason:"Low violation density (9.4 per 100 properties), 3020 311 complaints (32.8/100), 1734 expired licenses (18.8/100)"},
+  {r:40,z:"19128",s:29.8,l:"moderate",v:768,c:4754,e:2873,p:13853,reason:"Low violation density (5.5 per 100 properties), 4754 311 complaints (34.3/100), 2873 expired licenses (20.7/100)"},
+  {r:41,z:"19152",s:28.1,l:"moderate",v:601,c:2884,e:2607,p:10405,reason:"Low violation density (5.8 per 100 properties), 2884 311 complaints (27.7/100), 2607 expired licenses (25.1/100)"},
+  {r:42,z:"19118",s:26.1,l:"moderate",v:216,c:964,e:387,p:3001,reason:"Low violation density (7.2 per 100 properties), 964 311 complaints (32.1/100), 387 expired licenses (12.9/100)"},
+  {r:43,z:"19106",s:25.4,l:"moderate",v:532,c:1931,e:944,p:6867,reason:"Low violation density (7.8 per 100 properties), 1931 311 complaints (28.1/100), 944 expired licenses (13.8/100)"},
+  {r:44,z:"19116",s:24.3,l:"moderate",v:527,c:2862,e:1767,p:10411,reason:"Low violation density (5.1 per 100 properties), 2862 311 complaints (27.5/100), 1767 expired licenses (17.0/100)"},
+  {r:45,z:"19154",s:23.5,l:"moderate",v:583,c:3225,e:1626,p:11544,reason:"Low violation density (5.0 per 100 properties), 3225 311 complaints (27.9/100), 1626 expired licenses (14.1/100)"},
+  {r:46,z:"19115",s:21.9,l:"moderate",v:440,c:2971,e:1261,p:10553,reason:"Low violation density (4.2 per 100 properties), 2971 311 complaints (28.1/100), 1261 expired licenses (11.9/100)"},
+  {r:47,z:"19114",s:21.5,l:"moderate",v:541,c:2418,e:1539,p:10410,reason:"Low violation density (5.2 per 100 properties), 2418 311 complaints (23.2/100), 1539 expired licenses (14.8/100)"}
+];
+var ZIP_RANKINGS_GENERATED = "2026-05-25T19:03:25Z";
 
 // ---- Evidence Checklists ----
 var EVIDENCE_CHECKLISTS = {
@@ -3839,9 +3948,88 @@ function switchToLookupByAddress(addr){
   });
 })();
 
+// ---- ZIP Code Rankings ----
+function renderZipRankings(){
+  var tbody=document.getElementById("zr-body");
+  var section=document.getElementById("zip-rankings");
+  var tsEl=document.getElementById("zr-timestamp");
+  if(!tbody||!section) return;
+
+  var levelLabels={high:"High Risk",elevated:"Elevated",moderate:"Moderate",low:"Low"};
+  var html="";
+  ZIP_RANKINGS.forEach(function(d){
+    var levelLabel=levelLabels[d.l]||d.l;
+    html+='<tr>';
+    html+='<td style="color:var(--ink-mute);text-align:right">'+d.r+'</td>';
+    html+='<td><span class="zr-zip-link" data-zip="'+esc(d.z)+'" title="Scan ZIP '+esc(d.z)+'">'+esc(d.z)+'</span></td>';
+    html+='<td><span class="zr-score '+d.l+'">'+d.s.toFixed(1)+'</span></td>';
+    html+='<td><span class="zr-level '+d.l+'">'+esc(levelLabel)+'</span></td>';
+    html+='<td>'+d.v.toLocaleString()+'</td>';
+    html+='<td>'+d.c.toLocaleString()+'</td>';
+    html+='<td>'+d.e.toLocaleString()+'</td>';
+    html+='<td>'+d.p.toLocaleString()+'</td>';
+    html+='<td class="zr-reason">'+esc(d.reason)+'</td>';
+    html+='</tr>';
+  });
+  tbody.innerHTML=html;
+
+  if(tsEl){
+    var genDate=new Date(ZIP_RANKINGS_GENERATED);
+    var dateStr=isNaN(genDate.getTime())?"":genDate.toLocaleDateString("en-US",{timeZone:"America/New_York",year:"numeric",month:"long",day:"numeric"});
+    tsEl.textContent="Rankings generated "+dateStr+" from Philadelphia Open Data — "+ZIP_RANKINGS.length+" zip codes scored";
+  }
+
+  section.classList.add("loaded");
+
+  // Wire zip clicks to trigger zip scanner
+  tbody.addEventListener("click",function(e){
+    var link=e.target.closest(".zr-zip-link");
+    if(!link) return;
+    var zip=link.dataset.zip;
+    if(!zip) return;
+    // Switch to zip scanner mode and trigger scan
+    var zipInput=document.getElementById("zip-input");
+    if(zipInput) zipInput.value=zip;
+    switchMode("zip");
+    window.scrollTo({top:0,behavior:"smooth"});
+    var scanBtn=document.getElementById("zip-scan-go");
+    if(scanBtn) setTimeout(function(){scanBtn.click();},150);
+  });
+}
+
+function downloadRankingsPDF(){
+  // Build CSV data as a fallback download
+  var header="Rank,ZIP,Score,Level,Violations,311 Complaints,Expired Licenses,Properties,Reason";
+  var levelLabels={high:"High Risk",elevated:"Elevated",moderate:"Moderate",low:"Low"};
+  var rows=ZIP_RANKINGS.map(function(d){
+    return [d.r,d.z,d.s.toFixed(1),levelLabels[d.l]||d.l,d.v,d.c,d.e,d.p,'"'+d.reason.replace(/"/g,'""')+'"'].join(",");
+  });
+  var csv=header+"\n"+rows.join("\n");
+  // Try print first, fall back to CSV download
+  if(window.matchMedia){
+    document.body.classList.add("print-rankings");
+    window.print();
+    document.body.classList.remove("print-rankings");
+  } else {
+    // CSV fallback
+    var blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url;
+    a.download="philly_zip_rankings.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+}
+
 window.addEventListener("DOMContentLoaded",()=>{
   renderLimitsTab();
   renderSavedBar();
+  renderZipRankings();
+  var dlBtn=document.getElementById("zr-download");
+  if(dlBtn) dlBtn.addEventListener("click",downloadRankingsPDF);
   const hashMatch=location.hash.match(/^#opa=(\d{6,12})$/);
   if(hashMatch){
     $("#opa").value=hashMatch[1];
@@ -3855,6 +4043,37 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 </script>
+
+<!-- AI ASSISTANT -->
+<button class="ai-fab no-print" id="ai-fab" title="AI Tenant Assistant" aria-label="Open AI assistant">&#129302;</button>
+
+<div class="ai-panel no-print" id="ai-panel">
+  <div class="ai-panel-header">
+    <h3>&#129302; Tenant Assistant</h3>
+    <button class="ai-panel-close" id="ai-close" aria-label="Close assistant">&times;</button>
+  </div>
+
+  <div id="ai-setup-view" class="ai-setup">
+    <label for="ai-provider">AI Provider</label>
+    <select id="ai-provider">
+      <option value="openai">OpenAI (GPT-4)</option>
+      <option value="anthropic">Anthropic (Claude)</option>
+      <option value="google">Google (Gemini)</option>
+    </select>
+    <label for="ai-key">API Key</label>
+    <input type="password" id="ai-key" placeholder="Paste your API key" autocomplete="off">
+    <button class="ai-setup-btn" id="ai-start">Start Assistant</button>
+    <div class="ai-note">Your API key is stored locally on your device only. It is sent directly to your chosen AI provider — never to our servers. We have no backend.</div>
+  </div>
+
+  <div id="ai-chat-view" style="display:none; flex-direction:column; flex:1;">
+    <div class="ai-messages" id="ai-messages"></div>
+    <div class="ai-input-row">
+      <textarea class="ai-input" id="ai-input" placeholder="Ask about your rights, violations, next steps..." rows="1"></textarea>
+      <button class="ai-send" id="ai-send">Send</button>
+    </div>
+  </div>
+</div>
 
 <!-- Get Help — emergency hotlines button + modal -->
 <style>
@@ -4010,6 +4229,9 @@ if('serviceWorker' in navigator){
     <button class="zr-dl-btn" id="zr-download">Download PDF Report</button>
   </div>
 </div>
+
+<!-- ZIP Rankings data is embedded in the main script block as ZIP_RANKINGS.
+     renderZipRankings() populates the table on DOMContentLoaded. -->
 
 </body>
 </html>
