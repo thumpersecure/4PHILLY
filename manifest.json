@@ -18,5 +18,6 @@
     }
   ],
   "categories": ["utilities"],
-  "lang": "en-US"
+  "lang": "en-US",
+  "version": "1.0"
 }
