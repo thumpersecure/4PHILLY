@@ -591,6 +591,38 @@
   .evidence-checklist label.ecl-item input[type="checkbox"]{width:20px;height:20px;min-width:20px;margin:2px 0 0;accent-color:var(--amber);cursor:pointer}
   .evidence-checklist label.ecl-item span{font-size:13px;color:var(--ink-dim);line-height:1.5;padding-top:1px}
   .evidence-checklist label.ecl-item.checked span{color:var(--ink-mute);text-decoration:line-through}
+
+  /* ZIP Rankings */
+  #zip-rankings { display:none; padding:24px 16px; max-width:960px; margin:0 auto; }
+  #zip-rankings.loaded { display:block; }
+  .zr-header { text-align:center; margin-bottom:20px; }
+  .zr-header h2 { font-family:Archivo,sans-serif; font-size:20px; color:var(--amber); margin:0 0 6px; }
+  .zr-header .zr-sub { font-size:12px; color:var(--ink-dim); }
+  .zr-header .zr-updated { font-size:11px; color:var(--ink-mute); margin-top:4px; }
+  .zr-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .zr-table th { background:var(--panel-2); color:var(--amber); padding:8px 10px; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; position:sticky; top:0; }
+  .zr-table td { padding:8px 10px; border-bottom:1px solid var(--line-soft); }
+  .zr-table tr:hover td { background:rgba(255,176,0,0.04); }
+  .zr-score { font-weight:700; font-family:Archivo,sans-serif; }
+  .zr-score.high { color:var(--red); }
+  .zr-score.elevated { color:#ff9500; }
+  .zr-score.moderate { color:var(--amber); }
+  .zr-score.low { color:var(--green); }
+  .zr-level { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; padding:2px 6px; border-radius:3px; }
+  .zr-level.high { background:rgba(255,69,58,0.15); color:var(--red); }
+  .zr-level.elevated { background:rgba(255,149,0,0.15); color:#ff9500; }
+  .zr-level.moderate { background:rgba(255,176,0,0.15); color:var(--amber); }
+  .zr-level.low { background:rgba(48,209,88,0.15); color:var(--green); }
+  .zr-reason { font-size:11px; color:var(--ink-dim); max-width:300px; }
+  .zr-actions { text-align:center; margin-top:16px; }
+  .zr-dl-btn { display:inline-block; background:var(--amber); color:var(--bg); font-size:13px; font-weight:700; padding:8px 20px; border-radius:4px; text-decoration:none; cursor:pointer; border:none; }
+  .zr-dl-btn:hover { background:var(--amber-soft); }
+  .zr-container { max-height:500px; overflow-y:auto; border:1px solid var(--line); border-radius:6px; }
+  @media(max-width:679px) {
+    .zr-table { font-size:11px; }
+    .zr-table th, .zr-table td { padding:6px 6px; }
+    .zr-reason { display:none; }
+  }
 </style>
 </head>
 <body>
@@ -887,7 +919,7 @@
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a></div>
-  <div class="footer-disc">4PHILLY v0.9.0 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-disc">4PHILLY v0.9.5 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
@@ -3959,6 +3991,25 @@ if('serviceWorker' in navigator){
   });
 })();
 </script>
+
+<div id="zip-rankings" class="no-print">
+  <div class="zr-header">
+    <h2>Philadelphia ZIP Code Rankings</h2>
+    <div class="zr-sub">Worst to best — based on open violations, 311 complaints, and expired rental licenses (private landlords only)</div>
+    <div class="zr-updated" id="zr-timestamp"></div>
+  </div>
+  <div class="zr-container">
+    <table class="zr-table">
+      <thead>
+        <tr><th>#</th><th>ZIP</th><th>Score</th><th>Level</th><th>Violations</th><th>311</th><th>Expired</th><th>Properties</th><th>Why</th></tr>
+      </thead>
+      <tbody id="zr-body"></tbody>
+    </table>
+  </div>
+  <div class="zr-actions">
+    <button class="zr-dl-btn" id="zr-download">Download PDF Report</button>
+  </div>
+</div>
 
 </body>
 </html>
