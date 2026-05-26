@@ -627,14 +627,19 @@
   .zr-zip-link:hover { color:var(--amber-soft); }
   @media print {
     body.print-rankings > *:not(#zip-rankings) { display:none!important; }
-    body.print-rankings #zip-rankings { display:block!important; }
-    
-    body.print-rankings #zip-rankings { padding:0!important; max-width:100%!important; }
+    body.print-rankings #zip-rankings { display:block!important; padding:0!important; max-width:100%!important; }
+    body.print-rankings #zip-rankings .zr-header { display:block!important; }
+    body.print-rankings #zip-rankings .zr-container { display:block!important; max-height:none!important; overflow:visible!important; border:none!important; }
+    body.print-rankings #zip-rankings .zr-table { display:table!important; }
+    body.print-rankings #zip-rankings .zr-table thead { display:table-header-group!important; }
+    body.print-rankings #zip-rankings .zr-table tbody { display:table-row-group!important; }
+    body.print-rankings #zip-rankings .zr-table tr { display:table-row!important; }
+    body.print-rankings #zip-rankings .zr-table th,
+    body.print-rankings #zip-rankings .zr-table td { display:table-cell!important; }
     body.print-rankings .zr-header h2 { color:#000!important; }
     body.print-rankings .zr-table { font-size:10pt!important; }
     body.print-rankings .zr-table th { background:#eee!important; color:#000!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     body.print-rankings .zr-table td { color:#000!important; border-bottom:1px solid #ccc!important; }
-    body.print-rankings .zr-container { max-height:none!important; overflow:visible!important; border:none!important; }
     body.print-rankings .zr-actions { display:none!important; }
     body.print-rankings .zr-score { color:#000!important; }
     body.print-rankings .zr-level { border:1px solid #999!important; }
@@ -643,8 +648,7 @@
   }
 
   /* AI Assistant */
-  .ai-fab { position:fixed; bottom:16px; left:72px; z-index:998; background:var(--blue); color:#fff; border:none; border-radius:50%; width:48px; height:48px; font-size:22px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:none; }
-  .ai-fab.visible { display:flex; align-items:center; justify-content:center; }
+  .ai-fab { position:fixed; bottom:16px; left:72px; z-index:998; background:var(--blue); color:#fff; border:none; border-radius:50%; width:48px; height:48px; font-size:22px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; }
   .ai-fab:hover { background:#90caf9; }
 
   .ai-panel { display:none; position:fixed; bottom:80px; left:16px; width:380px; max-height:500px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); z-index:999; flex-direction:column; overflow:hidden; }
@@ -689,7 +693,7 @@
     <div>
       <div class="brand">
         <div class="brand-mark">4<span>PHILLY</span></div>
-        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v1.0</span>
+        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v2.0&#946;</span>
         <div class="brand-tag">Philadelphia property record</div>
       </div>
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
@@ -977,7 +981,7 @@
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a></div>
-  <div class="footer-disc">4PHILLY v1.0 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-disc">4PHILLY v2.0&#946; — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
@@ -1024,6 +1028,37 @@
 </div>
 
 <!-- bottom-nav removed; tabs are always at top -->
+
+<!-- AI ASSISTANT (must be before main script so initAIAssistant can find elements) -->
+<button class="ai-fab no-print" id="ai-fab" title="AI Tenant Assistant" aria-label="Open AI assistant">&#129302;</button>
+
+<div class="ai-panel no-print" id="ai-panel">
+  <div class="ai-panel-header">
+    <h3>&#129302; Tenant Assistant</h3>
+    <button class="ai-panel-close" id="ai-close" aria-label="Close assistant">&times;</button>
+  </div>
+
+  <div id="ai-setup-view" class="ai-setup">
+    <label for="ai-provider">AI Provider</label>
+    <select id="ai-provider">
+      <option value="openai">OpenAI (GPT-4)</option>
+      <option value="anthropic">Anthropic (Claude)</option>
+      <option value="google">Google (Gemini)</option>
+    </select>
+    <label for="ai-key">API Key</label>
+    <input type="password" id="ai-key" placeholder="Paste your API key" autocomplete="off">
+    <button class="ai-setup-btn" id="ai-start">Start Assistant</button>
+    <div class="ai-note">Your API key is stored locally on your device only. It is sent directly to your chosen AI provider — never to our servers. We have no backend.</div>
+  </div>
+
+  <div id="ai-chat-view" style="display:none; flex-direction:column; flex:1;">
+    <div class="ai-messages" id="ai-messages"></div>
+    <div class="ai-input-row">
+      <textarea class="ai-input" id="ai-input" placeholder="Ask about your rights, violations, next steps..." rows="1"></textarea>
+      <button class="ai-send" id="ai-send">Send</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const ECLIPSE = "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services";
@@ -4262,8 +4297,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
   if (typeof render4PScore === 'function') {
     // Can't easily hook - just show fab always
   }
-  // Show fab on load
-  aiFab.classList.add('visible');
+  // fab is always visible via CSS — no classList toggle needed
 
   // Restore saved provider/key
   aiProvider.value = provider;
@@ -4424,38 +4458,6 @@ Always provide relevant referrals. These organizations offer free or low-cost le
   });
 })();
 </script>
-
-<!-- AI ASSISTANT -->
-<button class="ai-fab no-print" id="ai-fab" title="AI Tenant Assistant" aria-label="Open AI assistant">&#129302;</button>
-
-<div class="ai-panel no-print" id="ai-panel">
-  <div class="ai-panel-header">
-    <h3>&#129302; Tenant Assistant</h3>
-    <button class="ai-panel-close" id="ai-close" aria-label="Close assistant">&times;</button>
-  </div>
-
-  <div id="ai-setup-view" class="ai-setup">
-    <label for="ai-provider">AI Provider</label>
-    <select id="ai-provider">
-      <option value="openai">OpenAI (GPT-4)</option>
-      <option value="anthropic">Anthropic (Claude)</option>
-      <option value="google">Google (Gemini)</option>
-    </select>
-    <label for="ai-key">API Key</label>
-    <input type="password" id="ai-key" placeholder="Paste your API key" autocomplete="off">
-    <button class="ai-setup-btn" id="ai-start">Start Assistant</button>
-    <div class="ai-note">Your API key is stored locally on your device only. It is sent directly to your chosen AI provider — never to our servers. We have no backend.</div>
-  </div>
-
-  <div id="ai-chat-view" style="display:none; flex-direction:column; flex:1;">
-    <div class="ai-messages" id="ai-messages"></div>
-    <div class="ai-input-row">
-      <textarea class="ai-input" id="ai-input" placeholder="Ask about your rights, violations, next steps..." rows="1"></textarea>
-      <button class="ai-send" id="ai-send">Send</button>
-    </div>
-  </div>
-</div>
-
 
 <!-- Get Help — emergency hotlines button + modal -->
 <style>
