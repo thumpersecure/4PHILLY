@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pointInPolygon, pointInGeometry, findDistrict } from '../src/geo.js';
+import { pointInPolygon, pointInPolygonWithHoles, pointInGeometry, findDistrict } from '../src/geo.js';
 import { Cache } from '../src/cache.js';
 
 test('geo: pointInPolygon - point inside simple square', () => {
@@ -40,6 +40,41 @@ test('geo: pointInGeometry - MultiPolygon type', () => {
   assert.equal(pointInGeometry([-75.15, 39.95], geometry), true);
   assert.equal(pointInGeometry([-74.95, 39.95], geometry), true);
   assert.equal(pointInGeometry([-75.05, 39.95], geometry), false);
+});
+
+test('geo: pointInPolygonWithHoles - point in hole is outside', () => {
+  const outer = [[-75.2, 39.9], [-75.0, 39.9], [-75.0, 40.1], [-75.2, 40.1], [-75.2, 39.9]];
+  const hole = [[-75.15, 39.95], [-75.05, 39.95], [-75.05, 40.05], [-75.15, 40.05], [-75.15, 39.95]];
+  const rings = [outer, hole];
+  assert.equal(pointInPolygonWithHoles([-75.18, 39.92], rings), true);
+  assert.equal(pointInPolygonWithHoles([-75.1, 40.0], rings), false);
+  assert.equal(pointInPolygonWithHoles([-74.5, 39.92], rings), false);
+});
+
+test('geo: pointInGeometry - Polygon with hole honors the hole', () => {
+  const geometry = {
+    type: 'Polygon',
+    coordinates: [
+      [[-75.2, 39.9], [-75.0, 39.9], [-75.0, 40.1], [-75.2, 40.1], [-75.2, 39.9]],
+      [[-75.15, 39.95], [-75.05, 39.95], [-75.05, 40.05], [-75.15, 40.05], [-75.15, 39.95]]
+    ]
+  };
+  assert.equal(pointInGeometry([-75.18, 39.92], geometry), true);
+  assert.equal(pointInGeometry([-75.1, 40.0], geometry), false);
+});
+
+test('geo: pointInGeometry - MultiPolygon part with hole honors the hole', () => {
+  const geometry = {
+    type: 'MultiPolygon',
+    coordinates: [
+      [
+        [[-75.2, 39.9], [-75.0, 39.9], [-75.0, 40.1], [-75.2, 40.1], [-75.2, 39.9]],
+        [[-75.15, 39.95], [-75.05, 39.95], [-75.05, 40.05], [-75.15, 40.05], [-75.15, 39.95]]
+      ]
+    ]
+  };
+  assert.equal(pointInGeometry([-75.18, 39.92], geometry), true);
+  assert.equal(pointInGeometry([-75.1, 40.0], geometry), false);
 });
 
 test('geo: findDistrict - returns correct district number', () => {

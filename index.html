@@ -1385,11 +1385,17 @@ async function getBuildingCerts(loc){
 async function nearestOPAByCoords(lat,lng){
   const d=0.0004;
   const where=`geocode_lat>${lat-d} AND geocode_lat<${lat+d} AND geocode_lon>${lng-d} AND geocode_lon<${lng+d}`;
+  // Fetch enough candidates that the true nearest is in the set (a block face can
+  // hold many parcels), then rank by real great-circle distance in meters.
   const rows=await eclipseQuery("opa_properties_public_pde",where,
     "parcel_number,location,owner_1,market_value,year_built,zip_code,geocode_lat,geocode_lon,council_district_2024,council_district_2016,zoning,census_tract",
-    "&resultRecordCount=5").catch(()=>[]);
+    "&resultRecordCount=50").catch(()=>[]);
   if(!rows.length) return null;
-  rows.sort((a,b)=>Math.hypot((a.geocode_lat||0)-lat,(a.geocode_lon||0)-lng)-Math.hypot((b.geocode_lat||0)-lat,(b.geocode_lon||0)-lng));
+  rows.forEach(r=>{
+    const rlat=Number(r.geocode_lat), rlng=Number(r.geocode_lon);
+    r._distM=(Number.isFinite(rlat)&&Number.isFinite(rlng))?haversineM(lat,lng,rlat,rlng):Infinity;
+  });
+  rows.sort((a,b)=>a._distM-b._distM);
   return rows[0];
 }
 
@@ -1407,24 +1413,52 @@ async function dorParcelLookup(lat,lng){
   return /^\d{6,12}$/.test(brt)?brt:null;
 }
 
+// Maximum distance (meters) a coordinate-proximity result may be from the saved
+// location before we stop trusting it as the same property. Philadelphia
+// rowhouse lots are ~5m wide and geocodes carry ~10-15m of error, so anything
+// beyond this is likely a neighboring parcel, not a re-numbered one.
+const SPATIAL_MAX_M=30;
+// Tokens that are street suffixes/directionals rather than the street name.
+const SUFFIX_DIR_TOKENS=new Set(["ST","STREET","AVE","AVENUE","RD","ROAD","BLVD","BOULEVARD","DR","DRIVE","CT","COURT","LN","LANE","PL","PLACE","N","S","E","W","NORTH","SOUTH","EAST","WEST"]);
+// Conservative same-property check: the house number must match AND the addresses
+// must share at least one actual street-name token (so "123 Main St" does not
+// match "123 Walnut St" just because both share the house number and "St").
+function addrLooksSame(a,b){
+  const na=normalizeAddr(a||""), nb=normalizeAddr(b||"");
+  if(!na||!nb) return false;
+  const ta=na.split(' ').filter(Boolean), tb=nb.split(' ').filter(Boolean);
+  if(!ta.length||!tb.length||ta[0]!==tb[0]) return false;
+  const nameA=ta.slice(1).filter(t=>!SUFFIX_DIR_TOKENS.has(t));
+  const nameB=new Set(tb.slice(1).filter(t=>!SUFFIX_DIR_TOKENS.has(t)));
+  if(!nameA.length||!nameB.size) return false;
+  return nameA.some(t=>nameB.has(t));
+}
+
 async function tryResolveStaleOPA(staleOPA,seq){
   const saved=getSaved().find(s=>s.opa===staleOPA);
+  const haveAddr=!!saved?.addr;
   if(saved?.lat&&saved?.lng){
     updateLookupProgress(seq,30,"OPA not found — trying coordinates from saved record...");
     const dorOPA=await dorParcelLookup(saved.lat,saved.lng).catch(()=>null);
     if(dorOPA&&dorOPA!==staleOPA){
       const row=await getOPADetails(dorOPA).catch(()=>null);
-      if(row) return {opaRow:row,newOPA:dorOPA,method:"dor_parcel"};
+      // DOR `pin` is a registry id, not guaranteed to be the OPA account, so only
+      // accept the looked-up parcel when its address corroborates the saved one.
+      if(row&&(!haveAddr||addrLooksSame(saved.addr,row.location)))
+        return {opaRow:row,newOPA:dorOPA,method:"dor_parcel",verified:true};
     }
     const nearest=await nearestOPAByCoords(saved.lat,saved.lng);
-    if(nearest&&nearest.parcel_number!==staleOPA)
-      return {opaRow:nearest,newOPA:nearest.parcel_number,method:"spatial"};
+    if(nearest&&nearest.parcel_number!==staleOPA&&nearest._distM<=SPATIAL_MAX_M){
+      const verified=haveAddr?addrLooksSame(saved.addr,nearest.location):false;
+      // Without an address to confirm, a nearby parcel is only a candidate.
+      return {opaRow:nearest,newOPA:nearest.parcel_number,method:"spatial",verified,distM:Math.round(nearest._distM)};
+    }
   }
-  if(saved?.addr){
+  if(haveAddr){
     updateLookupProgress(seq,45,"Trying address resolution...");
     const addrMatches=await resolveAddress(saved.addr).catch(()=>[]);
-    if(addrMatches.length===1&&addrMatches[0].parcel_number!==staleOPA)
-      return {opaRow:addrMatches[0],newOPA:addrMatches[0].parcel_number,method:"address"};
+    if(addrMatches.length===1&&addrMatches[0].parcel_number!==staleOPA&&addrLooksSame(saved.addr,addrMatches[0].location))
+      return {opaRow:addrMatches[0],newOPA:addrMatches[0].parcel_number,method:"address",verified:true};
   }
   return null;
 }
@@ -1440,6 +1474,24 @@ function asDateMs(value){
   if(value==null||value==="") return null;
   const ms=typeof value==="number"?value:new Date(value).getTime();
   return Number.isNaN(ms)?null:ms;
+}
+// Canonical date key for cross-source comparison. Eclipse returns epoch-ms
+// numbers; Carto returns date strings (date-only or ISO timestamps). Parse both
+// to an instant, then format the same UTC calendar day so equal dates compare
+// equal regardless of source representation. Returns null for missing/invalid.
+function dateKey(value){
+  const ms=asDateMs(value);
+  if(ms===null) return null;
+  const d=new Date(ms);
+  return Number.isNaN(d.getTime())?null:d.toISOString().slice(0,10);
+}
+// Great-circle distance in meters. Used instead of Math.hypot on raw lat/lng,
+// which mis-weights longitude vs latitude at Philadelphia's latitude.
+function haversineM(lat1,lng1,lat2,lng2){
+  const R=6371000, toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLng=toRad(lng2-lng1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(a)));
 }
 
 function analyzeLicenseRow(row){
@@ -1484,7 +1536,18 @@ function summarizeLicenses(rows){
 function buildLicenseRowMap(rows){
   const map=new Map();
   const seen=new Map();
-  (Array.isArray(rows)?rows:[]).forEach((row,idx)=>{
+  // Sort deterministically so that rows sharing a license number (or rows with
+  // no license number) are paired consistently across Eclipse and Carto instead
+  // of by each API's arbitrary return order, which can pair unrelated rows.
+  const sorted=(Array.isArray(rows)?rows.slice():[]).sort((a,b)=>{
+    const an=String(a?.licensenum||"").trim().toUpperCase();
+    const bn=String(b?.licensenum||"").trim().toUpperCase();
+    if(an!==bn) return an<bn?-1:1;
+    const am=asDateMs(a?.mostrecentissuedate)??asDateMs(a?.expirationdate)??asDateMs(a?.initialissuedate)??-1;
+    const bm=asDateMs(b?.mostrecentissuedate)??asDateMs(b?.expirationdate)??asDateMs(b?.initialissuedate)??-1;
+    return am-bm;
+  });
+  sorted.forEach((row,idx)=>{
     const num=String(row?.licensenum||"").trim();
     const base=num?`num:${num.toUpperCase()}`:`idx:${idx}`;
     const occ=seen.get(base)||0;
@@ -1732,9 +1795,12 @@ function renderDriftLicense(eRows,cRows){
     ["licensenum","License #"],
     ["licensetype","License type"],
     ["licensestatus","Status"],
+    ["business_name","Business name"],
+    ["legalname","Legal name"],
+    ["initialissuedate","Initial issue",true],
+    ["mostrecentissuedate","Most recent issue",true],
     ["expirationdate","Expires",true],
     ["inactivedate","Inactive date",true],
-    ["mostrecentissuedate","Most recent issue",true],
     ["numberofunits","Units"]
   ];
   const eclipseOnly=keys.filter(k=>eMap.has(k)&&!cMap.has(k)).length;
@@ -1755,8 +1821,6 @@ function renderDriftLicense(eRows,cRows){
     const hasC=cMap.has(key);
     const E=hasE?eMap.get(key):{};
     const C=hasC?cMap.get(key):{};
-    const eMeta=hasE?analyzeLicenseRow(E):null;
-    const cMeta=hasC?analyzeLicenseRow(C):null;
     const licenseLabel=(E.licensenum||C.licensenum||`Unnumbered license ${idx+1}`);
     html+=`<div style="margin-top:${idx===0?0:18}px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);margin-bottom:6px">License ${esc(String(licenseLabel))}</div>
@@ -1773,17 +1837,44 @@ function renderDriftLicense(eRows,cRows){
     </div>`;
 
     fields.forEach(([fieldKey,label,isDate])=>{
-      const eV=fieldKey==="licensestatus"&&hasE?(eMeta.isActive?"ACTIVE":eMeta.displayStatus):(E[fieldKey]);
-      const cV=fieldKey==="licensestatus"&&hasC?(cMeta.isActive?"ACTIVE":cMeta.displayStatus):(C[fieldKey]);
-      const eNorm=(eV==null||eV==="")?null:(isDate?fmtDate(eV):String(eV).trim().toUpperCase());
-      const cNorm=(cV==null||cV==="")?null:(isDate?fmtDate(cV):String(cV).trim().toUpperCase());
-      const eAbsent=eNorm===null, cAbsent=cNorm===null;
-      const same=eNorm===cNorm&&!(eAbsent&&cAbsent&&(hasE||hasC));
-      const oneSided=eAbsent!==cAbsent;
-      const statusLabel=same?'<span class="pill complied">match</span>':(oneSided?'<span class="pill amber">ABSENT</span>':'<span class="pill open">DRIFT</span>');
-      const eDisplay=eNorm==null?"—":(isDate?eNorm:(eV!=null?String(eV):"—"));
-      const cDisplay=cNorm==null?"—":(isDate?cNorm:(cV!=null?String(cV):"—"));
-      html+=`<div class="drift-row ${same?"":"diverge"}">
+      // Compare the RAW field values from both sources. Status is compared raw
+      // (not a derived "effective status") so that e.g. Eclipse "Inactive" vs a
+      // lagging Carto "Active" is correctly flagged as DRIFT instead of being
+      // collapsed to the same derived label. Dates use a single canonical UTC
+      // key so epoch-ms and ISO strings for the same day compare equal. Units
+      // compare numerically so 163 vs "163.0" is not a false DRIFT.
+      const eRaw=hasE?E[fieldKey]:null;
+      const cRaw=hasC?C[fieldKey]:null;
+      let eKey,cKey,eDisplay,cDisplay;
+      if(isDate){
+        eKey=dateKey(eRaw); cKey=dateKey(cRaw);
+        eDisplay=eKey||"—"; cDisplay=cKey||"—";
+      } else if(fieldKey==="numberofunits"){
+        const en=(eRaw==null||eRaw==="")?null:Number(eRaw);
+        const cn=(cRaw==null||cRaw==="")?null:Number(cRaw);
+        eKey=(en==null||Number.isNaN(en))?null:String(en);
+        cKey=(cn==null||Number.isNaN(cn))?null:String(cn);
+        eDisplay=eKey==null?"—":eKey; cDisplay=cKey==null?"—":cKey;
+      } else {
+        eKey=(eRaw==null||String(eRaw).trim()==="")?null:String(eRaw).trim().toUpperCase();
+        cKey=(cRaw==null||String(cRaw).trim()==="")?null:String(cRaw).trim().toUpperCase();
+        eDisplay=(eRaw==null||eRaw==="")?"—":String(eRaw);
+        cDisplay=(cRaw==null||cRaw==="")?"—":String(cRaw);
+      }
+      const bothPresent=hasE&&hasC;
+      const eAbsent=eKey===null, cAbsent=cKey===null;
+      let same,statusLabel,diverge;
+      if(eAbsent&&cAbsent){
+        same=bothPresent; diverge=false;
+        statusLabel=bothPresent?'<span class="pill complied">match</span>':'<span class="pill admin">—</span>';
+      } else if(eAbsent!==cAbsent){
+        same=false; diverge=true;
+        statusLabel='<span class="pill amber">ABSENT</span>';
+      } else {
+        same=eKey===cKey; diverge=!same;
+        statusLabel=same?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>';
+      }
+      html+=`<div class="drift-row ${diverge?"diverge":""}">
         <div class="dl-label">${label}</div>
         <div class="drift-vals">
           <div class="dl-e">${esc(String(eDisplay))}</div>
@@ -1801,14 +1892,31 @@ function renderDriftViolations(eAll,cartoDist){
   eAll=Array.isArray(eAll)?eAll:[];
   cartoDist=Array.isArray(cartoDist)?cartoDist:[];
   const KNOWN_STATUSES=["OPEN","COMPLIED","COMPEXCP","CMPLY","CLOSED","CLOSEDCASE","RESOLVE","DEMOLISH","SVN ISSUED","CVN ISSUED","WARNING ISSUED","STOP WORK","ERROR"];
+  // Normalize status strings on BOTH sides before bucketing, so case/whitespace
+  // variants (e.g. "open" vs "OPEN ") land in the same canonical bucket instead
+  // of both being dumped into OTHER and falsely matching.
+  const normStatus=s=>String(s==null?"":s).trim().toUpperCase();
   const eDist={OTHER:0}; KNOWN_STATUSES.forEach(s=>eDist[s]=0);
-  eAll.forEach(v=>{ const s=v.violationstatus; if(s!=null&&eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
+  eAll.forEach(v=>{ const s=normStatus(v.violationstatus); if(s&&eDist[s]!==undefined) eDist[s]++; else eDist.OTHER++; });
   const cDist={OTHER:0}; KNOWN_STATUSES.forEach(s=>cDist[s]=0);
-  cartoDist.forEach(r=>{ if(r.violationstatus!=null&&cDist[r.violationstatus]!==undefined) cDist[r.violationstatus]+=Number(r.ct)||0; else cDist.OTHER+=Number(r.ct)||0; });
+  cartoDist.forEach(r=>{ const s=normStatus(r.violationstatus); const n=Number(r.ct)||0; if(s&&cDist[s]!==undefined) cDist[s]+=n; else cDist.OTHER+=n; });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
+  // Eclipse queries are capped at 2000 rows; if we hit the cap the Eclipse count
+  // is a lower bound and any "match" would be unreliable.
+  const eTruncated=eAll.length>=2000;
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
+  if(eTruncated){
+    html+=`<div class="drift-row diverge" style="padding:10px 12px;border:1px solid rgba(255,69,58,.3);border-radius:3px;margin-bottom:6px">
+      <div class="dl-label" style="color:var(--red);font-weight:600">Eclipse rows truncated</div>
+      <div class="drift-vals">
+        <div class="dl-e">≥2000 (capped)</div>
+        <div class="dl-c"></div>
+        <div class="dl-s"><span class="pill open">DRIFT</span></div>
+      </div>
+    </div>`;
+  }
   const statuses=[...KNOWN_STATUSES,
     ...(eDist.OTHER>0||cDist.OTHER>0?["OTHER"]:[])].filter(s=>eDist[s]>0||cDist[s]>0);
   const eOnlyViolS=statuses.filter(s=>eDist[s]>0&&(!cDist[s]));
@@ -1835,12 +1943,18 @@ function renderDriftViolations(eAll,cartoDist){
       </div>
     </div>`;
   });
-  html+=`<div class="drift-row" style="border-top:1px solid var(--line);background:var(--panel-2)">
+  // TOTAL only "matches" when the totals agree AND every per-status bucket
+  // agrees AND Eclipse was not truncated. Equal totals alone are misleading:
+  // counts can redistribute across statuses (e.g. COMPLIED<->CMPLY) and still
+  // sum to the same number while the systems clearly disagree.
+  const allBuckets=[...KNOWN_STATUSES,"OTHER"];
+  const totalMatch=eTotal===cTotal&&!eTruncated&&allBuckets.every(s=>eDist[s]===cDist[s]);
+  html+=`<div class="drift-row ${totalMatch?"":"diverge"}" style="border-top:1px solid var(--line);background:var(--panel-2)">
     <div class="dl-label"><b style="color:var(--ink)">TOTAL</b></div>
     <div class="drift-vals">
-      <div class="dl-e"><b>${eTotal}</b></div>
+      <div class="dl-e"><b>${eTotal}${eTruncated?"+":""}</b></div>
       <div class="dl-c"><b>${cTotal}</b></div>
-      <div class="dl-s">${eTotal===cTotal?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>'}</div>
+      <div class="dl-s">${totalMatch?'<span class="pill complied">match</span>':'<span class="pill open">DRIFT</span>'}</div>
     </div>
   </div>`;
   $("#drift-viol").innerHTML=html;
@@ -2525,7 +2639,13 @@ function buildCouncilMailto(member,opaRow,openViol,lic,t311,allViol){
 
 function renderCouncilTab(opaRow,openViol,lic,t311,allViol){
   const body=$("#council-body");
-  const distRaw=opaRow?.council_district_2024||opaRow?.council_district_2016;
+  const d2024=opaRow?.council_district_2024;
+  const d2016=opaRow?.council_district_2016;
+  const has2024=d2024!=null&&String(d2024).trim()!=="";
+  const distRaw=has2024?d2024:d2016;
+  // 2024 boundaries map to the current roster; a 2016-era district can pair an
+  // old district number with the post-redistricting councilmember, so flag it.
+  const usingFallback=!has2024&&d2016!=null&&String(d2016).trim()!=="";
   const distNum=parseInt(distRaw,10);
 
   if(!distRaw||isNaN(distNum)){
@@ -2534,10 +2654,14 @@ function renderCouncilTab(opaRow,openViol,lic,t311,allViol){
   }
 
   const member=getCouncilMember(distNum);
+  let fallbackNote="";
+  if(usingFallback){
+    fallbackNote=`<div class="banner" style="border-color:rgba(255,176,0,.4)"><b>Using 2016 district boundaries.</b> This property has no <code>council_district_2024</code> value, so the district shown is from the pre-redistricting <code>council_district_2016</code> field and the councilmember may be incorrect under current boundaries. Verify on <a href="https://atlas.phila.gov/${encodeURIComponent(opaRow?.location||"")}" target="_blank" rel="noopener">Atlas</a>.</div>`;
+  }
   const issueType=detectIssueType(opaRow,openViol,lic);
   const atLarge=COUNCIL_MEMBERS.filter(m=>m.type==="at-large");
 
-  let html="";
+  let html=fallbackNote;
 
   // District councilmember card
   if(member){
@@ -2609,7 +2733,7 @@ function renderCouncilTab(opaRow,openViol,lic,t311,allViol){
 
   // Data source note
   html+=`<div style="margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);line-height:1.7">
-    District assignment from OPA field <code>council_district_2024</code>. Roster sourced from <a href="https://phlcouncil.com/" target="_blank" rel="noopener">phlcouncil.com</a> standing committees page. L&amp;I Committee Chair: ${esc(LI_CHAIR?.name||"—")} (District ${LI_CHAIR?.district||"—"}). Data embedded 2026-05-20 — verify at source for changes.
+    District assignment from OPA field <code>${usingFallback?"council_district_2016":"council_district_2024"}</code>. Roster sourced from <a href="https://phlcouncil.com/" target="_blank" rel="noopener">phlcouncil.com</a> standing committees page. L&amp;I Committee Chair: ${esc(LI_CHAIR?.name||"—")} (District ${LI_CHAIR?.district||"—"}). Data embedded 2026-05-20 — verify at source for changes.
   </div>`;
 
   body.innerHTML=html;
@@ -2918,10 +3042,15 @@ async function lookup(opa){
       const resolved=await tryResolveStaleOPA(opa,seq);
       if(seq !== lookupSeq) return;
       if(resolved){
-        const{opaRow:newRow,newOPA,method}=resolved;
+        const{opaRow:newRow,newOPA,method,verified,distM}=resolved;
         updateSavedOPA(opa,newOPA,newRow.location,parseFloat(newRow.geocode_lat),parseFloat(newRow.geocode_lon));
-        const methodLabel=method==="dor_parcel"?"DOR parcel geometry (Atlas)":method==="spatial"?"OPA coordinate proximity":"address re-resolution";
-        banner(`<b>Parcel re-numbered.</b> OPA <code>${esc(opa)}</code> is no longer active. Resolved to <code>${esc(newOPA)}</code> via ${methodLabel}. <a href="https://atlas.phila.gov/${encodeURIComponent(newRow.location||"")}" target="_blank" rel="noopener" style="margin-left:6px">Verify on Atlas</a>`);
+        const methodLabel=method==="dor_parcel"?"DOR parcel geometry (Atlas)":method==="spatial"?`coordinate proximity${distM!=null?` (~${distM}m away)`:""}`:"address re-resolution";
+        // Only call it a confirmed re-number when the candidate's address matches
+        // the saved one; otherwise present it as an unverified nearby candidate.
+        const headline=verified
+          ?`<b>Parcel re-numbered.</b> OPA <code>${esc(opa)}</code> is no longer active. Resolved to <code>${esc(newOPA)}</code> via ${methodLabel}.`
+          :`<b>Possible match.</b> OPA <code>${esc(opa)}</code> is no longer active. Showing nearby OPA <code>${esc(newOPA)}</code> (via ${methodLabel}) — <b>not confirmed</b>, verify before relying on it.`;
+        banner(`${headline} <a href="https://atlas.phila.gov/${encodeURIComponent(newRow.location||"")}" target="_blank" rel="noopener" style="margin-left:6px">Verify on Atlas</a>`,!verified);
         opa=newOPA;
         opaRow=newRow;
         const newHash=`#opa=${newOPA}`;
