@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { pointInPolygon, pointInPolygonWithHoles, pointInGeometry, findDistrict } from '../src/geo.js';
+import { resolveDistrict } from '../src/district-resolver.js';
 import { Cache } from '../src/cache.js';
 
 test('geo: pointInPolygon - point inside simple square', () => {
@@ -96,6 +97,18 @@ test('geo: findDistrict - returns correct district number', () => {
   assert.equal(findDistrict(39.92, -75.17, districts), 1);
   assert.equal(findDistrict(39.92, -75.12, districts), 2);
   assert.equal(findDistrict(40.0, -75.0, districts), null);
+});
+
+// Real 2024 council-district boundaries (data/districts.geojson). These interior
+// points should be stable for the 2024 district map and return numeric districts.
+test('resolveDistrict: real boundaries resolve known interior points', async () => {
+  assert.equal(await resolveDistrict(39.9526, -75.1652), 5);  // City Hall
+  assert.equal(await resolveDistrict(39.906, -75.167), 2);    // South Philly (stadiums)
+  assert.equal(await resolveDistrict(39.96, -75.23), 3);      // West Philly
+});
+
+test('resolveDistrict: a point outside the city returns null', async () => {
+  assert.equal(await resolveDistrict(40.5, -74.0), null);
 });
 
 test('cache: basic set and get', () => {

@@ -35,6 +35,6 @@ node --test tests/
 
 ## Data
 
-- `data/districts.geojson` — Council district boundaries
+- `data/districts.geojson` — official 2024 Council district boundaries (City of Philadelphia GIS)
 - `data/councilmembers.json` — Current council roster
 - `data/committees.json` — L&I Committee configuration
