@@ -4,7 +4,7 @@
 
 ### Philadelphia property record — unified, live, drift-aware
 
-[![Build](https://img.shields.io/badge/build-0.9.0-ffb000?style=flat-square&labelColor=000000)](https://thumpersecure.github.io/4philly/)
+[![Build](https://img.shields.io/badge/build-2.5.0--beta-ffb000?style=flat-square&labelColor=000000)](https://thumpersecure.github.io/4philly/)
 [![License](https://img.shields.io/badge/license-MIT-ffb000?style=flat-square&labelColor=000000)](#license)
 [![PWA](https://img.shields.io/badge/PWA-installable-ffb000?style=flat-square&labelColor=000000)](#install-as-a-pwa)
 [![Backend](https://img.shields.io/badge/backend-none-ffb000?style=flat-square&labelColor=000000)](#tech)
@@ -287,7 +287,7 @@ A short field guide to the L&I status codes you'll see:
 - [ ] CSV / JSON export
 - [ ] Diff alerts (subscribe to a property)
 - [ ] Print-ready brief (one-page PDF per property)
-- [ ] Real GIS shapefile for council districts (replace simplified boundaries in council module)
+- [x] Real GIS boundaries for council districts (official 2024 districts in council module)
 
 -----
 
