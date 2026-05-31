@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   asDateMs, dateKey, haversineM,
-  normalizeAddr, addrLooksSame,
+  normalizeAddr, addrLooksSame, scoreAddressMatch,
   compareLicenseField,
   buildViolationDist, normStatus
 } from '../lib/matching.mjs';
@@ -17,7 +17,6 @@ test('dateKey: Eclipse epoch-ms and Carto ISO-Z for the same instant match', () 
   assert.equal(dateKey(ms), '2023-05-01');
   assert.equal(dateKey('2023-05-01T00:00:00Z'), '2023-05-01');
   assert.equal(dateKey('2023-05-01'), '2023-05-01');
-  // All three representations collapse to the same canonical key.
   assert.equal(dateKey(ms), dateKey('2023-05-01T00:00:00Z'));
   assert.equal(dateKey(ms), dateKey('2023-05-01'));
 });
@@ -166,4 +165,28 @@ test('addrLooksSame: different house number does not match', () => {
 
 test('addrLooksSame: same number different street does not match', () => {
   assert.equal(addrLooksSame('123 Main St', '123 Walnut St'), false);
+});
+
+// ---------------------------------------------------------------------------
+// Address relevance scoring (drives auto-select vs confirm)
+// ---------------------------------------------------------------------------
+
+test('scoreAddressMatch: exact full address scores high (auto-select threshold)', () => {
+  assert.ok(scoreAddressMatch('315 N 12th St', '315 N 12TH ST') >= 0.9);
+});
+
+test('scoreAddressMatch: house-number mismatch is a hard reject (0)', () => {
+  assert.equal(scoreAddressMatch('12 Main St', '1234 MAIN ST'), 0);
+});
+
+test('scoreAddressMatch: same number different street stays below auto-select', () => {
+  assert.ok(scoreAddressMatch('123 Main St', '123 WALNUT ST') < 0.9);
+});
+
+test('scoreAddressMatch: wrong directional is penalized below auto-select', () => {
+  assert.ok(scoreAddressMatch('123 N Main St', '123 S MAIN ST') < 0.9);
+});
+
+test('scoreAddressMatch: matching directional with full name scores high', () => {
+  assert.ok(scoreAddressMatch('123 North Main St', '123 N MAIN ST') >= 0.9);
 });
