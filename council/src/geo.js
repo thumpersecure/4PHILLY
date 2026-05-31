@@ -18,17 +18,36 @@ export function pointInPolygon(point, polygon) {
 }
 
 /**
+ * Test if a point is inside a single GeoJSON polygon (an array of linear rings).
+ * The first ring is the outer boundary; any further rings are holes. A point is
+ * inside the polygon only when it is inside the outer ring AND not inside any
+ * hole. Ignoring holes would incorrectly report points in enclaves as inside.
+ * @param {[number, number]} point - [longitude, latitude]
+ * @param {Array<Array<[number, number]>>} rings - polygon rings ([outer, ...holes])
+ * @returns {boolean}
+ */
+export function pointInPolygonWithHoles(point, rings) {
+  if (!Array.isArray(rings) || rings.length === 0) return false;
+  if (!pointInPolygon(point, rings[0])) return false;
+  for (let i = 1; i < rings.length; i++) {
+    if (pointInPolygon(point, rings[i])) return false;
+  }
+  return true;
+}
+
+/**
  * Test if a point is inside a GeoJSON Polygon or MultiPolygon geometry.
+ * Honors interior rings (holes) for both geometry types.
  * @param {[number, number]} point - [longitude, latitude]
  * @param {object} geometry - GeoJSON geometry object (Polygon or MultiPolygon)
  * @returns {boolean}
  */
 export function pointInGeometry(point, geometry) {
   if (geometry.type === 'Polygon') {
-    return pointInPolygon(point, geometry.coordinates[0]);
+    return pointInPolygonWithHoles(point, geometry.coordinates);
   }
   if (geometry.type === 'MultiPolygon') {
-    return geometry.coordinates.some(poly => pointInPolygon(point, poly[0]));
+    return geometry.coordinates.some(poly => pointInPolygonWithHoles(point, poly));
   }
   return false;
 }
