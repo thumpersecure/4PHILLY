@@ -685,6 +685,89 @@
     .ai-panel { left:8px; right:8px; width:auto; bottom:72px; max-height:60vh; }
     .ai-fab { right:16px; bottom:16px; width:44px; height:44px; font-size:20px; }
   }
+
+  /* ============================================================
+     Clickability & keyboard-accessibility affordances
+     Added to make interactive elements unambiguous and reachable.
+     ============================================================ */
+  /* High-visibility keyboard focus ring (amber on dark). :focus-visible
+     keeps it off for mouse/touch so the aesthetic is unchanged there. */
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
+  details:focus-visible,
+  [role="button"]:focus-visible,
+  .tab:focus-visible,
+  .saved-chip:focus-visible,
+  .scan-row:focus-visible,
+  .scan-row-lic:focus-visible,
+  .scan-row-owner:focus-visible,
+  .zr-zip-link:focus-visible,
+  .brand-mark:focus-visible,
+  .rtkl-clear-link:focus-visible,
+  .help-link:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:2px;
+    border-radius:3px;
+  }
+  /* On amber-filled controls, invert so the ring stays visible on amber. */
+  .btn:not(.ghost):focus-visible,
+  .scan-btn:focus-visible,
+  .scanner-toggle button.active:focus-visible,
+  .modal-311-copy:focus-visible,
+  .modal-rtkl-copy:focus-visible,
+  .ai-setup-btn:focus-visible,
+  .zr-dl-btn:focus-visible{
+    outline:2px solid #1a1100;
+    outline-offset:1px;
+    box-shadow:0 0 0 4px rgba(255,176,0,.5);
+  }
+  /* Blue-accented AI controls: use a blue ring to match their identity. */
+  .ai-send:focus-visible,
+  .ai-fab:focus-visible{
+    outline:2px solid #0a0f1a;
+    outline-offset:1px;
+    box-shadow:0 0 0 4px rgba(100,181,246,.5);
+  }
+  /* Red-accented emergency button. */
+  .help-fab:focus-visible{
+    outline:2px solid #fff;
+    outline-offset:2px;
+  }
+  /* Inputs / textareas / selects already border amber on focus; add a soft
+     ring so keyboard focus is obvious even mid-typing. */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:1px;
+  }
+  .ai-input:focus-visible,
+  .ai-key:focus-visible,
+  #ai-provider:focus-visible,
+  .ai-setup select:focus-visible,
+  .ai-setup input:focus-visible{
+    outline-color:var(--blue);
+  }
+  input[type="checkbox"]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+  /* Brand mark is an interactive reset control — hint it on hover/focus. */
+  .brand-mark:hover,.brand-mark:focus-visible{cursor:pointer}
+
+  /* External-link cue: any link that opens a new tab (Atlas, phila.gov,
+     phlcouncil, tenant orgs) shows a small ↗ so users know they're leaving
+     the app. Opt out with .no-ext-cue where a manual arrow already exists. */
+  a[target="_blank"]:not(.no-ext-cue)::after{
+    content:"\2197";
+    display:inline-block;
+    margin-left:.22em;
+    font-size:.82em;
+    line-height:1;
+    color:var(--amber-soft);
+    vertical-align:baseline;
+    border-bottom:none;
+  }
+  a[target="_blank"]:not(.no-ext-cue):hover::after{color:var(--amber)}
 </style>
 </head>
 <body>
@@ -693,7 +776,7 @@
   <header class="top">
     <div>
       <div class="brand">
-        <div class="brand-mark">4<span>PHILLY</span></div>
+        <div class="brand-mark" role="button" tabindex="0" aria-label="4PHILLY — reset and return to lookup">4<span>PHILLY</span></div>
         <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v2.5&#946;</span>
         <div class="brand-tag">Philadelphia property record</div>
       </div>
@@ -1200,15 +1283,40 @@ function setNow(){
 setNow();
 
 // ---- API ----
-async function eclipseQuery(layer, where, fields="*", extra=""){
-  const url=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json&resultRecordCount=2000${extra}`;
+async function eclipseFetchPage(layer, url){
   let r;
   try{ r=await fetch(url); }catch(e){ throw new Error(`Eclipse ${layer}: network error (${e.message})`); }
   if(!r.ok) throw new Error(`Eclipse ${layer} HTTP ${r.status}`);
   let j;
   try{ j=await r.json(); }catch(e){ throw new Error(`Eclipse ${layer}: invalid JSON response`); }
   if(j.error) throw new Error(`Eclipse ${layer}: ${j.error?.message||j.error?.code||'unknown error'}`);
-  return (j.features||[]).map(f=>f.attributes);
+  return j;
+}
+// ArcGIS feature services cap each response at maxRecordCount (often 1000-2000)
+// and signal more rows with exceededTransferLimit. Requesting resultRecordCount=
+// 2000 does NOT lift a lower server cap, so full history (violations, licenses,
+// permits) was being silently truncated. Page through with resultOffset until the
+// server stops reporting more rows. Callers that pass an explicit resultRecordCount
+// in `extra` (bounded address/building/permit searches) keep single-page behavior.
+async function eclipseQuery(layer, where, fields="*", extra=""){
+  const base=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json`;
+  if(/[?&]?resultRecordCount=/i.test(extra)){
+    const j=await eclipseFetchPage(layer,`${base}&resultRecordCount=2000${extra}`);
+    return (j.features||[]).map(f=>f.attributes);
+  }
+  const PAGE=2000, MAX_PAGES=25;
+  const out=[]; let offset=0, truncated=false;
+  for(let page=0;page<MAX_PAGES;page++){
+    const j=await eclipseFetchPage(layer,`${base}&resultRecordCount=${PAGE}&resultOffset=${offset}${extra}`);
+    const feats=j.features||[];
+    for(const f of feats) out.push(f.attributes);
+    if(!j.exceededTransferLimit||feats.length===0) break;
+    offset+=feats.length;
+    if(page===MAX_PAGES-1) truncated=true;
+  }
+  // Non-enumerable so it survives array operations but never shows up as data.
+  Object.defineProperty(out,"_truncated",{value:truncated,enumerable:false});
+  return out;
 }
 async function cartoQuery(sql){
   const url=`${CARTO}?q=${encodeURIComponent(sql)}&format=json`;
@@ -1280,7 +1388,16 @@ function scoreAddressMatch(input,loc){
   else { score+=0.3; }
   const dirI=ti.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]);
   const dirL=new Set(tl.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]));
-  if(dirI.length){ score+=dirI.every(d=>dirL.has(d))?0.2:0; }
+  if(dirI.length){
+    if(dirL.size){
+      // Both sides name a directional. Agreement earns the weight; a conflict
+      // ("N 12th" vs "S 12th") is a different street entirely — hard reject so a
+      // wrong-quadrant parcel can never auto-select or out-rank the true match.
+      if(dirI.every(d=>dirL.has(d))) score+=0.2;
+      else return 0;
+    }
+    // Candidate omits the directional: no credit, but not a rejection.
+  }
   else { score+=0.2; }
   return Math.min(1,score);
 }
@@ -1465,6 +1582,12 @@ function addrLooksSame(a,b){
   if(!na||!nb) return false;
   const ta=na.split(' ').filter(Boolean), tb=nb.split(' ').filter(Boolean);
   if(!ta.length||!tb.length||ta[0]!==tb[0]) return false;
+  // Conflicting directional => different street (Philadelphia's N/S/E/W grid).
+  // Reject when BOTH addresses carry a directional and they disagree, so the
+  // stale-OPA re-resolution can't accept "123 S Main" as the saved "123 N Main".
+  const dirA=new Set(ta.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]));
+  const dirB=new Set(tb.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]));
+  if(dirA.size&&dirB.size&&![...dirA].some(d=>dirB.has(d))) return false;
   const nameA=ta.slice(1).filter(t=>!SUFFIX_DIR_TOKENS.has(t));
   const nameB=new Set(tb.slice(1).filter(t=>!SUFFIX_DIR_TOKENS.has(t)));
   if(!nameA.length||!nameB.size) return false;
@@ -1501,6 +1624,9 @@ async function tryResolveStaleOPA(staleOPA,seq){
 }
 
 // ---- Render helpers ----
+// Canonical status key: trim + uppercase so "open", "OPEN " and "COMPLIED "
+// all bucket to their real status instead of falling into OTHER / being missed.
+function normStatus(s){ return String(s==null?"":s).trim().toUpperCase(); }
 function statusPill(s){
   if(s==="OPEN") return `<span class="pill open">OPEN</span>`;
   if(s==="COMPLIED") return `<span class="pill complied">COMPLIED</span>`;
@@ -1740,8 +1866,8 @@ function renderOpenViolations(ov){
 function renderViolHistory(all){
   const dist={OPEN:0,COMPLIED:0,COMPEXCP:0,CMPLY:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,DEMOLISH:0,"SVN ISSUED":0,"CVN ISSUED":0,"WARNING ISSUED":0,"STOP WORK":0,ERROR:0,OTHER:0};
   all.forEach(v=>{
-    const s=v.violationstatus;
-    if(s!=null&&dist[s]!==undefined) dist[s]++; else dist.OTHER++;
+    const s=normStatus(v.violationstatus);
+    if(s&&dist[s]!==undefined) dist[s]++; else dist.OTHER++;
   });
   const total=all.length;
   let earliest=null,latest=null;
@@ -1939,16 +2065,18 @@ function renderDriftViolations(eAll,cartoDist){
   cartoDist.forEach(r=>{ const s=normStatus(r.violationstatus); const n=Number(r.ct)||0; if(s&&cDist[s]!==undefined) cDist[s]+=n; else cDist.OTHER+=n; });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
-  // Eclipse queries are capped at 2000 rows; if we hit the cap the Eclipse count
-  // is a lower bound and any "match" would be unreliable.
-  const eTruncated=eAll.length>=2000;
+  // eclipseQuery now pages through the full result set, so a large count is real
+  // rather than a truncated 2000. It flags `_truncated` only if it hit its page
+  // safety cap; in that case the Eclipse count is a lower bound and any "match"
+  // would be unreliable.
+  const eTruncated=!!eAll._truncated;
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
   if(eTruncated){
     html+=`<div class="drift-row diverge" style="padding:10px 12px;border:1px solid rgba(255,69,58,.3);border-radius:3px;margin-bottom:6px">
       <div class="dl-label" style="color:var(--red);font-weight:600">Eclipse rows truncated</div>
       <div class="drift-vals">
-        <div class="dl-e">≥2000 (capped)</div>
+        <div class="dl-e">${eTotal}+ (capped)</div>
         <div class="dl-c"></div>
         <div class="dl-s"><span class="pill open">DRIFT</span></div>
       </div>
@@ -2071,7 +2199,7 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
     ${renderBriefLicenseList(lic)}
     ${openSection}
     <p>Over the last 12 months this address shows <b>${recent311.length} 311 complaint${recent311.length===1?"":"s"}</b> in the Philly311 public feed. Over the last 24 months: <b>${safe311.length}</b>. Tenant identity on those complaints is not public.</p>
-    <p>All time, Eclipse has <b>${safeAllViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${safeAllViol.filter(v=>v.violationstatus==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
+    <p>All time, Eclipse has <b>${safeAllViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${safeAllViol.filter(v=>normStatus(v.violationstatus)==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
     <p>Owner of record: <b>${esc(owner)}</b>.</p>
     <div class="gap">
       <h4>What this record DOES NOT tell you</h4>
@@ -2625,7 +2753,7 @@ function renderLegalAid(issueType){
     var phoneLine = org.phone
       ? '<a href="tel:' + esc(org.phone.replace(/[^+\d]/g,"")) + '" style="color:var(--amber);font-family:IBM Plex Mono,monospace;font-size:12px;text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)">&#9742; ' + esc(org.phone) + '</a>'
       : '';
-    var webLine = '<a href="' + esc(org.url) + '" target="_blank" rel="noopener" style="color:var(--amber);font-family:IBM Plex Mono,monospace;font-size:12px;text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)">&#8599; ' + esc(org.url.replace(/^https?:\/\//, "")) + '</a>';
+    var webLine = '<a href="' + esc(org.url) + '" target="_blank" rel="noopener" class="no-ext-cue" style="color:var(--amber);font-family:IBM Plex Mono,monospace;font-size:12px;text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)">&#8599; ' + esc(org.url.replace(/^https?:\/\//, "")) + '</a>';
     return '<div style="background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">'
       + '<div style="font-family:Archivo,sans-serif;font-weight:700;font-size:14px;color:var(--ink)">' + esc(org.name) + '</div>'
       + '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">'
@@ -3296,6 +3424,9 @@ $("#opa").addEventListener("input",()=>{ if($("#opa").value.trim()) $("#addr").v
 $(".brand-mark").addEventListener("click",()=>{
   switchMode("lookup");
   resetSearchState({focus:true});
+});
+$(".brand-mark").addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.currentTarget.click(); }
 });
 
 $$(".quick button").forEach(b=>{
@@ -4735,7 +4866,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
       <li><a href="tel:+18002221222"><span class="hl-icon">&#9763;</span><span class="hl-name">Poison Control</span><span class="hl-num">1-800-222-1222</span></a></li>
       <li><a href="tel:+12156869500"><span class="hl-icon">&#127969;</span><span class="hl-name">Philadelphia Tenant Hotline<small>City of Philadelphia</small></span><span class="hl-num">215-686-9500</span></a></li>
       <li><a href="tel:+12159813700"><span class="hl-icon">&#9878;</span><span class="hl-name">Community Legal Services<small>Free legal help for tenants</small></span><span class="hl-num">215-981-3700</span></a></li>
-      <li><a href="https://phillytenant.org" target="_blank" rel="noopener"><span class="hl-icon">&#9994;</span><span class="hl-name">Philadelphia Tenants Union<small>phillytenant.org</small></span><span class="hl-num">&rarr;</span></a></li>
+      <li><a href="https://phillytenant.org" target="_blank" rel="noopener" class="no-ext-cue"><span class="hl-icon">&#9994;</span><span class="hl-name">Philadelphia Tenants Union<small>phillytenant.org</small></span><span class="hl-num">&rarr;</span></a></li>
       <li><a href="tel:+18007997233"><span class="hl-icon">&#128156;</span><span class="hl-name">National DV Hotline<small>Text START to 88788</small></span><span class="hl-num">1-800-799-7233</span></a></li>
     </ul>
     <div class="help-disc">This app does not provide emergency services. For immediate danger, call 911.</div>
