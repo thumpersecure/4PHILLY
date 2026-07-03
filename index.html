@@ -685,6 +685,89 @@
     .ai-panel { left:8px; right:8px; width:auto; bottom:72px; max-height:60vh; }
     .ai-fab { right:16px; bottom:16px; width:44px; height:44px; font-size:20px; }
   }
+
+  /* ============================================================
+     Clickability & keyboard-accessibility affordances
+     Added to make interactive elements unambiguous and reachable.
+     ============================================================ */
+  /* High-visibility keyboard focus ring (amber on dark). :focus-visible
+     keeps it off for mouse/touch so the aesthetic is unchanged there. */
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
+  details:focus-visible,
+  [role="button"]:focus-visible,
+  .tab:focus-visible,
+  .saved-chip:focus-visible,
+  .scan-row:focus-visible,
+  .scan-row-lic:focus-visible,
+  .scan-row-owner:focus-visible,
+  .zr-zip-link:focus-visible,
+  .brand-mark:focus-visible,
+  .rtkl-clear-link:focus-visible,
+  .help-link:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:2px;
+    border-radius:3px;
+  }
+  /* On amber-filled controls, invert so the ring stays visible on amber. */
+  .btn:not(.ghost):focus-visible,
+  .scan-btn:focus-visible,
+  .scanner-toggle button.active:focus-visible,
+  .modal-311-copy:focus-visible,
+  .modal-rtkl-copy:focus-visible,
+  .ai-setup-btn:focus-visible,
+  .zr-dl-btn:focus-visible{
+    outline:2px solid #1a1100;
+    outline-offset:1px;
+    box-shadow:0 0 0 4px rgba(255,176,0,.5);
+  }
+  /* Blue-accented AI controls: use a blue ring to match their identity. */
+  .ai-send:focus-visible,
+  .ai-fab:focus-visible{
+    outline:2px solid #0a0f1a;
+    outline-offset:1px;
+    box-shadow:0 0 0 4px rgba(100,181,246,.5);
+  }
+  /* Red-accented emergency button. */
+  .help-fab:focus-visible{
+    outline:2px solid #fff;
+    outline-offset:2px;
+  }
+  /* Inputs / textareas / selects already border amber on focus; add a soft
+     ring so keyboard focus is obvious even mid-typing. */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:1px;
+  }
+  .ai-input:focus-visible,
+  .ai-key:focus-visible,
+  #ai-provider:focus-visible,
+  .ai-setup select:focus-visible,
+  .ai-setup input:focus-visible{
+    outline-color:var(--blue);
+  }
+  input[type="checkbox"]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+  /* Brand mark is an interactive reset control — hint it on hover/focus. */
+  .brand-mark:hover,.brand-mark:focus-visible{cursor:pointer}
+
+  /* External-link cue: any link that opens a new tab (Atlas, phila.gov,
+     phlcouncil, tenant orgs) shows a small ↗ so users know they're leaving
+     the app. Opt out with .no-ext-cue where a manual arrow already exists. */
+  a[target="_blank"]:not(.no-ext-cue)::after{
+    content:"\2197";
+    display:inline-block;
+    margin-left:.22em;
+    font-size:.82em;
+    line-height:1;
+    color:var(--amber-soft);
+    vertical-align:baseline;
+    border-bottom:none;
+  }
+  a[target="_blank"]:not(.no-ext-cue):hover::after{color:var(--amber)}
 </style>
 </head>
 <body>
@@ -693,7 +776,7 @@
   <header class="top">
     <div>
       <div class="brand">
-        <div class="brand-mark">4<span>PHILLY</span></div>
+        <div class="brand-mark" role="button" tabindex="0" aria-label="4PHILLY — reset and return to lookup">4<span>PHILLY</span></div>
         <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v2.5&#946;</span>
         <div class="brand-tag">Philadelphia property record</div>
       </div>
@@ -2670,7 +2753,7 @@ function renderLegalAid(issueType){
     var phoneLine = org.phone
       ? '<a href="tel:' + esc(org.phone.replace(/[^+\d]/g,"")) + '" style="color:var(--amber);font-family:IBM Plex Mono,monospace;font-size:12px;text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)">&#9742; ' + esc(org.phone) + '</a>'
       : '';
-    var webLine = '<a href="' + esc(org.url) + '" target="_blank" rel="noopener" style="color:var(--amber);font-family:IBM Plex Mono,monospace;font-size:12px;text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)">&#8599; ' + esc(org.url.replace(/^https?:\/\//, "")) + '</a>';
+    var webLine = '<a href="' + esc(org.url) + '" target="_blank" rel="noopener" class="no-ext-cue" style="color:var(--amber);font-family:IBM Plex Mono,monospace;font-size:12px;text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)">&#8599; ' + esc(org.url.replace(/^https?:\/\//, "")) + '</a>';
     return '<div style="background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">'
       + '<div style="font-family:Archivo,sans-serif;font-weight:700;font-size:14px;color:var(--ink)">' + esc(org.name) + '</div>'
       + '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">'
@@ -3341,6 +3424,9 @@ $("#opa").addEventListener("input",()=>{ if($("#opa").value.trim()) $("#addr").v
 $(".brand-mark").addEventListener("click",()=>{
   switchMode("lookup");
   resetSearchState({focus:true});
+});
+$(".brand-mark").addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.currentTarget.click(); }
 });
 
 $$(".quick button").forEach(b=>{
@@ -4780,7 +4866,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
       <li><a href="tel:+18002221222"><span class="hl-icon">&#9763;</span><span class="hl-name">Poison Control</span><span class="hl-num">1-800-222-1222</span></a></li>
       <li><a href="tel:+12156869500"><span class="hl-icon">&#127969;</span><span class="hl-name">Philadelphia Tenant Hotline<small>City of Philadelphia</small></span><span class="hl-num">215-686-9500</span></a></li>
       <li><a href="tel:+12159813700"><span class="hl-icon">&#9878;</span><span class="hl-name">Community Legal Services<small>Free legal help for tenants</small></span><span class="hl-num">215-981-3700</span></a></li>
-      <li><a href="https://phillytenant.org" target="_blank" rel="noopener"><span class="hl-icon">&#9994;</span><span class="hl-name">Philadelphia Tenants Union<small>phillytenant.org</small></span><span class="hl-num">&rarr;</span></a></li>
+      <li><a href="https://phillytenant.org" target="_blank" rel="noopener" class="no-ext-cue"><span class="hl-icon">&#9994;</span><span class="hl-name">Philadelphia Tenants Union<small>phillytenant.org</small></span><span class="hl-num">&rarr;</span></a></li>
       <li><a href="tel:+18007997233"><span class="hl-icon">&#128156;</span><span class="hl-name">National DV Hotline<small>Text START to 88788</small></span><span class="hl-num">1-800-799-7233</span></a></li>
     </ul>
     <div class="help-disc">This app does not provide emergency services. For immediate danger, call 911.</div>
