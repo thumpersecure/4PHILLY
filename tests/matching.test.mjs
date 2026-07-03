@@ -4,7 +4,7 @@ import {
   asDateMs, dateKey, haversineM,
   normalizeAddr, addrLooksSame, scoreAddressMatch,
   compareLicenseField,
-  buildViolationDist, normStatus
+  buildViolationDist, normStatus, statusHistogram
 } from '../lib/matching.mjs';
 
 // ---------------------------------------------------------------------------
@@ -132,6 +132,38 @@ test('buildViolationDist: Eclipse truncation forces non-match', () => {
   assert.equal(r.totalMatch, false);
 });
 
+test('buildViolationDist: explicit eTruncated flag catches sub-2000 server caps', () => {
+  // Server maxRecordCount = 1000: exactly 1000 rows returned but MORE exist.
+  // The length heuristic (>=2000) would miss this; the real flag must not.
+  const eAll = Array(1000).fill({ violationstatus: 'OPEN' });
+  const cartoDist = [{ violationstatus: 'OPEN', ct: '1000' }];
+  assert.equal(buildViolationDist(eAll, cartoDist).totalMatch, true, 'heuristic alone sees a false match');
+  const r = buildViolationDist(eAll, cartoDist, { eTruncated: true });
+  assert.equal(r.eTruncated, true);
+  assert.equal(r.totalMatch, false);
+});
+
+test('buildViolationDist: a complete >2000-row page is NOT falsely truncated when flag says so', () => {
+  const eAll = Array(3000).fill({ violationstatus: 'OPEN' });
+  const cartoDist = [{ violationstatus: 'OPEN', ct: '3000' }];
+  const r = buildViolationDist(eAll, cartoDist, { eTruncated: false });
+  assert.equal(r.eTruncated, false);
+  assert.equal(r.totalMatch, true);
+});
+
+test('statusHistogram: case/whitespace variants bucket to the real status, not OTHER', () => {
+  const h = statusHistogram([
+    { violationstatus: 'complied' },
+    { violationstatus: 'COMPLIED ' },
+    { violationstatus: ' open' },
+    { violationstatus: null },
+    { violationstatus: 'WEIRD' }
+  ]);
+  assert.equal(h.COMPLIED, 2);
+  assert.equal(h.OPEN, 1);
+  assert.equal(h.OTHER, 2); // null + unknown "WEIRD"
+});
+
 test('normStatus normalizes case and whitespace', () => {
   assert.equal(normStatus(' open '), 'OPEN');
   assert.equal(normStatus(null), '');
@@ -167,6 +199,22 @@ test('addrLooksSame: same number different street does not match', () => {
   assert.equal(addrLooksSame('123 Main St', '123 Walnut St'), false);
 });
 
+// Directional-aware matching: N/S/E/W are distinct streets in Philadelphia's
+// grid. A saved "123 N Main St" must NOT be treated as the same property as a
+// re-numbered "123 S Main St" during stale-OPA re-resolution.
+test('addrLooksSame: conflicting directional (N vs S) does NOT match', () => {
+  assert.equal(addrLooksSame('123 N Main St', '123 S Main St'), false);
+  assert.equal(addrLooksSame('123 E 12th St', '123 W 12th St'), false);
+});
+
+test('addrLooksSame: matching directional (abbrev vs spelled) still matches', () => {
+  assert.equal(addrLooksSame('123 N Main St', '123 North Main Street'), true);
+});
+
+test('addrLooksSame: one side omitting the directional is tolerated', () => {
+  assert.equal(addrLooksSame('123 Main St', '123 N Main St'), true);
+});
+
 // ---------------------------------------------------------------------------
 // Address relevance scoring (drives auto-select vs confirm)
 // ---------------------------------------------------------------------------
@@ -185,6 +233,16 @@ test('scoreAddressMatch: same number different street stays below auto-select', 
 
 test('scoreAddressMatch: wrong directional is penalized below auto-select', () => {
   assert.ok(scoreAddressMatch('123 N Main St', '123 S MAIN ST') < 0.9);
+});
+
+test('scoreAddressMatch: conflicting directional is a hard reject (0), never auto-selects', () => {
+  assert.equal(scoreAddressMatch('123 N Main St', '123 S MAIN ST'), 0);
+  assert.equal(scoreAddressMatch('123 E 12th St', '123 W 12TH ST'), 0);
+});
+
+test('scoreAddressMatch: candidate omitting the directional still scores (not rejected)', () => {
+  // Input has "N", candidate omits it: no directional credit, but no rejection.
+  assert.ok(scoreAddressMatch('123 N Main St', '123 MAIN ST') > 0);
 });
 
 test('scoreAddressMatch: matching directional with full name scores high', () => {
