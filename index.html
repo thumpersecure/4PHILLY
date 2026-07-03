@@ -1200,15 +1200,40 @@ function setNow(){
 setNow();
 
 // ---- API ----
-async function eclipseQuery(layer, where, fields="*", extra=""){
-  const url=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json&resultRecordCount=2000${extra}`;
+async function eclipseFetchPage(layer, url){
   let r;
   try{ r=await fetch(url); }catch(e){ throw new Error(`Eclipse ${layer}: network error (${e.message})`); }
   if(!r.ok) throw new Error(`Eclipse ${layer} HTTP ${r.status}`);
   let j;
   try{ j=await r.json(); }catch(e){ throw new Error(`Eclipse ${layer}: invalid JSON response`); }
   if(j.error) throw new Error(`Eclipse ${layer}: ${j.error?.message||j.error?.code||'unknown error'}`);
-  return (j.features||[]).map(f=>f.attributes);
+  return j;
+}
+// ArcGIS feature services cap each response at maxRecordCount (often 1000-2000)
+// and signal more rows with exceededTransferLimit. Requesting resultRecordCount=
+// 2000 does NOT lift a lower server cap, so full history (violations, licenses,
+// permits) was being silently truncated. Page through with resultOffset until the
+// server stops reporting more rows. Callers that pass an explicit resultRecordCount
+// in `extra` (bounded address/building/permit searches) keep single-page behavior.
+async function eclipseQuery(layer, where, fields="*", extra=""){
+  const base=`${ECLIPSE}/${layer}/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(fields)}&f=json`;
+  if(/[?&]?resultRecordCount=/i.test(extra)){
+    const j=await eclipseFetchPage(layer,`${base}&resultRecordCount=2000${extra}`);
+    return (j.features||[]).map(f=>f.attributes);
+  }
+  const PAGE=2000, MAX_PAGES=25;
+  const out=[]; let offset=0, truncated=false;
+  for(let page=0;page<MAX_PAGES;page++){
+    const j=await eclipseFetchPage(layer,`${base}&resultRecordCount=${PAGE}&resultOffset=${offset}${extra}`);
+    const feats=j.features||[];
+    for(const f of feats) out.push(f.attributes);
+    if(!j.exceededTransferLimit||feats.length===0) break;
+    offset+=feats.length;
+    if(page===MAX_PAGES-1) truncated=true;
+  }
+  // Non-enumerable so it survives array operations but never shows up as data.
+  Object.defineProperty(out,"_truncated",{value:truncated,enumerable:false});
+  return out;
 }
 async function cartoQuery(sql){
   const url=`${CARTO}?q=${encodeURIComponent(sql)}&format=json`;
@@ -1280,7 +1305,16 @@ function scoreAddressMatch(input,loc){
   else { score+=0.3; }
   const dirI=ti.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]);
   const dirL=new Set(tl.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]));
-  if(dirI.length){ score+=dirI.every(d=>dirL.has(d))?0.2:0; }
+  if(dirI.length){
+    if(dirL.size){
+      // Both sides name a directional. Agreement earns the weight; a conflict
+      // ("N 12th" vs "S 12th") is a different street entirely — hard reject so a
+      // wrong-quadrant parcel can never auto-select or out-rank the true match.
+      if(dirI.every(d=>dirL.has(d))) score+=0.2;
+      else return 0;
+    }
+    // Candidate omits the directional: no credit, but not a rejection.
+  }
   else { score+=0.2; }
   return Math.min(1,score);
 }
@@ -1465,6 +1499,12 @@ function addrLooksSame(a,b){
   if(!na||!nb) return false;
   const ta=na.split(' ').filter(Boolean), tb=nb.split(' ').filter(Boolean);
   if(!ta.length||!tb.length||ta[0]!==tb[0]) return false;
+  // Conflicting directional => different street (Philadelphia's N/S/E/W grid).
+  // Reject when BOTH addresses carry a directional and they disagree, so the
+  // stale-OPA re-resolution can't accept "123 S Main" as the saved "123 N Main".
+  const dirA=new Set(ta.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]));
+  const dirB=new Set(tb.filter(t=>DIR_CANON[t]).map(t=>DIR_CANON[t]));
+  if(dirA.size&&dirB.size&&![...dirA].some(d=>dirB.has(d))) return false;
   const nameA=ta.slice(1).filter(t=>!SUFFIX_DIR_TOKENS.has(t));
   const nameB=new Set(tb.slice(1).filter(t=>!SUFFIX_DIR_TOKENS.has(t)));
   if(!nameA.length||!nameB.size) return false;
@@ -1501,6 +1541,9 @@ async function tryResolveStaleOPA(staleOPA,seq){
 }
 
 // ---- Render helpers ----
+// Canonical status key: trim + uppercase so "open", "OPEN " and "COMPLIED "
+// all bucket to their real status instead of falling into OTHER / being missed.
+function normStatus(s){ return String(s==null?"":s).trim().toUpperCase(); }
 function statusPill(s){
   if(s==="OPEN") return `<span class="pill open">OPEN</span>`;
   if(s==="COMPLIED") return `<span class="pill complied">COMPLIED</span>`;
@@ -1740,8 +1783,8 @@ function renderOpenViolations(ov){
 function renderViolHistory(all){
   const dist={OPEN:0,COMPLIED:0,COMPEXCP:0,CMPLY:0,CLOSED:0,CLOSEDCASE:0,RESOLVE:0,DEMOLISH:0,"SVN ISSUED":0,"CVN ISSUED":0,"WARNING ISSUED":0,"STOP WORK":0,ERROR:0,OTHER:0};
   all.forEach(v=>{
-    const s=v.violationstatus;
-    if(s!=null&&dist[s]!==undefined) dist[s]++; else dist.OTHER++;
+    const s=normStatus(v.violationstatus);
+    if(s&&dist[s]!==undefined) dist[s]++; else dist.OTHER++;
   });
   const total=all.length;
   let earliest=null,latest=null;
@@ -1939,16 +1982,18 @@ function renderDriftViolations(eAll,cartoDist){
   cartoDist.forEach(r=>{ const s=normStatus(r.violationstatus); const n=Number(r.ct)||0; if(s&&cDist[s]!==undefined) cDist[s]+=n; else cDist.OTHER+=n; });
   const eTotal=Object.values(eDist).reduce((a,b)=>a+b,0);
   const cTotal=Object.values(cDist).reduce((a,b)=>a+b,0);
-  // Eclipse queries are capped at 2000 rows; if we hit the cap the Eclipse count
-  // is a lower bound and any "match" would be unreliable.
-  const eTruncated=eAll.length>=2000;
+  // eclipseQuery now pages through the full result set, so a large count is real
+  // rather than a truncated 2000. It flags `_truncated` only if it hit its page
+  // safety cap; in that case the Eclipse count is a lower bound and any "match"
+  // would be unreliable.
+  const eTruncated=!!eAll._truncated;
 
   let html=`<div class="drift-row head"><div></div><div>ECLIPSE count</div><div>CARTO count</div><div></div></div>`;
   if(eTruncated){
     html+=`<div class="drift-row diverge" style="padding:10px 12px;border:1px solid rgba(255,69,58,.3);border-radius:3px;margin-bottom:6px">
       <div class="dl-label" style="color:var(--red);font-weight:600">Eclipse rows truncated</div>
       <div class="drift-vals">
-        <div class="dl-e">≥2000 (capped)</div>
+        <div class="dl-e">${eTotal}+ (capped)</div>
         <div class="dl-c"></div>
         <div class="dl-s"><span class="pill open">DRIFT</span></div>
       </div>
@@ -2071,7 +2116,7 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
     ${renderBriefLicenseList(lic)}
     ${openSection}
     <p>Over the last 12 months this address shows <b>${recent311.length} 311 complaint${recent311.length===1?"":"s"}</b> in the Philly311 public feed. Over the last 24 months: <b>${safe311.length}</b>. Tenant identity on those complaints is not public.</p>
-    <p>All time, Eclipse has <b>${safeAllViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${safeAllViol.filter(v=>v.violationstatus==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
+    <p>All time, Eclipse has <b>${safeAllViol.length} violation records</b> on file for this property. Of those, <b style="color:var(--green)">${safeAllViol.filter(v=>normStatus(v.violationstatus)==="COMPLIED").length}</b> are recorded as actually complied with. The rest are either open or were closed administratively without a recorded compliance event.</p>
     <p>Owner of record: <b>${esc(owner)}</b>.</p>
     <div class="gap">
       <h4>What this record DOES NOT tell you</h4>
