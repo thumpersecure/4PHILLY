@@ -144,6 +144,17 @@
   table.dat td.k{color:var(--ink)}
   table.dat tr:hover td{background:rgba(255,255,255,.02)}
   .pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;text-transform:uppercase}
+  .permit-timeline{border-left:2px solid var(--line);margin:4px 0 8px;padding-left:14px}
+  .pt-year{display:flex;align-items:center;gap:8px;margin:12px 0 6px;font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.08em}
+  .pt-year:first-child{margin-top:0}
+  .pt-year-count{font-size:10px;font-weight:600;color:var(--ink-dim);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:1px 8px}
+  .pt-item{position:relative;margin:0 0 8px;padding-left:2px;font-size:13px;line-height:1.5}
+  .pt-item::before{content:"";position:absolute;left:-19px;top:6px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+  .pt-date{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-dim);letter-spacing:.04em}
+  .pt-type{font-weight:600;color:var(--ink)}
+  .permit-table-toggle{margin-top:10px}
+  .permit-table-toggle>summary{cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-dim);text-transform:uppercase;padding:4px 0}
+  .permit-table-toggle[open]>summary{color:var(--amber)}
   .pill.open{background:rgba(255,69,58,.12);color:var(--red);border:1px solid rgba(255,69,58,.35)}
   .pill.complied{background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.3)}
   .pill.admin{background:rgba(154,154,154,.08);color:var(--ink-dim);border:1px solid var(--line)}
@@ -951,6 +962,9 @@
         </div>
       </div>
       <div class="prophead-actions">
+        <button class="share-btn" id="export-btn" aria-label="Download this property record as JSON" title="Download record (JSON)">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>
+        </button>
         <button class="share-btn" id="share-btn" aria-label="Share this property report" title="Share this property report">
           <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
         </button>
@@ -975,19 +989,19 @@
     <div class="score-breakdown" id="score-breakdown"></div>
   </div>
 
-  <nav class="tabs" id="tabs" style="display:none">
-    <button class="tab active" data-tab="inspect">Inspect</button>
-    <button class="tab" data-tab="drift">Drift</button>
-    <button class="tab" data-tab="brief">Brief</button>
-    <button class="tab" data-tab="records">Records</button>
-    <button class="tab" data-tab="limits">Limits</button>
-    <button class="tab" data-tab="council">Council</button>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Property record views" style="display:none">
+    <button class="tab active" data-tab="inspect" role="tab" id="tab-inspect" aria-controls="pane-inspect" aria-selected="true">Inspect</button>
+    <button class="tab" data-tab="drift" role="tab" id="tab-drift" aria-controls="pane-drift" aria-selected="false" tabindex="-1">Drift</button>
+    <button class="tab" data-tab="brief" role="tab" id="tab-brief" aria-controls="pane-brief" aria-selected="false" tabindex="-1">Brief</button>
+    <button class="tab" data-tab="records" role="tab" id="tab-records" aria-controls="pane-records" aria-selected="false" tabindex="-1">Records</button>
+    <button class="tab" data-tab="limits" role="tab" id="tab-limits" aria-controls="pane-limits" aria-selected="false" tabindex="-1">Limits</button>
+    <button class="tab" data-tab="council" role="tab" id="tab-council" aria-controls="pane-council" aria-selected="false" tabindex="-1">Council</button>
   </nav>
 
   <div id="pane-container">
 
   <!-- INSPECT -->
-  <section id="pane-inspect" class="pane active">
+  <section id="pane-inspect" class="pane active" role="tabpanel" aria-labelledby="tab-inspect" tabindex="0">
     <div class="grid" id="kpis"></div>
     <div class="sec">
       <h2>Business &amp; trade licenses <span class="count" id="lic-c"></span></h2>
@@ -1008,7 +1022,7 @@
   </section>
 
   <!-- DRIFT -->
-  <section id="pane-drift" class="pane">
+  <section id="pane-drift" class="pane" role="tabpanel" aria-labelledby="tab-drift" tabindex="0">
     <div class="banner" style="display:block;margin-top:0">
       <b>What this is:</b> the same data point pulled from Eclipse (li.phila.gov's backend) and Carto (the open-data mirror), placed side by side. Divergent rows highlight in red. Eclipse always wins.
     </div>
@@ -1027,13 +1041,13 @@
   </section>
 
   <!-- BRIEF -->
-  <section id="pane-brief" class="pane">
+  <section id="pane-brief" class="pane" role="tabpanel" aria-labelledby="tab-brief" tabindex="0">
     <button class="print-brief-btn no-print" id="print-brief" aria-label="Print report" title="Print or save as PDF"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Report</button>
     <div class="brief" id="brief-body"></div>
   </section>
 
   <!-- RECORDS -->
-  <section id="pane-records" class="pane">
+  <section id="pane-records" class="pane" role="tabpanel" aria-labelledby="tab-records" tabindex="0">
     <div class="sec">
       <h2>Permits <span class="count" id="prm-c"></span></h2>
       <div id="prm-body"></div>
@@ -1045,7 +1059,7 @@
   </section>
 
   <!-- LIMITS -->
-  <section id="pane-limits" class="pane">
+  <section id="pane-limits" class="pane" role="tabpanel" aria-labelledby="tab-limits" tabindex="0">
     <div class="brief">
       <p class="lede">What 4PHILLY can't tell you — and why.</p>
       <p style="font-size:13px;color:var(--ink-dim);margin-top:0">This app queries data the city already publishes. Where it falls short, the limitation is a city data gap, a policy decision, or a technical constraint of running without a server. Future versions will try to address each of these.</p>
@@ -1054,7 +1068,7 @@
   </section>
 
   <!-- COUNCIL -->
-  <section id="pane-council" class="pane">
+  <section id="pane-council" class="pane" role="tabpanel" aria-labelledby="tab-council" tabindex="0">
     <div id="council-body"></div>
   </section>
 
@@ -1125,9 +1139,15 @@
   <div id="ai-setup-view" class="ai-setup">
     <label for="ai-provider">AI Provider</label>
     <select id="ai-provider">
-      <option value="openai">OpenAI (GPT-4)</option>
       <option value="anthropic">Anthropic (Claude)</option>
+      <option value="openai">OpenAI (GPT)</option>
       <option value="google">Google (Gemini)</option>
+    </select>
+    <label for="ai-tier">Model</label>
+    <select id="ai-tier">
+      <option value="fast">Fast &amp; low-cost (recommended)</option>
+      <option value="balanced">Balanced</option>
+      <option value="best">Most capable</option>
     </select>
     <label for="ai-key">API Key</label>
     <input type="password" id="ai-key" placeholder="Paste your API key" autocomplete="off">
@@ -1178,6 +1198,7 @@ function freshnessBadge(source){
 let currentTab = 'inspect';
 let lookupSeq = 0;
 let progressHideTimer = null;
+let currentRecord = null; // structured data from the last successful lookup (for export + AI context)
 
 function setLookupBusy(isBusy){
   const btn=$("#go");
@@ -2428,8 +2449,40 @@ function renderPermits(rows){
     $("#prm-body").innerHTML=`<div class="banner">No permit records in Eclipse for this OPA.</div>`;
     return;
   }
-  let html=`<div class="table-scroll"><table class="dat"><thead><tr><th>Permit #</th><th>Type</th><th>Description</th><th>Issued</th><th>Status</th><th>Unit</th></tr></thead><tbody>`;
-  rows.forEach(p=>{
+  // Chronological timeline (newest first), grouped by year. Sits above the
+  // full table so patterns over time are visible at a glance.
+  const permitYear=p=>{
+    const d=p.permitissuedate;
+    if(typeof d==="string"){ const m=d.trim().match(/^(\d{4})-/); if(m) return m[1]; }
+    if(typeof d==="number"&&d>0){ const y=new Date(d).getFullYear(); if(!isNaN(y)) return String(y); }
+    return "Undated";
+  };
+  const sorted=rows.slice().sort((a,b)=>{
+    const av=typeof a.permitissuedate==="string"?a.permitissuedate:(a.permitissuedate||0);
+    const bv=typeof b.permitissuedate==="string"?b.permitissuedate:(b.permitissuedate||0);
+    return bv<av?-1:bv>av?1:0;
+  });
+  const byYear={};
+  sorted.forEach(p=>{ const y=permitYear(p); (byYear[y]=byYear[y]||[]).push(p); });
+  const years=Object.keys(byYear).sort((a,b)=>{
+    if(a==="Undated") return 1; if(b==="Undated") return -1; return b.localeCompare(a);
+  });
+  let html=`<div class="permit-timeline" aria-label="Permit timeline">`;
+  years.forEach(y=>{
+    html+=`<div class="pt-year"><span class="pt-year-label">${esc(y)}</span><span class="pt-year-count">${byYear[y].length}</span></div>`;
+    byYear[y].forEach(p=>{
+      const desc=(p.permitdescription||p.approvedscopeofwork||p.typeofwork||"—").slice(0,120);
+      const pillCls=/^(ISSUED|COMPLETED|FINAL|ACTIVE|CLOSED)$/i.test(p.status||"")?"complied":/^(WITHDRAWN|REVOKED|DENIED|REJECTED)$/i.test(p.status||"")?"open":"admin";
+      html+=`<div class="pt-item">
+        <div class="pt-date">${fmtDate(p.permitissuedate)}</div>
+        <div class="pt-body"><span class="pt-type">${esc(p.permittype||"Permit")}</span> — ${esc(desc)} <span class="pill ${pillCls}">${esc(p.status||"—")}</span></div>
+      </div>`;
+    });
+  });
+  html+=`</div>`;
+  html+=`<details class="permit-table-toggle"><summary>Full permit table (${rows.length})</summary>`;
+  html+=`<div class="table-scroll"><table class="dat"><thead><tr><th>Permit #</th><th>Type</th><th>Description</th><th>Issued</th><th>Status</th><th>Unit</th></tr></thead><tbody>`;
+  sorted.forEach(p=>{
     const desc=(p.permitdescription||p.approvedscopeofwork||p.typeofwork||"—").slice(0,120);
     html+=`<tr>
       <td class="k">${esc(p.permitnumber||"—")}</td>
@@ -2440,7 +2493,7 @@ function renderPermits(rows){
       <td>${esc(p.unit_num||"—")}</td>
     </tr>`;
   });
-  html+=`</tbody></table></div>`;
+  html+=`</tbody></table></div></details>`;
   $("#prm-body").innerHTML=html;
 }
 
@@ -2975,7 +3028,14 @@ function renderSavedBar(){
 function switchTab(which){
   if(!TABS.includes(which)) return;
   currentTab=which;
-  $$(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab===which));
+  $$(".tab").forEach(x=>{
+    const on=x.dataset.tab===which;
+    x.classList.toggle("active",on);
+    // Keep ARIA + roving tabindex in sync so screen readers announce the
+    // selected tab and keyboard users tab into the active one only.
+    x.setAttribute("aria-selected",on?"true":"false");
+    x.tabIndex=on?0:-1;
+  });
   $$(".pane").forEach(p=>p.classList.remove("active"));
   const pane=$("#pane-"+which);
   if(pane) pane.classList.add("active");
@@ -2985,6 +3045,21 @@ function switchTab(which){
 $("#tabs").addEventListener("click",e=>{
   const t=e.target.closest(".tab");
   if(t) switchTab(t.dataset.tab);
+});
+
+// Keyboard support for the tablist (WAI-ARIA: Left/Right/Home/End move + focus)
+$("#tabs").addEventListener("keydown",e=>{
+  const idx=TABS.indexOf(currentTab);
+  let next=-1;
+  if(e.key==="ArrowRight"||e.key==="ArrowDown") next=(idx+1)%TABS.length;
+  else if(e.key==="ArrowLeft"||e.key==="ArrowUp") next=(idx-1+TABS.length)%TABS.length;
+  else if(e.key==="Home") next=0;
+  else if(e.key==="End") next=TABS.length-1;
+  if(next<0) return;
+  e.preventDefault();
+  switchTab(TABS[next]);
+  const btn=$("#tab-"+TABS[next]);
+  if(btn) btn.focus();
 });
 
 // ---- Swipe ----
@@ -3031,6 +3106,61 @@ $("#share-btn").addEventListener('click', async ()=>{
     }
   }
 });
+
+// ---- Export record (JSON) ----
+function triggerDownload(filename,text,mime){
+  try{
+    const blob=new Blob([text],{type:(mime||"application/octet-stream")+";charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download=filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
+  }catch(e){ return false; }
+}
+function exportCurrentRecord(){
+  if(!currentRecord){ showCopyToast("Look up a property first"); return; }
+  const r=currentRecord;
+  // A stable, documented shape — self-describing so a downloaded file is
+  // useful without the app. Mirrors the on-screen tabs.
+  const payload={
+    source:"4PHILLY (thumpersecure.github.io/4philly)",
+    disclaimer:"Public data from Philadelphia L&I Eclipse, Carto, OPA and Philly311. Verify before relying on any field.",
+    exported_at:new Date().toISOString(),
+    opa:r.opa,
+    property:{
+      address:r.opaRow?.location||null,
+      owner:r.opaRow?.owner_1||null,
+      year_built:r.opaRow?.year_built||null,
+      market_value:r.opaRow?.market_value||null,
+      council_district:r.opaRow?.council_district_2024||r.opaRow?.council_district_2016||null,
+      zip:r.opaRow?.zip_code||null,
+      lat:r.opaRow?.geocode_lat||null,
+      lng:r.opaRow?.geocode_lon||null
+    },
+    counts:{
+      licenses:(r.lic||[]).length,
+      open_violations:(r.openViol||[]).length,
+      all_violations:(r.allViol||[]).length,
+      complaints_311:(r.t311||[]).length,
+      permits:(r.permits||[]).length,
+      building_certs:(r.bcerts||[]).length
+    },
+    "4p_score":r.scoreData?(r.scoreData.score??r.scoreData):null,
+    licenses:r.lic||[],
+    open_violations:r.openViol||[],
+    all_violations:r.allViol||[],
+    complaints_311:r.t311||[],
+    permits:r.permits||[],
+    building_certifications:r.bcerts||[]
+  };
+  const base=(r.opaRow?.location||("opa-"+r.opa)).replace(/[^\w.-]+/g,"_").slice(0,50);
+  const ok=triggerDownload(base+"_4philly.json",JSON.stringify(payload,null,2),"application/json");
+  showCopyToast(ok?"Record downloaded (JSON)":"Download blocked by browser");
+}
+const exportBtn=$("#export-btn");
+if(exportBtn) exportBtn.addEventListener("click",exportCurrentRecord);
 
 // ---- Print Brief button ----
 $("#print-brief").addEventListener("click",()=>{
@@ -3271,6 +3401,9 @@ async function lookup(opa){
     // 4P Score
     const scoreData=compute4PScoreFromLookup({lic,ovE,t311,allViol});
     render4PScore(scoreData);
+
+    // Cache the structured record for export + AI context (single source of truth)
+    currentRecord={opa,opaRow,lic,openViol:ovE,allViol,t311,permits,bcerts,licenseSummary,scoreData,fetchedAt:Date.now()};
 
     $("#banner").style.display="none";
     completeLookupProgress(seq,"Property report ready.");
@@ -4598,12 +4731,27 @@ Always provide relevant referrals. These organizations offer free or low-cost le
   var aiSend = document.getElementById('ai-send');
   var aiStart = document.getElementById('ai-start');
   var aiProvider = document.getElementById('ai-provider');
+  var aiTierSel = document.getElementById('ai-tier');
   var aiKeyInput = document.getElementById('ai-key');
 
   var apiKey = localStorage.getItem('4p_ai_key') || '';
-  var provider = localStorage.getItem('4p_ai_provider') || 'openai';
+  var provider = localStorage.getItem('4p_ai_provider') || 'anthropic';
+  var tier = localStorage.getItem('4p_ai_tier') || 'fast';
   var chatHistory = [];
   var sending = false;
+
+  // Map (provider, tier) → a current model id. Kept in one place so model
+  // upgrades are a single edit. Defaults favor fast, low-cost models —
+  // the right fit for a browser-side tenant Q&A assistant.
+  var AI_MODELS = {
+    anthropic: { fast: 'claude-haiku-4-5', balanced: 'claude-sonnet-5', best: 'claude-opus-4-8' },
+    openai:    { fast: 'gpt-4o-mini',      balanced: 'gpt-4o',         best: 'gpt-4o' },
+    google:    { fast: 'gemini-2.0-flash', balanced: 'gemini-2.0-flash', best: 'gemini-2.0-pro' }
+  };
+  function aiModel(prov) {
+    var byTier = AI_MODELS[prov] || AI_MODELS.anthropic;
+    return byTier[tier] || byTier.fast;
+  }
 
   // Show fab after a property is looked up
   // Hook into the existing lookup success path
@@ -4613,8 +4761,9 @@ Always provide relevant referrals. These organizations offer free or low-cost le
   }
   // fab is always visible via CSS — no classList toggle needed
 
-  // Restore saved provider/key
+  // Restore saved provider/tier/key
   aiProvider.value = provider;
+  if (aiTierSel) aiTierSel.value = tier;
   if (apiKey) aiKeyInput.value = apiKey;
 
   // Toggle panel
@@ -4629,12 +4778,15 @@ Always provide relevant referrals. These organizations offer free or low-cost le
   aiStart.addEventListener('click', function() {
     var key = aiKeyInput.value.trim();
     var prov = aiProvider.value;
+    var tr = aiTierSel ? aiTierSel.value : 'fast';
     if (!key) { aiKeyInput.style.borderColor = 'var(--red)'; return; }
     aiKeyInput.style.borderColor = '';
     localStorage.setItem('4p_ai_key', key);
     localStorage.setItem('4p_ai_provider', prov);
+    localStorage.setItem('4p_ai_tier', tr);
     apiKey = key;
     provider = prov;
+    tier = tr;
     aiSetup.style.display = 'none';
     aiChat.style.display = 'flex';
     chatHistory = [];
@@ -4651,14 +4803,33 @@ Always provide relevant referrals. These organizations offer free or low-cost le
   }
 
   function getPropertyContext() {
+    // Prefer the structured record (accurate, complete) over DOM scraping.
+    var r = (typeof currentRecord !== 'undefined') ? currentRecord : null;
+    if (r) {
+      var lines = [];
+      lines.push('OPA: ' + r.opa);
+      if (r.opaRow) {
+        if (r.opaRow.location) lines.push('Property: ' + r.opaRow.location);
+        if (r.opaRow.owner_1) lines.push('Owner: ' + r.opaRow.owner_1);
+        var cd = r.opaRow.council_district_2024 || r.opaRow.council_district_2016;
+        if (cd) lines.push('Council District: ' + cd);
+      }
+      lines.push('Open L&I violations: ' + (r.openViol || []).length);
+      lines.push('All violations on record: ' + (r.allViol || []).length);
+      lines.push('311 complaints (24mo): ' + (r.t311 || []).length);
+      lines.push('Business/rental licenses: ' + (r.lic || []).length);
+      lines.push('Permits: ' + (r.permits || []).length);
+      // Include the codes of open violations — most actionable for a tenant.
+      var codes = (r.openViol || []).map(function(v){ return v.violationcode; }).filter(Boolean).slice(0, 15);
+      if (codes.length) lines.push('Open violation codes: ' + codes.join(', '));
+      return lines.join('\n') + '\n';
+    }
+    // Fallback: scrape the DOM if no record is cached yet.
     var ctx = '';
     var owner = document.getElementById('ph-owner-line');
     var addr = document.querySelector('#prophead h1');
-    var score = document.getElementById('score-card');
     if (addr) ctx += 'Property: ' + addr.textContent.trim() + '\n';
     if (owner) ctx += 'Owner: ' + owner.textContent.replace('Owner:','').trim() + '\n';
-    if (score) ctx += 'Score data visible on screen.\n';
-    // Try to get more data from the page
     var brief = document.getElementById('brief-body');
     if (brief) ctx += 'Brief: ' + brief.textContent.trim().substring(0, 500) + '\n';
     return ctx;
@@ -4720,7 +4891,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
     var r = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({ model: 'gpt-4o-mini', messages: msgs, max_tokens: 1000 })
+      body: JSON.stringify({ model: aiModel('openai'), messages: msgs, max_tokens: 1000 })
     });
     if (!r.ok) throw new Error('OpenAI API error: ' + r.status);
     var d = await r.json();
@@ -4736,7 +4907,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, system: system, messages: messages })
+      body: JSON.stringify({ model: aiModel('anthropic'), max_tokens: 1000, system: system, messages: messages })
     });
     if (!r.ok) throw new Error('Anthropic API error: ' + r.status);
     var d = await r.json();
@@ -4750,7 +4921,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
     // Prepend system as first user message
     contents.unshift({ role: 'user', parts: [{ text: system + '\n\nPlease acknowledge you understand your role.' }] });
     contents.splice(1, 0, { role: 'model', parts: [{ text: 'Understood. I am the 4PHILLY tenant rights assistant. How can I help?' }] });
-    var r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey, {
+    var r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + aiModel('google') + ':generateContent?key=' + apiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: contents })
