@@ -120,6 +120,24 @@
   .prophead-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .prophead h1{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 4px}
   .prophead .ph-owner-line{font-family:"Archivo",sans-serif;font-weight:600;font-size:15px;color:var(--amber);margin:2px 0 6px;letter-spacing:-.01em}
+  .owner-link{background:none;border:0;color:var(--amber);font:inherit;cursor:pointer;padding:0;text-align:left;border-bottom:1px dashed rgba(255,176,0,.5)}
+  .owner-link:hover{border-bottom-color:var(--amber)}
+  .owner-link-icon{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-mute);border-bottom:0}
+  .owner-portfolio{margin:10px 0 4px;border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);border-radius:2px;padding:14px 16px}
+  .owner-portfolio .op-head{font-family:"Archivo",sans-serif;font-size:15px;color:var(--ink);margin-bottom:10px}
+  .owner-portfolio .op-loading{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim);display:flex;align-items:center;gap:6px}
+  .owner-portfolio .op-toggle{display:flex;gap:8px;margin-bottom:10px}
+  .op-mode{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 10px;min-height:34px;border-radius:2px;cursor:pointer;touch-action:manipulation}
+  .op-mode.active{background:var(--amber);color:#1a1100;border-color:var(--amber);font-weight:600}
+  .op-count{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+  .op-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow:auto}
+  .op-item{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:2px;padding:8px 10px;cursor:pointer;touch-action:manipulation}
+  .op-item:hover{border-color:var(--amber)}
+  .op-addr{font-family:"Archivo",sans-serif;font-weight:600;font-size:13px;color:var(--ink)}
+  .op-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-dim)}
+  .op-note{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);margin-top:6px}
+  .op-caveat{font-family:"Archivo",sans-serif;font-size:12px;line-height:1.5;color:var(--ink-dim);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+  .op-caveat b{color:var(--ink)}
   .prophead .sub{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:14px}
   .prophead .sub span b{color:var(--amber);font-weight:500}
   .star-btn{background:transparent;border:1px solid var(--line);color:var(--ink-mute);width:44px;height:44px;min-width:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation;transition:color .15s,border-color .15s}
@@ -1051,6 +1069,8 @@
     </div>
   </div>
 
+  <div id="owner-portfolio" class="owner-portfolio" style="display:none"></div>
+
   <div id="score-card" class="score-card" style="display:none">
     <h2>4P Score <span class="score-badge" id="score-badge">—</span></h2>
     <div class="score-desc">Composite tenant risk assessment using Philadelphia public records</div>
@@ -1555,6 +1575,21 @@ async function getOPADetails(opa){
   return rows[0]||null;
 }
 
+// Find other parcels held under an owner name. `mode` is 'exact' (owner_1
+// equals the name — precise) or 'similar' (owner_1 LIKE name% — wider, catches
+// minor spelling variants but can over-match). Both query the same OPA layer.
+async function getOwnerProperties(ownerName,mode){
+  const name=String(ownerName||"").trim();
+  if(!name) return [];
+  const safe=name.replace(/'/g,"''");
+  const where=mode==="similar"
+    ? `owner_1 LIKE '${sqlSafeStr(name).toUpperCase()}%'`
+    : `owner_1='${safe}'`;
+  const rows=await eclipseQuery("opa_properties_public_pde",where,
+    "parcel_number,location,owner_1,market_value,zip_code","&resultRecordCount=200");
+  return rows;
+}
+
 async function getBusinessLicenses(opa){
   assertOPA(opa);
   return eclipseQuery("BUSINESS_LICENSES",
@@ -1870,7 +1905,18 @@ function renderProphead(opa, opaRow){
   $("#ph-opa").textContent=opa;
   const ownerName=opaRow?.owner_1||"—";
   const ownerLine=$("#ph-owner-line");
-  if(ownerLine) ownerLine.textContent=ownerName!=="—"?`Owner: ${ownerName}`:"";
+  if(ownerLine){
+    if(ownerName!=="—"){
+      // Clickable: opens this owner's other properties. Owner name lives on
+      // the parcel's owner_1 field, so we can find every parcel with the same
+      // owner name (see openOwnerPortfolio for the exact/similar caveat).
+      ownerLine.innerHTML=`Owner: <button class="owner-link" id="owner-link" type="button" title="See other properties under this owner name">${esc(ownerName)} <span class="owner-link-icon">▸ other properties</span></button>`;
+      const ob=$("#owner-link");
+      if(ob) ob.addEventListener("click",()=>openOwnerPortfolio(ownerName,opa));
+    } else {
+      ownerLine.textContent="";
+    }
+  }
   const phFreshness=$("#ph-freshness");
   if(phFreshness) phFreshness.innerHTML=freshnessBadge('eclipse');
   $("#ph-built").textContent=opaRow?.year_built||"—";
@@ -1884,7 +1930,57 @@ function renderProphead(opa, opaRow){
   const atlasLink=$("#ph-atlas");
   if(atlasLink) atlasLink.href=`https://atlas.phila.gov/${atlasAddr}`;
   updateStarBtn(opa);
+  // A new property was rendered — collapse any open owner-portfolio panel.
+  const opPanel=$("#owner-portfolio");
+  if(opPanel){ opPanel.style.display="none"; opPanel.innerHTML=""; }
   setActiveRecordState(true);
+}
+
+// Owner portfolio: list other parcels held under this owner name.
+let ownerPortfolioMode="exact";
+async function openOwnerPortfolio(ownerName,currentOpa,mode){
+  ownerPortfolioMode=mode||"exact";
+  const panel=$("#owner-portfolio");
+  if(!panel) return;
+  panel.style.display="block";
+  panel.innerHTML=`<div class="op-head"><b>Other properties owned by</b> “${esc(ownerName)}”</div>
+    <div class="op-loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span> searching city records…</div>`;
+  panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  let rows=[];
+  try{ rows=await getOwnerProperties(ownerName,ownerPortfolioMode); }
+  catch(e){
+    panel.innerHTML=`<div class="op-head"><b>Other properties owned by</b> “${esc(ownerName)}”</div><div class="banner err">Could not load owner records — the city API may be unreachable. Try again.</div>`;
+    return;
+  }
+  // Put the current property first, dedupe by OPA.
+  const seen=new Set(); const others=[];
+  rows.forEach(r=>{ if(seen.has(r.parcel_number))return; seen.add(r.parcel_number); if(r.parcel_number!==currentOpa) others.push(r); });
+  const toggle=`<div class="op-toggle">
+    <button type="button" class="op-mode ${ownerPortfolioMode==='exact'?'active':''}" data-mode="exact">Exact owner name</button>
+    <button type="button" class="op-mode ${ownerPortfolioMode==='similar'?'active':''}" data-mode="similar">Similar names</button>
+  </div>`;
+  let html=`<div class="op-head"><b>Other properties owned by</b> “${esc(ownerName)}”</div>${toggle}`;
+  if(!others.length){
+    html+=`<div class="banner">No other parcels found under this exact owner name${ownerPortfolioMode==='exact'?` — try <b>Similar names</b> above, which casts a wider net`:``}.</div>`;
+  } else {
+    html+=`<div class="op-count">${others.length} other parcel${others.length===1?'':'s'} under this owner name</div>`;
+    html+=`<div class="op-list">`;
+    others.slice(0,100).forEach(r=>{
+      html+=`<button type="button" class="op-item" data-opa="${esc(r.parcel_number)}">
+        <span class="op-addr">${esc(r.location||"(no address)")}</span>
+        <span class="op-meta">OPA ${esc(r.parcel_number)}${r.market_value?` · ${esc(fmtMoney(r.market_value))}`:""}${r.zip_code?` · ${esc(r.zip_code)}`:""}</span>
+      </button>`;
+    });
+    html+=`</div>`;
+    if(others.length>100) html+=`<div class="op-note">Showing first 100 of ${others.length}.</div>`;
+  }
+  html+=`<div class="op-caveat"><b>Note:</b> matched by the owner name on each parcel. Landlords often hold each building under a separate LLC, so this can <b>undercount</b> a portfolio spread across shell entities. It reflects “properties under this owner name,” not a guaranteed complete portfolio. <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a>.</div>`;
+  panel.innerHTML=html;
+  panel.querySelectorAll(".op-item").forEach(b=>b.addEventListener("click",()=>{
+    const o=b.dataset.opa; if(!/^\d{6,12}$/.test(o)) return;
+    $("#opa").value=o; $("#addr").value=""; lookup(o);
+  }));
+  panel.querySelectorAll(".op-mode").forEach(b=>b.addEventListener("click",()=>openOwnerPortfolio(ownerName,currentOpa,b.dataset.mode)));
 }
 
 function renderKPIs({licenseSummary,openCt,unfitCt,t311Ct,allViolCt}){
@@ -3807,10 +3903,18 @@ function switchToLookupByAddress(addr){
     try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City violations query failed:",e.message); return []; }
   }
 
+  // The 311 dataset (public_cases_fc) has no OPA number and no residential flag,
+  // so it can't be filtered by owner like the other scanner queries. These are
+  // well-known non-residential addresses (City Hall, Municipal Services Bldg,
+  // the Eagles stadium) plus intersection complaints ("X & Y"), which are public
+  // -space/road issues, not a tenant's building. Excluding them keeps the "most
+  // 311 complaints" list focused on actual residences.
+  const NON_RESIDENTIAL_311_FILTER=`AND UPPER(address) NOT LIKE '%1400%JOHN F KENNEDY%' AND UPPER(address) NOT LIKE '%1234 MARKET%' AND UPPER(address) NOT LIKE '%LINCOLN FINANCIAL%' AND address NOT LIKE '%&%'`;
+
   async function query311Complaints(){
     const queries=[
-      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
-      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= (current_date - 365) AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
+      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${NON_RESIDENTIAL_311_FILTER} GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
+      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= (current_date - 365) AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${NON_RESIDENTIAL_311_FILTER} GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
     ];
     for(const sql of queries){
       try{
@@ -4111,8 +4215,12 @@ function switchToLookupByAddress(addr){
   }
 
   async function query311Complaints(zip){
-    // public_cases_fc.zipcode is plain 5-digit (e.g. "19107"), exact match works
-    const sql=`SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zipcode = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') GROUP BY address ORDER BY complaint_count DESC LIMIT 50`;
+    // public_cases_fc.zipcode is plain 5-digit (e.g. "19107"), exact match works.
+    // Exclude non-residential/civic addresses and intersections (see the city
+    // scanner's NON_RESIDENTIAL_311_FILTER note) — this scanner is a separate
+    // scope, so the filter is inlined here.
+    const nonRes=`AND UPPER(address) NOT LIKE '%1400%JOHN F KENNEDY%' AND UPPER(address) NOT LIKE '%1234 MARKET%' AND UPPER(address) NOT LIKE '%LINCOLN FINANCIAL%' AND address NOT LIKE '%&%'`;
+    const sql=`SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zipcode = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${nonRes} GROUP BY address ORDER BY complaint_count DESC LIMIT 50`;
     try{
       return await zipCartoQuery(sql);
     }catch(e){
