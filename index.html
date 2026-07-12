@@ -65,14 +65,15 @@
   .search{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
   .field{flex:1 1 100%;display:flex;flex-direction:column;gap:4px}
   .field-primary{flex:1 1 260px}
-  .search-go{flex:0 0 auto}
-  .search-go .btn{width:100%}
+  .search-go{flex:0 0 auto;display:flex;gap:8px}
+  .search-go .btn{flex:1 1 auto}
+  .search-go #search-reset{flex:0 0 auto}
   @media(min-width:480px){.field{flex:1 1 220px}.field.opa-field{flex:1 1 220px}}
   .field label{font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-mute)}
-  .field input{background:transparent;color:var(--ink);border:0;border-bottom:1px solid var(--line);padding:10px 2px;min-height:44px;font-family:"IBM Plex Mono",monospace;font-size:16px;border-radius:0;outline:none;transition:border-color .15s}
+  .field input{background:var(--panel-2);color:var(--ink);border:1.5px solid #f2ede3;padding:10px 12px;min-height:44px;font-family:"IBM Plex Mono",monospace;font-size:16px;border-radius:0;outline:none;transition:border-color .15s,box-shadow .15s}
   .field input::placeholder{color:var(--ink-mute)}
-  .field input:focus{border-bottom-color:var(--amber)}
-  .field-primary input{font-size:18px;padding:12px 2px}
+  .field input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.25)}
+  .field-primary input{font-size:18px;padding:13px 14px;border-width:2px}
   .btn{background:var(--amber);color:#1a1100;border:2px solid #1a1100;padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgba(0,0,0,0.45)}
   .btn:hover{background:#ffbe2e}
   .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,0.45)}
@@ -104,6 +105,7 @@
   .quick button{background:transparent;color:var(--ink-dim);border:1px solid var(--line-soft);padding:8px 9px;min-height:44px;font-family:inherit;font-size:11px;border-radius:2px;cursor:pointer;touch-action:manipulation}
   .quick button:hover{color:var(--amber);border-color:var(--amber)}
   .quick button:active{color:var(--amber);border-color:var(--amber);background:rgba(255,176,0,.08)}
+  .peek-hint{margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);letter-spacing:.02em}
 
   /* Saved bar */
   .saved-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;padding:6px 0;border-top:1px solid var(--line-soft)}
@@ -114,6 +116,11 @@
   .banner{margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);font-size:13px;color:var(--ink-dim);border-radius:2px}
   .banner.err{border-left-color:var(--red)}
   .banner b{color:var(--ink)}
+  .pwa-banner{margin-top:14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .pwa-banner #pwa-banner-text{flex:1 1 220px}
+  .pwa-banner-close{background:transparent;border:none;color:var(--ink-mute);cursor:pointer;padding:0;font-size:18px;line-height:1;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+  .pwa-banner-close:hover{color:var(--ink)}
+  .pwa-install-btn{min-height:36px;padding:0 14px;font-size:12px}
 
   /* Property header */
   .prophead{margin-top:22px;padding:18px 20px;background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:3px}
@@ -266,6 +273,7 @@
   .limit-card .severity{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;padding:2px 7px;border-radius:2px;text-transform:uppercase;margin-bottom:8px}
   .limit-card .severity.technical{background:rgba(100,181,246,.1);color:var(--blue);border:1px solid rgba(100,181,246,.3)}
   .limit-card .severity.policy{background:rgba(154,154,154,.08);color:var(--ink-dim);border:1px solid var(--line)}
+  .limit-card .severity.context{background:rgba(255,176,0,.08);color:var(--amber);border:1px solid rgba(255,176,0,.3)}
 
   /* Council tab */
   .council-member{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:20px;margin-bottom:14px}
@@ -491,7 +499,8 @@
     .search{gap:8px}
     .search > div:last-child{width:100%}
     .search-go{width:100%}
-    .search-go .btn{width:100%;min-height:50px;font-size:14px}
+    .search-go .btn{min-height:50px;font-size:14px}
+    .search-go #search-reset{flex:0 0 84px;padding:0 10px}
     .field input{font-size:16px;min-height:48px}
     .grid{grid-template-columns:repeat(2,1fr);gap:8px}
     .card{padding:12px;border-radius:4px}
@@ -845,6 +854,12 @@
     </div>
   </header>
 
+  <div id="pwa-banner" class="banner pwa-banner" role="status" style="display:none">
+    <span id="pwa-banner-text"></span>
+    <button class="btn ghost pwa-install-btn" id="pwa-install-btn" type="button" style="display:none">Install</button>
+    <button class="pwa-banner-close" id="pwa-banner-close" aria-label="Dismiss">&times;</button>
+  </div>
+
   <div class="scanner-toggle" id="mode-toggle">
     <button class="active" data-mode="lookup">Property Lookup</button>
     <button data-mode="scanner">4P City Scanner</button>
@@ -989,10 +1004,11 @@
     <div class="search">
       <div class="field field-primary">
         <label for="addr">Enter a property address or building name</label>
-        <input id="addr" type="text" placeholder="e.g. 315 N 12th St  or  The Sterling" autocomplete="off" inputmode="search">
+        <input id="addr" type="text" placeholder="Type here to search by address, property name, or OPA" autocomplete="off" inputmode="search">
       </div>
       <div class="search-go">
         <button class="btn" id="go">Look up</button>
+        <button class="btn ghost" id="search-reset" type="button" title="Clear the search and start over">Reset</button>
       </div>
     </div>
 
@@ -1024,6 +1040,7 @@
       <button data-addr="1900 MARKET ST">1900 Market St</button>
       <button data-opa="881147700">The Sterling</button>
     </div>
+    <div class="peek-hint">A lookup shows: Inspect · Drift · Brief · Records · Limits · Council</div>
     <div class="saved-bar" id="saved-bar" style="display:none">
       <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-mute);white-space:nowrap">saved:</span>
       <div id="saved-chips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -1175,6 +1192,7 @@
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a> · <a href="https://jlegal.pro/safe-healthy-homes.html" target="_blank" rel="noopener">Safe Healthy Homes Act</a></div>
+  <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>.</div>
   <div class="footer-disc">4PHILLY v2.5&#946; — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
@@ -2722,6 +2740,12 @@ function renderBuildingCerts(rows){
 function renderLimitsTab(){
   const limits=[
     {
+      severity:"context",
+      title:"What an OPA number is, and why this app is built around it",
+      why:"An OPA number (Office of Property Assessment account number) is Philadelphia's unique ID for a single parcel of land — every property in the city has exactly one. Street addresses are ambiguous: one address can span multiple parcels, and the same parcel can be written many ways. This app anchors every lookup to the OPA number once it's resolved from your address, then joins violations, licenses, permits, 311 complaints, and building certifications across Eclipse and Carto using that single ID — it's the thread that ties every tab on this page back to the same property. If you already know a property's OPA number, the advanced option under the main search box lets you skip address-matching entirely.",
+      future:"This is documentation, not a gap — no change planned."
+    },
+    {
       severity:"technical",
       title:"311 complaints matched by address pattern, not property ID",
       why:"Philadelphia's 311 database (public_cases_fc on Carto) doesn't carry OPA account numbers. Complaints are matched to a property using address-string pattern matching, which can miss unit-specific complaints, mis-match addresses with similar patterns, or fail for non-standard address formats. This app runs multiple normalized patterns in parallel to maximize recall, but the fundamental join problem remains.",
@@ -2771,12 +2795,17 @@ function renderLimitsTab(){
     }
   ];
 
+  // "context" is background/definitional info (e.g. what an OPA number is),
+  // not a gap the app is trying to close — it gets its own label and skips
+  // the "Future versions will try to address this" framing, which would
+  // otherwise misrepresent a documentation entry as an unsolved problem.
+  const SEVERITY_LABEL={technical:"Technical gap",policy:"Policy gap",context:"Background"};
   const html=limits.map(L=>`
     <div class="limit-card">
-      <span class="severity ${L.severity}">${L.severity==='technical'?'Technical gap':'Policy gap'}</span>
+      <span class="severity ${L.severity}">${SEVERITY_LABEL[L.severity]||"Policy gap"}</span>
       <h3>${esc(L.title)}</h3>
       <p class="why">${esc(L.why)}</p>
-      <div class="future">Future versions will try to address this: ${esc(L.future)}</div>
+      ${L.severity==="context"?`<div class="future">${esc(L.future)}</div>`:`<div class="future">Future versions will try to address this: ${esc(L.future)}</div>`}
     </div>
   `).join('');
   $("#limits-body").innerHTML=html;
@@ -3651,6 +3680,18 @@ function resetSearchState({focus=false,showPrompt=false}={}){
   }
   if(focus) $("#addr").focus();
 }
+
+// ---- Reset button ----
+// Fixes a real bug: resetSearchState() (which correctly clears both #opa and
+// #addr) was previously only called on initial page load and the hash-driven
+// auto-lookup path — never after a normal completed search. That meant a
+// stale OPA value (set by an auto-resolved address match, a "try:" chip, or
+// manual entry) could silently win the NEXT lookup even after typing a new
+// address, since #go's handler checks #opa before #addr. This button exposes
+// the existing, already-correct reset path so users can explicitly clear it.
+$("#search-reset").addEventListener("click",()=>{
+  resetSearchState({focus:true,showPrompt:true});
+});
 
 // ---- Entry points ----
 $("#go").addEventListener("click",async()=>{
@@ -4741,11 +4782,89 @@ window.addEventListener("DOMContentLoaded",()=>{
     return;
   }
   resetSearchState({focus:true,showPrompt:true});
+  // First-visit-only nudge pointing at the search box. Feedback was that new
+  // users don't realize the box is the primary action ("looks too technical,
+  // unclear where to type"). A one-time toast (reusing the existing
+  // showCopyToast helper, not a new component) closes that gap without
+  // adding a permanent fixture. Delayed so it doesn't collide with the
+  // input's own focus-ring animation.
+  if(!localStorage.getItem("4p_search_hint_shown")){
+    setTimeout(()=>{
+      showCopyToast("↓ Type an address above, then tap Look up");
+      try{ localStorage.setItem("4p_search_hint_shown","1"); }catch(e){}
+    },600);
+  }
 });
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
+
+/* ── PWA install banner ──
+   Two install paths exist because iOS Safari and Android/Chrome expose
+   completely different mechanisms:
+   - iOS Safari has NO native install API (no beforeinstallprompt). The only
+     path is Share → Add to Home Screen, so this banner can only show
+     instructions, never a real "Install" button, on iOS.
+   - Android/Chrome fires `beforeinstallprompt`, which lets us show a real
+     Install button that triggers the browser's native install flow via
+     event.prompt() — a strictly better UX than instructions, so we use it
+     whenever it's available instead of falling back to text.
+   Neither should show if the app is already installed (standalone display
+   mode) or after the user has dismissed it once (localStorage-persisted). */
+(function initPwaBanner(){
+  const DISMISS_KEY="4p_pwa_banner_dismissed";
+  if(localStorage.getItem(DISMISS_KEY)) return;
+
+  const isStandalone = navigator.standalone===true
+    || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if(isStandalone) return; // already installed — nothing to prompt
+
+  const banner=$("#pwa-banner");
+  const textEl=$("#pwa-banner-text");
+  const installBtn=$("#pwa-install-btn");
+  const closeBtn=$("#pwa-banner-close");
+  if(!banner||!textEl||!installBtn||!closeBtn) return;
+
+  function dismiss(){
+    banner.style.display="none";
+    try{ localStorage.setItem(DISMISS_KEY,"1"); }catch(e){}
+  }
+  closeBtn.addEventListener("click",dismiss);
+
+  const isIOS = /iP(hone|od|iPad)/.test(navigator.userAgent) && !window.MSStream;
+
+  if(isIOS){
+    // No native prompt on iOS Safari — instructional copy only.
+    textEl.innerHTML="<b>Install 4PHILLY on your iPhone:</b> tap the Share icon, then “Add to Home Screen.”";
+    banner.style.display="flex";
+    return;
+  }
+
+  // Android/Chrome (and other Chromium browsers that support it): wait for
+  // the browser's own install-eligibility signal rather than guessing at
+  // user-agent — beforeinstallprompt only fires when Chrome has decided the
+  // PWA is actually installable (valid manifest + service worker + HTTPS).
+  let deferredPrompt=null;
+  window.addEventListener("beforeinstallprompt",(e)=>{
+    e.preventDefault();
+    deferredPrompt=e;
+    textEl.innerHTML="<b>Install 4PHILLY</b> for one-tap access from your home screen.";
+    installBtn.style.display="inline-block";
+    banner.style.display="flex";
+  });
+
+  installBtn.addEventListener("click",async()=>{
+    if(!deferredPrompt) return;
+    installBtn.disabled=true;
+    try{ await deferredPrompt.prompt(); } // shows the native browser install dialog
+    finally{ deferredPrompt=null; dismiss(); }
+  });
+
+  // If the app gets installed through any other route (e.g. the browser's
+  // own address-bar install icon), stop showing the banner too.
+  window.addEventListener("appinstalled",dismiss);
+})();
 
 /* ── AI Tenant Assistant ── */
 (function initAIAssistant() {
