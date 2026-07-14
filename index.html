@@ -10,6 +10,7 @@
 
   gtag('config', 'G-EBGSHY69K6');
 </script>
+<script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Philadelphia Apartments — Check Violations &amp; Landlord Records Before You Rent | 4PHILLY</title>
@@ -64,6 +65,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* Light theme = default (friendly, high-contrast). Dark overrides below. */
+    --bg:#ffffff;
+    --panel:#f6f7f9;
+    --panel-2:#eceef2;
+    --line:#dce0e6;
+    --line-soft:#e9ecf1;
+    --ink:#181b1f;
+    --ink-dim:#555b63;
+    --ink-mute:#868d96;
+    --amber:#b06a00;        /* darker in light mode so amber TEXT stays legible on white */
+    --amber-soft:#c97f0a;
+    --amber-fill:#ffb000;   /* bright brand amber for button/pill BACKGROUNDS (both themes) */
+    --red:#c62f28;
+    --green:#1a7f37;
+    --blue:#1f6feb;
+    --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.10);
+  }
+  html[data-theme="dark"]{
     --bg:#111214;
     --panel:#161819;
     --panel-2:#1c1e20;
@@ -74,6 +93,7 @@
     --ink-mute:#666;
     --amber:#ffb000;
     --amber-soft:#ffd166;
+    --amber-fill:#ffb000;
     --red:#ff453a;
     --green:#30d158;
     --blue:#64b5f6;
@@ -111,7 +131,7 @@
   .field input::placeholder{color:var(--ink-mute)}
   .field input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.25)}
   .field-primary input{font-size:18px;padding:13px 14px;border-width:2px}
-  .btn{background:var(--amber);color:#1a1100;border:2px solid #1a1100;padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgba(0,0,0,0.45)}
+  .btn{background:var(--amber-fill);color:#1a1100;border:2px solid #1a1100;padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgba(0,0,0,0.45)}
   .btn:hover{background:#ffbe2e}
   .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,0.45)}
   .btn:disabled{cursor:not-allowed;opacity:.72}
@@ -534,6 +554,9 @@
   .impact-foot b{color:var(--ink)}
   @media(min-width:640px){.impact-cols{grid-template-columns:1fr 1fr;gap:36px}}
   @media(max-width:679px){.impact-hero{padding:28px 20px;margin:24px 0 8px}.impact-h{font-size:22px}.impact-lede{font-size:15px;margin-bottom:26px}}
+  /* Theme toggle */
+  .theme-toggle{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);border-radius:20px;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:5px 12px;cursor:pointer;margin-bottom:8px;white-space:nowrap;transition:color .15s,border-color .15s}
+  .theme-toggle:hover{color:var(--ink);border-color:var(--amber)}
 
   /* Responsive overrides */
   @media(max-width:679px){
@@ -912,6 +935,7 @@
       </div>
     </div>
     <div class="top-meta">
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle light / dark">☾ Dark</button>
       <div>build <span class="mono">1.0</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
@@ -5601,6 +5625,22 @@ Always provide relevant referrals. These organizations offer free or low-cost le
       window.scrollTo({top:0,behavior:"smooth"});
       var zi=document.getElementById("zip-input");
       if(zi){ setTimeout(function(){ zi.focus(); },450); }
+    });
+  })();
+</script>
+<script>
+  (function(){
+    var btn=document.getElementById("theme-toggle");
+    if(!btn) return;
+    function cur(){ return document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light"; }
+    function paint(){ btn.textContent = cur()==="dark" ? "☀ Light" : "☾ Dark"; }
+    paint();
+    btn.addEventListener("click",function(){
+      var next = cur()==="dark" ? "light" : "dark";
+      if(next==="dark") document.documentElement.setAttribute("data-theme","dark");
+      else document.documentElement.removeAttribute("data-theme");
+      try{ localStorage.setItem("4p-theme",next); }catch(e){}
+      paint();
     });
   })();
 </script>
