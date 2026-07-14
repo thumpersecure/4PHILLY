@@ -519,20 +519,21 @@
   .table-scroll{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .table-scroll::after{content:'';position:sticky;right:0;top:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--bg) 90%);display:block;margin-top:-100%;float:right;height:100%}
 
-  /* Impact / value section — light block below the search (previews light mode) */
-  .impact-hero{background:#ffffff;color:#1a1c1f;border-radius:16px;margin:32px 0 12px;padding:48px 44px;box-shadow:0 12px 44px rgba(0,0,0,.34);border:1px solid #ececec}
+  /* Impact / value section — uses theme tokens (banner style), so it is dark in
+     dark mode and becomes white automatically when light mode flips the vars. */
+  .impact-hero{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:6px;margin:32px 0 12px;padding:40px 36px}
   .impact-inner{max-width:840px;margin:0 auto}
-  .impact-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#b8791f;font-weight:700;margin-bottom:12px}
-  .impact-h{font-size:30px;line-height:1.15;margin:0 0 16px;font-weight:800;color:#0f1012;letter-spacing:-.01em}
-  .impact-lede{font-size:16px;line-height:1.65;color:#3a3d42;margin:0 0 34px;max-width:700px}
-  .impact-cols{display:grid;grid-template-columns:1fr;gap:26px}
-  .impact-col{padding-left:18px;border-left:3px solid var(--amber)}
-  .impact-col h3{font-size:17px;margin:0 0 9px;color:#0f1012;font-weight:700}
-  .impact-col p{font-size:14.5px;line-height:1.62;color:#45484e;margin:0}
-  .impact-foot{margin:36px 0 0;padding-top:22px;border-top:1px solid #ededed;font-size:14.5px;color:#555;font-weight:500}
-  .impact-foot b{color:#0f1012}
-  @media(min-width:640px){.impact-cols{grid-template-columns:1fr 1fr;gap:40px}}
-  @media(max-width:679px){.impact-hero{padding:34px 22px;margin:24px 0 8px}.impact-h{font-size:24px}.impact-lede{font-size:15px;margin-bottom:26px}}
+  .impact-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:12px}
+  .impact-h{font-family:"Archivo",sans-serif;font-size:28px;line-height:1.15;margin:0 0 16px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+  .impact-lede{font-size:16px;line-height:1.65;color:var(--ink-dim);margin:0 0 32px;max-width:700px}
+  .impact-cols{display:grid;grid-template-columns:1fr;gap:22px}
+  .impact-col{padding-left:16px;border-left:3px solid var(--amber)}
+  .impact-col h3{font-family:"Archivo",sans-serif;font-size:16px;margin:0 0 8px;color:var(--ink);font-weight:700}
+  .impact-col p{font-size:14.5px;line-height:1.6;color:var(--ink-dim);margin:0}
+  .impact-foot{margin:32px 0 0;padding-top:20px;border-top:1px solid var(--line-soft);font-size:14.5px;color:var(--ink-dim);font-weight:500}
+  .impact-foot b{color:var(--ink)}
+  @media(min-width:640px){.impact-cols{grid-template-columns:1fr 1fr;gap:36px}}
+  @media(max-width:679px){.impact-hero{padding:28px 20px;margin:24px 0 8px}.impact-h{font-size:22px}.impact-lede{font-size:15px;margin-bottom:26px}}
 
   /* Responsive overrides */
   @media(max-width:679px){
