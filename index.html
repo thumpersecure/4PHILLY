@@ -1548,13 +1548,16 @@ async function cartoQuery(sql){
 }
 
 // ---- Address normalization ----
+// One-way: spelled-out -> the abbreviated form OPA's `location` field uses
+// ("1500 N BROAD ST"). Must NOT be bidirectional — mapping N->NORTH would turn a
+// mixed input like "1500 N Broad Street" into "%1500%NORTH%BROAD%ST%", which
+// matches no record (OPA stores "N"), so the lookup returned nothing.
 const ADDR_ABBR={
   'STREET':'ST','AVENUE':'AVE','ROAD':'RD','BOULEVARD':'BLVD',
   'DRIVE':'DR','COURT':'CT','LANE':'LN','PLACE':'PL',
-  'NORTH':'N','SOUTH':'S','EAST':'E','WEST':'W',
-  'ST':'STREET','AVE':'AVENUE','RD':'ROAD','BLVD':'BOULEVARD',
-  'DR':'DRIVE','CT':'COURT','LN':'LANE','PL':'PLACE',
-  'N':'NORTH','S':'SOUTH','E':'EAST','W':'WEST'
+  'TERRACE':'TER','PARKWAY':'PKWY','SQUARE':'SQ','CIRCLE':'CIR',
+  'HIGHWAY':'HWY','PLAZA':'PLZ','ALLEY':'ALY','PIKE':'PIKE',
+  'NORTH':'N','SOUTH':'S','EAST':'E','WEST':'W'
 };
 const ADDR_WHITELIST=/^[0-9A-Za-z\s.\-#\/&',]+$/;
 function validateInput(raw,fieldLabel){
