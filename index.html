@@ -14,23 +14,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title> 4PHILLY — Philadelphia Tenants - Check this before you sign!  </title>
 <meta name="description" content="4philly.net | Safe and Healthy Homes Act">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com; img-src 'self' data:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; img-src 'self' data: https://www.google-analytics.com;">
 <meta name="theme-color" content="#ffb000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="4PHILLY">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23ffb000'/><text x='50' y='70' font-size='54' font-family='Arial Black,sans-serif' font-weight='900' fill='%230a0a0a' text-anchor='middle'>4P</text></svg>">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="canonical" href="https://4philly.net/">
 <link rel="manifest" href="manifest.json">
 <meta property="og:title" content="4PHILLY.NET">
 <meta property="og:description" content="Philadelphia landlord lookup for property record - made for tenants — violations, business license status, 311 complaints, council district &amp; councilmember lookup. <b> Safe Healthy Homes Act </b> ">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://thumpersecure.github.io/4philly/">
-<meta property="og:image" content="https://thumpersecure.github.io/4philly/og-image.png">
+<meta property="og:url" content="https://4philly.net/">
+<meta property="og:image" content="https://4philly.net/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://thumpersecure.github.io/4philly/og-image.png">
+<meta name="twitter:image" content="https://4philly.net/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -496,7 +498,7 @@
     .wrap{padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
     .top{flex-direction:column;gap:10px;padding-bottom:16px;margin-bottom:16px}
     .top-meta{text-align:left}
-    .top .top-desc{display:none}
+    .top .top-desc{font-size:12.5px;margin-top:8px;line-height:1.5}
     .brand-mark{font-size:26px}
     .brand-tag{font-size:10px;letter-spacing:.14em}
     .prophead{padding:14px;margin-top:16px;border-radius:6px}
@@ -570,7 +572,7 @@
   .modal-rtkl-body{padding:16px 20px 20px}
   .modal-rtkl-body .rtkl-name-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
   .modal-rtkl-body .rtkl-name-row label{font-family:"Archivo",sans-serif;font-weight:600;font-size:12px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-  .modal-rtkl-body .rtkl-name-input{flex:1;min-width:180px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:8px 10px;font-family:"IBM Plex Mono",monospace;font-size:13px;outline:none;box-sizing:border-box;box-shadow:inset 0 1px 3px rgba(0,0,0,0.2)}
+  .modal-rtkl-body .rtkl-name-input{flex:1;min-width:180px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:8px 10px;font-family:"IBM Plex Mono",monospace;font-size:16px;outline:none;box-sizing:border-box;box-shadow:inset 0 1px 3px rgba(0,0,0,0.2)}
   .modal-rtkl-body .rtkl-name-input:focus{border-color:var(--amber)}
   .modal-rtkl-body .rtkl-clear-link{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);cursor:pointer;text-decoration:underline;white-space:nowrap}
   .modal-rtkl-body .rtkl-clear-link:hover{color:var(--amber)}
@@ -749,7 +751,7 @@
 
   .ai-setup { padding:16px; }
   .ai-setup label { display:block; font-size:12px; color:var(--ink-dim); margin-bottom:4px; }
-  .ai-setup select, .ai-setup input { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:13px; margin-bottom:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2); }
+  .ai-setup select, .ai-setup input { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:16px; margin-bottom:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2); }
   .ai-setup select:focus, .ai-setup input:focus { border-color:var(--blue); outline:none; }
   .ai-setup .ai-setup-btn { width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; }
   .ai-setup .ai-note { font-size:11px; color:var(--ink-mute); margin-top:8px; line-height:1.5; }
@@ -1202,7 +1204,7 @@
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a> · <a href="https://jlegal.pro/safe-healthy-homes.html" target="_blank" rel="noopener">Safe Healthy Homes Act</a></div>
-  <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>.</div>
+  <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>. · <a href="privacy.html">Privacy Policy</a></div>
   <div class="footer-disc">4PHILLY v2.5&#946; — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
@@ -1589,11 +1591,11 @@ async function resolveAddress(addr){
     seen.add(r.parcel_number); return true;
   });
   // Score each candidate against the typed address and rank best-first. Drop
-  // candidates whose house number contradicts the input, but never return empty
-  // purely due to scoring (fall back to the unscored set).
+  // candidates whose house number contradicts the input (scoreAddressMatch returns
+  // 0 only as a hard reject). Returning empty is correct — surfacing rejected
+  // house-number mismatches as "matches" is worse than an honest "no match".
   const scored=deduped.map(r=>({r,s:scoreAddressMatch(addr,r.location)}));
-  const kept=scored.filter(x=>x.s>0);
-  const use=kept.length?kept:scored;
+  const use=scored.filter(x=>x.s>0);
   return use.sort((a,b)=>b.s-a.s).map(x=>Object.assign({_score:x.s},x.r));
 }
 
@@ -1677,7 +1679,9 @@ async function get311ForAddress(loc){
     .replace(/^(\d+)-\d+\b/,'$1')
     .replace(/\b(APT|UNIT|STE|FL|RM)\b.*/,'').trim();
   if(!base) return [];
-  const SKIP=new Set(['N','S','E','W','NE','NW','SE','SW','ST','AVE','RD','BLVD','DR','CT','LN','PL','STREET','AVENUE','ROAD','BOULEVARD','DRIVE','COURT','LANE','PLACE']);
+  // Keep directionals (N/S/E/W/NE...) — dropping them made "1234 N 5TH ST" also
+  // match "1234 S 5TH ST", a different building on the opposite side of the grid.
+  const SKIP=new Set(['ST','AVE','RD','BLVD','DR','CT','LN','PL','STREET','AVENUE','ROAD','BOULEVARD','DRIVE','COURT','LANE','PLACE']);
   const tokens=base.split(' ').filter(Boolean);
   const keyTokens=tokens.filter(t=>!SKIP.has(t));
   if(!keyTokens.length) return [];
@@ -2190,9 +2194,13 @@ function render311(rows){
   $("#t-body").innerHTML=html;
 }
 
-function renderDriftLicense(eRows,cRows){
+function renderDriftLicense(eRows,cRows,cartoOk=true){
   eRows=Array.isArray(eRows)?eRows:[];
   cRows=Array.isArray(cRows)?cRows:[];
+  if(!cartoOk){
+    $("#drift-lic").innerHTML=`<div class="banner">Carto (the historical mirror) didn't respond, so no license drift comparison could be run. This is a mirror outage — <b>not</b> a discrepancy between the systems. The Eclipse data elsewhere on this page is still authoritative.</div>`;
+    return;
+  }
   if(eRows.length===0&&cRows.length===0){
     $("#drift-lic").innerHTML=`<div class="banner">No business license rows in either system for this OPA.</div>`;
     return;
@@ -2297,9 +2305,13 @@ function renderDriftLicense(eRows,cRows){
   $("#drift-lic").innerHTML=html;
 }
 
-function renderDriftViolations(eAll,cartoDist){
+function renderDriftViolations(eAll,cartoDist,cartoOk=true){
   eAll=Array.isArray(eAll)?eAll:[];
   cartoDist=Array.isArray(cartoDist)?cartoDist:[];
+  if(!cartoOk){
+    $("#drift-viol").innerHTML=`<div class="banner">Carto (the historical mirror) didn't respond, so no violation drift comparison could be run. This is a mirror outage — <b>not</b> a discrepancy between the systems. The Eclipse counts elsewhere on this page are still authoritative.</div>`;
+    return;
+  }
   const KNOWN_STATUSES=["OPEN","COMPLIED","COMPEXCP","CMPLY","CLOSED","CLOSEDCASE","RESOLVE","DEMOLISH","SVN ISSUED","CVN ISSUED","WARNING ISSUED","STOP WORK","ERROR"];
   // Normalize status strings on BOTH sides before bucketing, so case/whitespace
   // variants (e.g. "open" vs "OPEN ") land in the same canonical bucket instead
@@ -3564,14 +3576,15 @@ async function lookup(opa){
   banner("Looking up records...");
 
   try{
+    let cartoLicFailed=false,cartoViolFailed=false,permitsFailed=false,t311Failed=false,bcertsFailed=false;
     let [opaRow,lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
       getOPADetails(opa),
       getBusinessLicenses(opa),
-      getCartoBusinessLicenses(opa).catch(()=>[]),
+      getCartoBusinessLicenses(opa).catch(()=>{cartoLicFailed=true;return [];}),
       getOpenViolations(opa),
       getAllViolations(opa),
-      getCartoViolationCount(opa).catch(()=>[]),
-      getPermits(opa).catch(()=>[])
+      getCartoViolationCount(opa).catch(()=>{cartoViolFailed=true;return [];}),
+      getPermits(opa).catch(()=>{permitsFailed=true;return [];})
     ]);
 
     // Record data freshness timestamps
@@ -3604,11 +3617,11 @@ async function lookup(opa){
         $("#opa").value=newOPA;
         [lic,licC,ovE,allViol,cartoVDist,permits]=await Promise.all([
           getBusinessLicenses(newOPA),
-          getCartoBusinessLicenses(newOPA).catch(()=>[]),
+          getCartoBusinessLicenses(newOPA).catch(()=>{cartoLicFailed=true;return [];}),
           getOpenViolations(newOPA),
           getAllViolations(newOPA),
-          getCartoViolationCount(newOPA).catch(()=>[]),
-          getPermits(newOPA).catch(()=>[])
+          getCartoViolationCount(newOPA).catch(()=>{cartoViolFailed=true;return [];}),
+          getPermits(newOPA).catch(()=>{permitsFailed=true;return [];})
         ]);
         if(seq !== lookupSeq) return;
       }else{
@@ -3627,8 +3640,8 @@ async function lookup(opa){
     updateLookupProgress(seq,76,"Loading supplemental records...");
 
     const [t311,bcerts]=await Promise.all([
-      get311ForAddress(opaRow.location||"").catch(e=>{console.warn("311 fetch failed",e);return [];}),
-      getBuildingCerts(opaRow.location||"").catch(e=>{console.warn("building certs failed",e);return [];})
+      get311ForAddress(opaRow.location||"").catch(e=>{console.warn("311 fetch failed",e);t311Failed=true;return [];}),
+      getBuildingCerts(opaRow.location||"").catch(e=>{console.warn("building certs failed",e);bcertsFailed=true;return [];})
     ]);
 
     // Abort if a newer lookup has started (after second await)
@@ -3642,8 +3655,8 @@ async function lookup(opa){
     renderOpenViolations(ovE);
     renderViolHistory(allViol);
     render311(t311);
-    renderDriftLicense(lic,licC);
-    renderDriftViolations(allViol,cartoVDist);
+    renderDriftLicense(lic,licC,!cartoLicFailed);
+    renderDriftViolations(allViol,cartoVDist,!cartoViolFailed);
     renderBrief({opaRow,lic,licenseSummary,openViol:ovE,allViol,t311});
     renderPermits(permits);
     renderBuildingCerts(bcerts);
@@ -3656,7 +3669,16 @@ async function lookup(opa){
     // Cache the structured record for export + AI context (single source of truth)
     currentRecord={opa,opaRow,lic,openViol:ovE,allViol,t311,permits,bcerts,licenseSummary,scoreData,fetchedAt:Date.now()};
 
-    $("#banner").style.display="none";
+    const failedData=[];
+    if(t311Failed) failedData.push("311 complaints");
+    if(bcertsFailed) failedData.push("building certifications");
+    if(permitsFailed) failedData.push("permits");
+    if(cartoLicFailed||cartoViolFailed) failedData.push("the historical mirror (Carto)");
+    if(failedData.length){
+      banner(`Heads up — ${failedData.join(", ")} couldn't be loaded (the City's data servers may be down). Where those sections read "none on file," that may reflect the failed request, <b>not</b> a confirmed clean record. Try the lookup again shortly.`,true);
+    }else{
+      $("#banner").style.display="none";
+    }
     completeLookupProgress(seq,"Property report ready.");
 
   }catch(err){
@@ -3969,7 +3991,9 @@ function switchToLookupByAddress(addr){
 
   async function queryWorstProperties(){
     const sql=`SELECT opa_account_num, address, MAX(opa_owner) as opa_owner, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND address IS NOT NULL AND opa_account_num IS NOT NULL AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
-    try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City violations query failed:",e.message); return []; }
+    // Let failures throw so runCityScan's allSettled shows "Data unavailable —
+    // query failed" instead of a false "No open violations found city-wide."
+    return await cityCartoQuery(sql);
   }
 
   // The 311 dataset (public_cases_fc) has no OPA number and no residential flag,
@@ -3985,18 +4009,23 @@ function switchToLookupByAddress(addr){
       `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${NON_RESIDENTIAL_311_FILTER} GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
       `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= (current_date - 365) AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${NON_RESIDENTIAL_311_FILTER} GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
     ];
+    let ran=false,lastErr=null;
     for(const sql of queries){
       try{
         const rows=await cityCartoQuery(sql);
+        ran=true;
         if(rows.length>0) return rows;
-      }catch(e){ console.warn("City 311 query variant failed:",e.message); }
+      }catch(e){ lastErr=e; console.warn("City 311 query variant failed:",e.message); }
     }
+    // Only return empty if a query actually RAN and found nothing; if every
+    // variant threw, propagate so the failure isn't shown as "no complaints".
+    if(!ran) throw lastErr||new Error("311 query failed");
     return [];
   }
 
   async function queryExpiredLicenses(){
     const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND (rentalcategory IS NULL OR rentalcategory NOT LIKE '%Hotel%') AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HILTON WORLDWIDE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WYNDHAM%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%RESIDENCE INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HAMPTON INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%COURTYARD BY MARRIOTT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%BOARD OF EDUCATION%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
-    try{ return await cityCartoQuery(sql); }catch(e){ console.warn("City licenses query failed:",e.message); return []; }
+    return await cityCartoQuery(sql);
   }
 
   async function queryRepeatOffenders(){
@@ -4008,7 +4037,9 @@ function switchToLookupByAddress(addr){
       if(rows.length>0) return rows;
       return await cityCartoQuery(sqlSimple);
     }catch(e){
-      try{ return await cityCartoQuery(sqlSimple); }catch(e2){ console.warn("City repeat offenders query failed:",e2.message); return []; }
+      // Fall back to the simpler query; if that ALSO throws, let it propagate so
+      // the failure surfaces as "Data unavailable" rather than "no offenders".
+      return await cityCartoQuery(sqlSimple);
     }
   }
 
@@ -4275,12 +4306,9 @@ function switchToLookupByAddress(addr){
     // violations.address is the location column (not "violationlocation")
     // violations.zip is ZIP+4 format (e.g. "19107-4205"), use LIKE prefix match
     const sql=`SELECT opa_account_num, COALESCE(address, opa_account_num) as address, MAX(opa_owner) as opa_owner, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND (zip LIKE '${zip}%' OR SUBSTRING(zip FROM 1 FOR 5) = '${zip}') AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' GROUP BY opa_account_num, COALESCE(address, opa_account_num) ORDER BY violation_count DESC LIMIT 50`;
-    try{
-      return await zipCartoQuery(sql);
-    }catch(e){
-      console.warn("Violations query failed:",e.message);
-      return [];
-    }
+    // Throw on failure so runZipScan's allSettled marks the step failed instead
+    // of rendering a false "No open violations found in this zip code."
+    return await zipCartoQuery(sql);
   }
 
   async function query311Complaints(zip){
@@ -4290,23 +4318,13 @@ function switchToLookupByAddress(addr){
     // scope, so the filter is inlined here.
     const nonRes=`AND UPPER(address) NOT LIKE '%1400%JOHN F KENNEDY%' AND UPPER(address) NOT LIKE '%1234 MARKET%' AND UPPER(address) NOT LIKE '%LINCOLN FINANCIAL%' AND address NOT LIKE '%&%'`;
     const sql=`SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE zipcode = '${zip}' AND requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${nonRes} GROUP BY address ORDER BY complaint_count DESC LIMIT 50`;
-    try{
-      return await zipCartoQuery(sql);
-    }catch(e){
-      console.warn("311 query failed:",e.message);
-      return [];
-    }
+    return await zipCartoQuery(sql);
   }
 
   async function queryExpiredLicenses(zip){
     // business_licenses.zip is ZIP+4 format (e.g. "19107-6007"), use LIKE prefix match
     const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND zip LIKE '${zip}%' AND (rentalcategory IS NULL OR rentalcategory NOT LIKE '%Hotel%') AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HILTON WORLDWIDE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WYNDHAM%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%RESIDENCE INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HAMPTON INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%COURTYARD BY MARRIOTT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%BOARD OF EDUCATION%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
-    try{
-      return await zipCartoQuery(sql);
-    }catch(e){
-      console.warn("Licenses query failed:",e.message);
-      return [];
-    }
+    return await zipCartoQuery(sql);
   }
 
   async function queryRepeatOffenders(zip){
@@ -4319,7 +4337,9 @@ function switchToLookupByAddress(addr){
       if(rows.length>0) return rows;
       return await zipCartoQuery(sqlSimple);
     }catch(e){
-      try{ return await zipCartoQuery(sqlSimple); }catch(e2){ console.warn("Repeat offenders query failed:",e2.message); return []; }
+      // Fall back to the simple query; if it also throws, let it propagate so the
+      // step is marked failed rather than showing "no repeat offenders".
+      return await zipCartoQuery(sqlSimple);
     }
   }
 
@@ -4533,10 +4553,19 @@ function switchToLookupByAddress(addr){
     }
   }
 
-  function renderZipSummary(zip,violCt,compCt,licCt,ownerCt){
+  function renderZipSummary(zip,violCt,compCt,licCt,ownerCt,anyFailed){
     const summary=$("#zip-scan-summary");
     if(!summary) return;
     const total=(violCt||0)+(compCt||0)+(licCt||0)+(ownerCt||0);
+    if(total===0 && anyFailed){
+      summary.className="zip-scan-summary has-issues";
+      summary.innerHTML=`
+        <div class="zs-headline">Scan incomplete for ZIP ${esc(zip)}</div>
+        <div class="zs-sub">One or more data sources didn't respond (see the sections above). This is <b>not</b> an all-clear — try again shortly.</div>
+      `;
+      summary.style.display="block";
+      return;
+    }
     if(total===0){
       summary.className="zip-scan-summary no-issues";
       summary.innerHTML=`
@@ -4674,7 +4703,8 @@ function switchToLookupByAddress(addr){
       }
 
       // Show summary banner
-      renderZipSummary(zip,violCt,compCt,licCt,ownerCt);
+      const anyZipFailed=[violations,complaints,licenses,owners].some(r=>r.status!=="fulfilled");
+      renderZipSummary(zip,violCt,compCt,licCt,ownerCt,anyZipFailed);
 
       // Show results and timestamp
       results.style.display="block";
@@ -4860,7 +4890,7 @@ if('serviceWorker' in navigator){
   }
   closeBtn.addEventListener("click",dismiss);
 
-  const isIOS = /iP(hone|od|iPad)/.test(navigator.userAgent) && !window.MSStream;
+  const isIOS = (/iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1)) && !window.MSStream;
 
   if(isIOS){
     // No native prompt on iOS Safari — instructional copy only.
@@ -5317,7 +5347,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
 <style>
   @media print{.no-print{display:none!important}}
   .help-fab{
-    position:fixed;bottom:env(safe-area-inset-bottom,16px);left:16px;z-index:9999;
+    position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);left:16px;z-index:8000;
     min-width:48px;min-height:48px;padding:10px 18px;
     background:var(--red);color:#fff;border:none;border-radius:4px;
     font-family:"Archivo",sans-serif;font-weight:700;font-size:15px;
