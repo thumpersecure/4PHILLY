@@ -854,7 +854,7 @@
         <div class="brand-tag"> A Tenants App for Philadelphia Properties - made easy.</div>
       </div>
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
-         <b>Eclipse</b> (authoritative for current state) and cross-checked against <b>Carto</b> (historical mirror). Flags drift between the two. Decodes status semantics. Resolves your <b>council district</b> and councilmember. THE Philadelphia property and landlord lookup site for property records tenants need to know - made for tenants to quickly find violations, business license status, 311 complaints, council district &amp; councilmember lookup.
+        Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from the City's official data — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
       </div>
     </div>
     <div class="top-meta">
@@ -1197,6 +1197,7 @@
   </div><!-- /pane-container -->
 
   <footer class="footer">
+  <div class="footer-row"><b>WHY THIS EXISTS</b> &nbsp; Landlords don't volunteer open violations, a dead rental license, or a building's 311 history — but you're the one who has to live with them. Two minutes here before you sign can save your deposit, spare you a lease you can't get out of, and keep you out of a unit the City has already flagged. Look it up, then send it to anyone you know who's apartment-hunting.</div>
   <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer · DOR Parcel layer · Council roster (phlcouncil.com)</div>
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
@@ -2394,6 +2395,13 @@ function buildRightsCard(issueType){
   </details>`;
 }
 
+// OPA category_code: 1 Residential, 2 Hotels/Apartments, 3 Store w/ Dwelling (all can contain
+// rental dwelling units, so a rental license IS expected); 4 Commercial, 5 Industrial, 6 Vacant
+// Land (no residential rental license required — its absence is normal, not a red flag).
+function isNonResidential(opaRow){
+  const c=parseInt(opaRow?.category_code,10);
+  return c===4||c===5||c===6;
+}
 function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
   const addr=opaRow?.location||"this property";
   const owner=opaRow?.owner_1||"unknown owner";
@@ -2410,7 +2418,12 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
   const recent311=safe311.filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
 
   let verdict="",vclass="";
-  if(allSummary.count===0){
+  const nonRes=isNonResidential(opaRow);
+  const catDesc=opaRow?.category_code_description||"a non-residential category";
+  if(nonRes && rentalSummary.count===0){
+    verdict=`<b>No residential rental license — and none is expected here.</b> Philadelphia's OPA records classify this parcel as <b>${esc(catDesc)}</b>, a non-residential category. Residential rental licenses only apply to properties with dwelling units, so the absence of one here is normal — not a red flag. ${allSummary.count>0?`Eclipse still shows <b>${allSummary.count}</b> business or trade license record(s) for this parcel — see the list below.`:`No business or trade license records are on file either.`} If someone is offering this as a place to <i>live</i>, treat <i>that</i> as the red flag and confirm the residential use is legal.`;
+    vclass="";
+  } else if(allSummary.count===0){
     verdict=`<b>No L&amp;I business or trade license records on file.</b> If regulated activity is occurring here without a required license, that is a separate compliance question under the applicable Phila. Code sections.`;
     vclass="bad";
   } else if(rentalSummary.count===0){
@@ -3073,7 +3086,7 @@ function buildCouncilMailto(member,opaRow,openViol,lic,t311,allViol){
   const addr=opaRow?.location||"Unknown Address";
   const opa=opaRow?.parcel_number||opaRow?.opa_account_num||"";
   const pageURL=`${location.origin}${location.pathname}#opa=${opa}`;
-  const scoreData=compute4PScoreFromLookup({lic,ovE:openViol,t311,allViol});
+  const scoreData=compute4PScoreFromLookup({lic,ovE:openViol,t311,allViol,opaRow});
   const level=get4PScoreLevel(scoreData.total);
   const openCt=(Array.isArray(openViol)?openViol:[]).length;
   const rentalRows=(Array.isArray(lic)?lic:[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
@@ -3473,8 +3486,8 @@ function render4PScore(scoreData){
   fill.style.background=level.color;
 
   // Breakdown
-  const licStatusDisplay=scoreData.rentalLicenseStatus==="active"?"Active":scoreData.rentalLicenseStatus==="expired"?"Expired":"No license found";
-  const licStatusColor=scoreData.rentalLicenseStatus==="active"?"var(--green)":scoreData.rentalLicenseStatus==="expired"?"var(--red)":"var(--red)";
+  const licStatusDisplay=scoreData.rentalLicenseStatus==="active"?"Active":scoreData.rentalLicenseStatus==="expired"?"Expired":scoreData.rentalLicenseStatus==="na"?"N/A — non-residential":"No license found";
+  const licStatusColor=scoreData.rentalLicenseStatus==="active"?"var(--green)":scoreData.rentalLicenseStatus==="expired"?"var(--red)":scoreData.rentalLicenseStatus==="na"?"var(--ink-dim)":"var(--red)";
   const unfitDisplay=scoreData.hasUnfit?"Yes":"No";
   const unfitColor=scoreData.hasUnfit?"var(--red)":"var(--green)";
 
@@ -3502,7 +3515,7 @@ function render4PScore(scoreData){
   `;
 }
 
-function compute4PScoreFromLookup({lic, ovE, t311, allViol}){
+function compute4PScoreFromLookup({lic, ovE, t311, allViol, opaRow}){
   const safeOvE=Array.isArray(ovE)?ovE:[];
   const safe311=Array.isArray(t311)?t311:[];
   const safeAllViol=Array.isArray(allViol)?allViol:[];
@@ -3515,6 +3528,9 @@ function compute4PScoreFromLookup({lic, ovE, t311, allViol}){
   if(rentalRows.length>0){
     const hasActive=rentalRows.some(r=>analyzeLicenseRow(r).isActive);
     rentalLicenseStatus=hasActive?"active":"expired";
+  } else if(isNonResidential(opaRow)){
+    // Non-residential parcel: a residential rental license isn't required, so don't penalize it.
+    rentalLicenseStatus="na";
   }
 
   // 311 complaints in last 12 months
@@ -3634,7 +3650,7 @@ async function lookup(opa){
     renderCouncilTab(opaRow,ovE,lic,t311,allViol);
 
     // 4P Score
-    const scoreData=compute4PScoreFromLookup({lic,ovE,t311,allViol});
+    const scoreData=compute4PScoreFromLookup({lic,ovE,t311,allViol,opaRow});
     render4PScore(scoreData);
 
     // Cache the structured record for export + AI context (single source of truth)
