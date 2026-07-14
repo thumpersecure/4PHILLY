@@ -1675,25 +1675,49 @@ function scoreAddressMatch(input,loc){
 // ---- Data fetchers ----
 function assertOPA(opa){ if(!/^\d{6,12}$/.test(opa)) throw new Error("Invalid OPA account number"); }
 
-async function resolveAddress(addr){
-  const patterns=addrVariants(addr);
+async function queryAndScoreAddress(addr,patterns,limit){
   const results=await Promise.all(patterns.map(p=>{
     const where=`UPPER(location) LIKE '${sqlSafeStr(p)}'`;
     return eclipseQuery("opa_properties_public_pde",where,
       "parcel_number,location,owner_1,market_value,year_built,zip_code,zoning,census_tract",
-      "&resultRecordCount=25").catch(()=>[]);
+      `&resultRecordCount=${limit}`).catch(()=>[]);
   }));
   const seen=new Set();
   const deduped=results.flat().filter(r=>{
     if(seen.has(r.parcel_number)) return false;
     seen.add(r.parcel_number); return true;
   });
-  // Score each candidate against the typed address and rank best-first. Drop
-  // candidates whose house number contradicts the input (scoreAddressMatch returns
-  // 0 only as a hard reject). Returning empty is correct — surfacing rejected
-  // house-number mismatches as "matches" is worse than an honest "no match".
-  const scored=deduped.map(r=>({r,s:scoreAddressMatch(addr,r.location)}));
-  const use=scored.filter(x=>x.s>0);
+  // Score each candidate against the typed address. Drop candidates whose house
+  // number contradicts the input (scoreAddressMatch returns 0 only as a hard
+  // reject) — surfacing a rejected mismatch as a "match" is worse than "no match".
+  return deduped.map(r=>({r,s:scoreAddressMatch(addr,r.location)})).filter(x=>x.s>0);
+}
+
+async function resolveAddress(addr){
+  let use=await queryAndScoreAddress(addr,addrVariants(addr),25);
+
+  // Range-parcel fallback. Philadelphia merges some addresses into a single
+  // parcel stored as a hyphenated range, e.g. "314-22 N 12TH ST". A typed
+  // number that's the range's start ("314") substring-matches fine, but a
+  // number INSIDE the range ("318", "320") never substring-matches "314-22" at
+  // all, so the primary query above returns nothing. Widen to the "hundred
+  // block" (drop the last 2 digits of the house number) so range parcels are
+  // in the candidate set, then let scoreAddressMatch's existing range-expansion
+  // logic (it already parses "314-22" and checks containment) pick the real
+  // match and reject everything else — this only fires when the exact query
+  // above found nothing, so it doesn't add cost to normal lookups.
+  if(use.length===0){
+    const parts=normalizeAddr(addr).split(' ').filter(Boolean);
+    const leadNum=parts[0];
+    if(/^\d{3,6}$/.test(leadNum) && parts.length>1){
+      const blockPrefix=leadNum.slice(0,-2);
+      if(blockPrefix){
+        const blockPattern=blockPrefix+'%'+parts.slice(1).join('%')+'%';
+        use=await queryAndScoreAddress(addr,[blockPattern],150);
+      }
+    }
+  }
+
   return use.sort((a,b)=>b.s-a.s).map(x=>Object.assign({_score:x.s},x.r));
 }
 
