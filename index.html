@@ -493,6 +493,21 @@
   .table-scroll{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .table-scroll::after{content:'';position:sticky;right:0;top:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--bg) 90%);display:block;margin-top:-100%;float:right;height:100%}
 
+  /* Impact / value section — light block below the search (previews light mode) */
+  .impact-hero{background:#ffffff;color:#1a1c1f;border-radius:16px;margin:32px 0 12px;padding:48px 44px;box-shadow:0 12px 44px rgba(0,0,0,.34);border:1px solid #ececec}
+  .impact-inner{max-width:840px;margin:0 auto}
+  .impact-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#b8791f;font-weight:700;margin-bottom:12px}
+  .impact-h{font-size:30px;line-height:1.15;margin:0 0 16px;font-weight:800;color:#0f1012;letter-spacing:-.01em}
+  .impact-lede{font-size:16px;line-height:1.65;color:#3a3d42;margin:0 0 34px;max-width:700px}
+  .impact-cols{display:grid;grid-template-columns:1fr;gap:26px}
+  .impact-col{padding-left:18px;border-left:3px solid var(--amber)}
+  .impact-col h3{font-size:17px;margin:0 0 9px;color:#0f1012;font-weight:700}
+  .impact-col p{font-size:14.5px;line-height:1.62;color:#45484e;margin:0}
+  .impact-foot{margin:36px 0 0;padding-top:22px;border-top:1px solid #ededed;font-size:14.5px;color:#555;font-weight:500}
+  .impact-foot b{color:#0f1012}
+  @media(min-width:640px){.impact-cols{grid-template-columns:1fr 1fr;gap:40px}}
+  @media(max-width:679px){.impact-hero{padding:34px 22px;margin:24px 0 8px}.impact-h{font-size:24px}.impact-lede{font-size:15px;margin-bottom:26px}}
+
   /* Responsive overrides */
   @media(max-width:679px){
     .wrap{padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
@@ -676,7 +691,7 @@
   .zr-header .zr-sub { font-size:12px; color:var(--ink-dim); }
   .zr-header .zr-updated { font-size:11px; color:var(--ink-mute); margin-top:4px; }
   .zr-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .zr-table th { background:var(--panel-2); color:var(--amber); padding:8px 10px; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; position:sticky; top:0; }
+  .zr-table th { background:var(--panel-2); color:var(--amber); padding:8px 10px; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; }
   .zr-table td { padding:8px 10px; border-bottom:1px solid var(--line-soft); }
   .zr-table tr:hover td { background:rgba(255,176,0,0.04); }
   .zr-score { font-weight:700; font-family:Archivo,sans-serif; }
@@ -693,7 +708,7 @@
   .zr-actions { text-align:center; margin-top:16px; }
   .zr-dl-btn { display:inline-block; background:var(--amber); color:var(--bg); font-size:13px; font-weight:700; padding:8px 20px; border-radius:4px; text-decoration:none; cursor:pointer; border:none; }
   .zr-dl-btn:hover { background:var(--amber-soft); }
-  .zr-container { max-height:500px; overflow-y:auto; border:1px solid var(--line); border-radius:6px; }
+  .zr-container { border:1px solid var(--line); border-radius:6px; }
   @media(max-width:679px) {
     .zr-table { font-size:11px; }
     .zr-table th, .zr-table td { padding:6px 6px; }
@@ -1197,6 +1212,25 @@
   </section>
 
   </div><!-- /pane-container -->
+
+  <section id="impact-hero" class="impact-hero" aria-label="Why renters use 4philly">
+    <div class="impact-inner">
+      <div class="impact-eyebrow">Why renters use 4PHILLY</div>
+      <h2 class="impact-h">Don't rent blind in Philadelphia.</h2>
+      <p class="impact-lede">Every apartment in Philadelphia carries a paper trail most landlords would rather you never read. 4philly pulls it into the open &mdash; free, in seconds, straight from the City's own Licenses &amp; Inspections and rental-license records &mdash; so the power isn't all on their side of the lease.</p>
+      <div class="impact-cols">
+        <div class="impact-col">
+          <h3>Before you sign a lease</h3>
+          <p>Check the apartment you're about to call home &mdash; or any Philadelphia address you're thinking of renting. See open code violations, whether the building's rental license is active, and the 311 complaints past tenants filed. Fresh paint and a friendly tour hide a lot; the City's record doesn't. Walk in knowing exactly what you'd be signing up for.</p>
+        </div>
+        <div class="impact-col">
+          <h3>When your landlord won't listen</h3>
+          <p>Repairs ignored, rental license lapsed, deposit games? Pull the same public records the City relies on and turn &ldquo;he said / she said&rdquo; into documented facts &mdash; ready to bring to your landlord, a housing attorney, Philadelphia L&amp;I, or your City Council member.</p>
+        </div>
+      </div>
+      <p class="impact-foot">Built for Philadelphia renters and tenants. <b>No account, no cost, no catch</b> &mdash; just the truth about your address before you sign or when you need to fight back.</p>
+    </div>
+  </section>
 
   <footer class="footer">
   <div class="footer-row"><b>WHY THIS EXISTS</b> &nbsp; Landlords don't volunteer open violations, a dead rental license, or a building's 311 history — but you're the one who has to live with them. Two minutes here before you sign can save your deposit, spare you a lease you can't get out of, and keep you out of a unit the City has already flagged. Look it up, then send it to anyone you know who's apartment-hunting.</div>
