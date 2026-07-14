@@ -3720,6 +3720,9 @@ $("#go").addEventListener("click",async()=>{
     lookup(opa); return;
   }
   if(!addrRaw){ banner("Enter an address or an OPA account number.",true); return; }
+  // Main box invites "OPA" input; a bare parcel number can never match address/
+  // building search, so route it to the existing OPA path (same rule as #opa).
+  if(/^\d{6,12}$/.test(addrRaw)){ lookup(addrRaw); return; }
   const addr=validateInput(addrRaw,"address");
   if(addr===null) return;
   const seq = ++lookupSeq;
