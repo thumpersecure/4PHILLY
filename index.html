@@ -569,6 +569,15 @@
   @keyframes cta-focus-pulse{0%{box-shadow:0 0 0 0 rgba(255,176,0,.55)}100%{box-shadow:0 0 0 16px rgba(255,176,0,0)}}
   #addr.cta-pulse{animation:cta-focus-pulse 1.4s ease-out 1}
 
+  /* Non-affiliation disclaimer — unmissable, right under the header (not
+     buried in the footer or a sub-page) so it satisfies Play policy's
+     "easy-to-see disclaimer in the app" requirement for apps that show
+     government data without being government-affiliated. */
+  .gov-disclaimer{margin:18px 0 0;padding:14px 18px;border:1px solid var(--line);border-left:3px solid var(--amber);background:var(--panel);border-radius:2px;font-size:12.5px;line-height:1.55;color:var(--ink-dim)}
+  .gov-disclaimer b{color:var(--ink)}
+  .gov-disclaimer a{color:var(--amber);font-weight:600}
+  @media(max-width:679px){.gov-disclaimer{padding:12px 14px;font-size:12px;margin-top:14px}}
+
   /* Responsive overrides */
   @media(max-width:679px){
     .wrap{padding:16px 14px calc(28px + env(safe-area-inset-bottom))}
@@ -941,8 +950,11 @@
         <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.0</span>
         <div class="brand-tag"> A Tenants App for Philadelphia Properties - made easy.</div>
       </div>
+      <div class="gov-disclaimer" role="note">
+        <b>4PHILLY is an independent, non-governmental tool.</b> It's built by a private developer and is <b>not operated, affiliated with, or endorsed by the City of Philadelphia</b> or any government agency. Every record shown here comes from Philadelphia's public data systems — always verify before relying on it, directly at the City's official property lookup: <a href="https://atlas.phila.gov/" target="_blank" rel="noopener"><b>atlas.phila.gov</b></a>
+      </div>
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
-        Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from the City's official data — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
+        Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from Philadelphia's public government records — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
       </div>
       <button type="button" id="cta-check" class="cta-check-btn">
         <span class="cta-check-btn-main">Check a Building or Apartment &rarr;</span>
