@@ -558,6 +558,17 @@
   .theme-toggle{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line);border-radius:20px;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:5px 12px;cursor:pointer;margin-bottom:8px;white-space:nowrap;transition:color .15s,border-color .15s}
   .theme-toggle:hover{color:var(--ink);border-color:var(--amber)}
 
+  /* Primary hero CTA — turns the "check before you sign" message into a
+     standout call-to-action button instead of just body copy. */
+  .cta-check-btn{display:block;width:100%;margin-top:18px;padding:16px 22px;background:var(--amber-fill);color:#1a1100;border:2px solid #1a1100;border-radius:6px;text-align:left;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.28);transition:transform .08s,box-shadow .08s;touch-action:manipulation}
+  .cta-check-btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 rgba(0,0,0,.32)}
+  .cta-check-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.28)}
+  .cta-check-btn-main{display:block;font-family:"Archivo",sans-serif;font-weight:800;font-size:17px;letter-spacing:-.01em}
+  .cta-check-btn-sub{display:block;font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:600;margin-top:4px;opacity:.82}
+  @media(min-width:680px){.cta-check-btn{width:auto;max-width:460px}}
+  @keyframes cta-focus-pulse{0%{box-shadow:0 0 0 0 rgba(255,176,0,.55)}100%{box-shadow:0 0 0 16px rgba(255,176,0,0)}}
+  #addr.cta-pulse{animation:cta-focus-pulse 1.4s ease-out 1}
+
   /* Responsive overrides */
   @media(max-width:679px){
     .wrap{padding:16px 14px calc(28px + env(safe-area-inset-bottom))}
@@ -933,6 +944,10 @@
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
         Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from the City's official data — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
       </div>
+      <button type="button" id="cta-check" class="cta-check-btn">
+        <span class="cta-check-btn-main">Check a Building or Apartment &rarr;</span>
+        <span class="cta-check-btn-sub">Before you sign a lease &mdash; or if your landlord's already ignoring you</span>
+      </button>
     </div>
     <div class="top-meta">
       <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle light / dark">☾ Dark</button>
@@ -5665,6 +5680,26 @@ Always provide relevant referrals. These organizations offer free or low-cost le
       else document.documentElement.removeAttribute("data-theme");
       try{ localStorage.setItem("4p-theme",next); }catch(e){}
       paint();
+    });
+  })();
+</script>
+<script>
+  (function(){
+    var btn=document.getElementById("cta-check");
+    if(!btn) return;
+    btn.addEventListener("click",function(){
+      var modeBtn=document.querySelector('#mode-toggle button[data-mode="lookup"]');
+      if(modeBtn) modeBtn.click();
+      var panel=document.getElementById("lookup-panel");
+      if(panel) panel.scrollIntoView({behavior:"smooth",block:"start"});
+      var addr=document.getElementById("addr");
+      if(addr){
+        setTimeout(function(){
+          addr.focus();
+          addr.classList.add("cta-pulse");
+          setTimeout(function(){ addr.classList.remove("cta-pulse"); },1500);
+        },380);
+      }
     });
   })();
 </script>
