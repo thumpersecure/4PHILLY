@@ -6,7 +6,7 @@
 
 ## 1. Data We Display
 
-All property, license, and inspection data shown on this Site is sourced from public government records (e.g., the City of Philadelphia's open data portals and L&I databases). This data is public record and is presented here for civic transparency and research purposes. We do not independently verify the accuracy of third-party public records and are not responsible for errors in the source data.
+All property, license, and inspection data shown on this Site is sourced from public government records (e.g., the City of Philadelphia's open data portals and L&I databases). This data is public record and is presented here for civic transparency and research purposes. We do not independently verify the accuracy of third-party public records and are not responsible for errors in the source data. You can independently verify any record shown on this Site directly at the City of Philadelphia's official property lookup: [atlas.phila.gov](https://atlas.phila.gov/).
 
 ## 2. Data We Collect From Visitors
 
@@ -44,4 +44,4 @@ Questions about this policy or the Site's data practices can be directed to the 
 
 ---
 
-*4philly.net is an independent civic research project and is not affiliated with or endorsed by the City of Philadelphia.*
+*4philly.net is an independent, non-governmental civic research project. It is not operated, affiliated with, or endorsed by the City of Philadelphia or any government agency.*
