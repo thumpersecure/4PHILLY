@@ -1,0 +1,16 @@
+# 4PHILLY
+
+> An independent, non-governmental tool that helps Philadelphia tenants look up public City of Philadelphia records for any address — L&I code violations, rental license status, 311 complaints, and council district — in one place.
+
+4PHILLY is NOT a City of Philadelphia government service and is not operated, endorsed, or affiliated with the City of Philadelphia. It is an independent civic-data tool built to make existing public records easier for tenants to find and read.
+
+## Key Pages
+
+- [Homepage](https://4philly.net/): address lookup tool surfacing L&I code violations, rental license status, 311 complaints, and City Council district for any Philadelphia property.
+- [Privacy Policy](https://4philly.net/privacy.html): what data 4PHILLY collects and how it is used.
+
+## Data Sources
+
+- Data is pulled live, on demand, from the City of Philadelphia's public Eclipse (L&I), Carto, and OPA (Office of Property Assessment) systems.
+- 4PHILLY does not host, store, or alter this data — it queries the same public City APIs in real time.
+- Every result can be independently verified directly against the City's own map at https://atlas.phila.gov.

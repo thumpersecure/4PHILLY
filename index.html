@@ -30,14 +30,14 @@
 <meta property="og:description" content="Apartments.com and Zillow show you photos and reviews. 4philly shows you the truth: open code violations, whether the rental license is active, and 311 complaints on any Philadelphia address. Apartment-hunting in Philly? Check here first — free, before you sign.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/">
-<meta property="og:image" content="https://4philly.net/og-image.png">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.1">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Philadelphia Apartments: Check It Before You Rent — 4PHILLY">
 <meta name="twitter:description" content="Listing sites show photos and reviews. 4philly shows the real City record — code violations, rental license status, and 311 complaints on any Philadelphia address. Check here first, free, before you sign.">
-<meta name="twitter:image" content="https://4philly.net/og-image.png">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.1">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -947,19 +947,19 @@
     <div>
       <div class="brand">
         <div class="brand-mark" role="button" tabindex="0" aria-label="4PHILLY — reset and return to lookup">4<span>PHILLY</span></div>
-        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.0</span>
+        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.1</span>
         <div class="brand-tag"> A Tenants App for Philadelphia Properties - made easy.</div>
       </div>
       <div class="gov-disclaimer" role="note">
         <b>4PHILLY is an independent, non-governmental tool.</b> It's built by a private developer and is <b>not operated, affiliated with, or endorsed by the City of Philadelphia</b> or any government agency. Every record shown here comes from Philadelphia's public data systems — always verify before relying on it, directly at the City's official property lookup: <a href="https://atlas.phila.gov/" target="_blank" rel="noopener"><b>atlas.phila.gov</b></a>
       </div>
-      <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
-        Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from Philadelphia's public government records — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
-      </div>
       <button type="button" id="cta-check" class="cta-check-btn">
         <span class="cta-check-btn-main">Check a Building or Apartment &rarr;</span>
         <span class="cta-check-btn-sub">Before you sign a lease &mdash; or if your landlord's already ignoring you</span>
       </button>
+      <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
+        Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from Philadelphia's public government records — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
+      </div>
     </div>
     <div class="top-meta">
       <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle light / dark">☾ Dark</button>
@@ -1322,12 +1322,16 @@
 
   <footer class="footer">
   <div class="footer-row"><b>WHY THIS EXISTS</b> &nbsp; Landlords don't volunteer open violations, a dead rental license, or a building's 311 history — but you're the one who has to live with them. Two minutes here before you sign can save your deposit, spare you a lease you can't get out of, and keep you out of a unit the City has already flagged. Look it up, then send it to anyone you know who's apartment-hunting.</div>
-  <div class="footer-row"><b>SOURCES</b> &nbsp; Eclipse ArcGIS feature services (services.arcgis.com/fLeGjb7u4uXqeF9q) · Carto SQL API (phl.carto.com) · OPA assessment layer · DOR Parcel layer · Council roster (phlcouncil.com)</div>
+  <div class="footer-row"><b>SOURCES</b> &nbsp; <a href="https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services" target="_blank" rel="noopener">Eclipse ArcGIS feature services</a> · <a href="https://phl.carto.com" target="_blank" rel="noopener">Carto SQL API</a> · <a href="https://property.phila.gov/" target="_blank" rel="noopener">OPA assessment layer</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">DOR Parcel layer</a> · <a href="https://phlcouncil.com" target="_blank" rel="noopener">Council roster</a></div>
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a> · <a href="https://jlegal.pro/safe-healthy-homes.html" target="_blank" rel="noopener">Safe Healthy Homes Act</a></div>
   <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>. · <a href="privacy.html">Privacy Policy</a></div>
-  <div class="footer-disc">4PHILLY v3.0 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-row"><b>VERIFY DIRECTLY</b> &nbsp; <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Atlas</a> · <a href="https://property.phila.gov/" target="_blank" rel="noopener">Property Assessment</a> · <a href="https://www.phila.gov/311/" target="_blank" rel="noopener">Philly311</a> · <a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener">Licenses &amp; Inspections</a></div>
+  <div style="border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--panel);text-align:center;margin-top:16px">
+    <img src="how-it-works.svg" alt="4PHILLY data flow diagram: an address or OPA number resolves through OPA lookup into two parallel sources, the authoritative Eclipse ArcGIS system and the historical Carto SQL mirror, which are compared by a drift comparator to produce a unified record with drift flags, while OPA data also resolves the council district to surface the councilmember and any L&amp;I Committee flag" style="max-width:100%;width:640px;display:block;margin:0 auto" loading="lazy">
+  </div>
+  <div class="footer-disc">4PHILLY v3.1 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
