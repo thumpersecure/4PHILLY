@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   asDateMs, dateKey, haversineM,
-  normalizeAddr, addrLooksSame, scoreAddressMatch,
+  normalizeAddr, addrLooksSame, scoreAddressMatch, houseNumsMatch,
   compareLicenseField,
   buildViolationDist, normStatus, statusHistogram
 } from '../lib/matching.mjs';
@@ -247,4 +247,33 @@ test('scoreAddressMatch: candidate omitting the directional still scores (not re
 
 test('scoreAddressMatch: matching directional with full name scores high', () => {
   assert.ok(scoreAddressMatch('123 North Main St', '123 N MAIN ST') >= 0.9);
+});
+
+// ---- Philadelphia hyphenated range addresses (e.g. "315-23 N 12TH ST") ----
+
+test('houseNumsMatch: base number matches its range and vice versa', () => {
+  assert.ok(houseNumsMatch('315', '315-23'));
+  assert.ok(houseNumsMatch('315-23', '315'));
+  assert.ok(houseNumsMatch('315-23', '315-23'));
+});
+
+test('houseNumsMatch: number inside the range matches, outside does not', () => {
+  assert.ok(houseNumsMatch('319', '315-23'));   // 319 is within 315..323
+  assert.ok(!houseNumsMatch('400', '315-23'));  // 400 is outside
+  assert.ok(!houseNumsMatch('310', '315-23'));  // 310 is below the range
+});
+
+test('addrLooksSame: typed base number matches ranged OPA parcel', () => {
+  assert.ok(addrLooksSame('315 N 12th St', '315-23 N 12TH ST'));
+  assert.ok(addrLooksSame('315-23 N 12th St', '315 N 12th St'));
+});
+
+test('scoreAddressMatch: ranged parcel auto-selects for the base number', () => {
+  assert.ok(scoreAddressMatch('315 N 12th', '315-23 N 12TH ST') >= 0.9);
+  assert.ok(scoreAddressMatch('315-23 N 12th St', '315 N 12TH ST') >= 0.9);
+});
+
+test('range fix does not weaken wrong-number / wrong-street rejection', () => {
+  assert.equal(scoreAddressMatch('12 Main St', '1234 Main St'), 0);
+  assert.ok(!addrLooksSame('315 N 12th St', '400-10 N 12th St')); // ranges disjoint
 });
