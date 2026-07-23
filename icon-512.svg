@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141414"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <linearGradient id="amb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffc233"/>
+      <stop offset="1" stop-color="#ffb000"/>
+    </linearGradient>
+  </defs>
+
+  <!-- rounded tile -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <rect x="6" y="6" width="500" height="500" rx="92" fill="none" stroke="#ffb000" stroke-opacity="0.18" stroke-width="4"/>
+
+  <!-- building / records motif: a simple apartment block with windows -->
+  <g transform="translate(150,120)">
+    <!-- tower -->
+    <rect x="0" y="40" width="212" height="252" rx="10" fill="url(#amb)"/>
+    <!-- windows grid (dark punch-outs) -->
+    <g fill="#0a0a0a">
+      <rect x="26" y="70"  width="34" height="30" rx="4"/>
+      <rect x="90" y="70"  width="34" height="30" rx="4"/>
+      <rect x="154" y="70" width="34" height="30" rx="4"/>
+      <rect x="26" y="128" width="34" height="30" rx="4"/>
+      <rect x="90" y="128" width="34" height="30" rx="4"/>
+      <rect x="154" y="128" width="34" height="30" rx="4"/>
+      <rect x="26" y="186" width="34" height="30" rx="4"/>
+      <rect x="90" y="186" width="34" height="30" rx="4"/>
+      <rect x="154" y="186" width="34" height="30" rx="4"/>
+      <!-- door -->
+      <rect x="86" y="240" width="42" height="52" rx="4"/>
+    </g>
+  </g>
+
+  <!-- 4P wordmark badge, bottom-left, high contrast -->
+  <g transform="translate(96,300)">
+    <rect x="0" y="0" width="150" height="118" rx="20" fill="#0a0a0a" stroke="#ffb000" stroke-width="5"/>
+    <text x="75" y="90" font-size="82" font-family="Arial Black, Arial, sans-serif" font-weight="900" fill="url(#amb)" text-anchor="middle">4P</text>
+  </g>
+</svg>
