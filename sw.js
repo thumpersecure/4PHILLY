@@ -1,7 +1,7 @@
-const CACHE = '4philly-v27';
+const CACHE = '4philly-v28';
 const STATIC = ['./', './index.html', './404.html', './manifest.json', './icon.svg'];
 const FONT_ORIGIN = 'https://fonts.gstatic.com';
-const API_ORIGINS = ['https://services.arcgis.com', 'https://phl.carto.com', 'https://api.openai.com', 'https://api.anthropic.com', 'https://generativelanguage.googleapis.com'];
+const API_ORIGINS = ['https://services.arcgis.com', 'https://phl.carto.com'];
 
 self.addEventListener('install', e => {
   e.waitUntil(

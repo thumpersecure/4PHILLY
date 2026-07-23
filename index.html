@@ -30,14 +30,14 @@
 <meta property="og:description" content="Apartments.com and Zillow show you photos and reviews. 4philly shows you the truth: open code violations, whether the rental license is active, and 311 complaints on any Philadelphia address. Apartment-hunting in Philly? Check here first — free, before you sign.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=3.1">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Philadelphia Apartments: Check It Before You Rent — 4PHILLY">
 <meta name="twitter:description" content="Listing sites show photos and reviews. 4philly shows the real City record — code violations, rental license status, and 311 complaints on any Philadelphia address. Check here first, free, before you sign.">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.1">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.3">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -528,7 +528,7 @@
   .lookup-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--amber) 0%,var(--amber-soft) 100%);transition:width .25s ease}
   .lookup-progress.error .lookup-progress-fill{background:var(--red)}
 
-  .footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:2}
+  .footer{margin-top:72px;padding-top:24px;padding-bottom:88px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:2}
   .footer b{color:var(--ink-dim)}
   .footer .footer-row{margin-bottom:8px}
   .footer .footer-disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--ink-mute);opacity:.7}
@@ -739,20 +739,6 @@
     @page{margin:0.6in 0.5in}
   }
 
-  /* Evidence Checklist */
-  .evidence-checklist{margin-top:22px}
-  .evidence-checklist summary{font-family:"Archivo",sans-serif;font-weight:600;font-size:14px;color:var(--amber);cursor:pointer;padding:14px 18px;min-height:44px;display:flex;align-items:center;gap:8px;list-style:none;user-select:none;-webkit-tap-highlight-color:transparent}
-  .evidence-checklist summary::-webkit-details-marker{display:none}
-  .evidence-checklist summary::before{content:'';display:inline-block;width:0;height:0;border-left:6px solid var(--amber);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s;flex-shrink:0}
-  .evidence-checklist[open] summary::before{transform:rotate(90deg)}
-  .evidence-checklist .ecl-body{padding:0 18px 14px}
-  .evidence-checklist .ecl-group{margin-bottom:14px}
-  .evidence-checklist .ecl-group-title{font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-mute);margin:0 0 8px}
-  .evidence-checklist label.ecl-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-  .evidence-checklist label.ecl-item input[type="checkbox"]{width:20px;height:20px;min-width:20px;margin:2px 0 0;accent-color:var(--amber);cursor:pointer}
-  .evidence-checklist label.ecl-item span{font-size:13px;color:var(--ink-dim);line-height:1.5;padding-top:1px}
-  .evidence-checklist label.ecl-item.checked span{color:var(--ink-mute);text-decoration:line-through}
-
   /* ZIP Rankings */
   #zip-rankings { display:none; padding:24px 16px; max-width:960px; margin:0 auto; }
   #zip-rankings.loaded { display:block; }
@@ -818,43 +804,31 @@
     @page { margin:0.5in; }
   }
 
-  /* AI Assistant */
-  .ai-fab { position:fixed; bottom:16px; right:16px; z-index:998; background:var(--blue); color:#fff; border:none; border-radius:50%; width:48px; height:48px; font-size:22px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; }
-  .ai-fab:hover { background:#90caf9; }
+  /* Disclaimer FAB + modal (government non-affiliation notice) */
+  .disc-fab { position:fixed; bottom:16px; right:16px; z-index:998; background:var(--amber); color:#1a1100; border:2px solid rgba(0,0,0,.35); border-radius:50%; width:52px; height:52px; cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; touch-action:manipulation; transition:filter .12s,transform .1s,box-shadow .15s; animation:disc-fab-in .35s ease-out both; }
+  .disc-fab:hover { filter:brightness(1.08); box-shadow:0 4px 16px rgba(0,0,0,.5); }
+  .disc-fab:active { transform:scale(.94); }
+  .disc-fab svg { width:26px; height:26px; display:block; }
+  @keyframes disc-fab-in { from{opacity:0;transform:scale(.6) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  /* one-time attention pulse so the "not a government app" notice gets noticed */
+  @keyframes disc-fab-pulse { 0%{box-shadow:0 3px 12px rgba(0,0,0,.45),0 0 0 0 rgba(255,176,0,.55)} 70%{box-shadow:0 3px 12px rgba(0,0,0,.45),0 0 0 12px rgba(255,176,0,0)} 100%{box-shadow:0 3px 12px rgba(0,0,0,.45),0 0 0 0 rgba(255,176,0,0)} }
+  .disc-fab.pulse { animation:disc-fab-pulse 1.6s ease-out 2; }
+  @media (prefers-reduced-motion: reduce) { .disc-fab{animation:none} .disc-fab.pulse{animation:none} }
 
-  .ai-panel { display:none; position:fixed; bottom:80px; right:16px; width:380px; max-height:500px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5); z-index:999; flex-direction:column; overflow:hidden; }
-  .ai-panel.open { display:flex; }
-
-  .ai-panel-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--panel-2); border-bottom:1px solid var(--line); }
-  .ai-panel-header h3 { font-size:14px; color:var(--blue); margin:0; font-family:Archivo,sans-serif; }
-  .ai-panel-close { background:none; border:none; color:var(--ink-mute); font-size:18px; cursor:pointer; padding:0; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; }
-  .ai-panel-close:hover { color:var(--ink); }
-
-  .ai-messages { flex:1; overflow-y:auto; padding:12px 16px; max-height:320px; }
-  .ai-msg { margin-bottom:12px; font-size:13px; line-height:1.6; }
-  .ai-msg.user { text-align:right; }
-  .ai-msg.user .ai-bubble { background:var(--blue); color:#fff; display:inline-block; padding:8px 12px; border-radius:12px 12px 4px 12px; max-width:85%; text-align:left; }
-  .ai-msg.assistant .ai-bubble { background:var(--panel-2); color:var(--ink); display:inline-block; padding:8px 12px; border-radius:12px 12px 12px 4px; max-width:85%; }
-  .ai-msg.system .ai-bubble { background:rgba(255,176,0,0.1); color:var(--amber); font-size:12px; text-align:center; padding:6px 12px; border-radius:8px; font-style:italic; }
-
-  .ai-input-row { display:flex; padding:8px 12px; border-top:1px solid var(--line); gap:8px; }
-  .ai-input { flex:1; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:8px 10px; color:var(--ink); font-size:16px; resize:none; min-height:44px; max-height:80px; font-family:inherit; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2); }
-  .ai-input:focus { border-color:var(--blue); outline:none; }
-  .ai-send { background:var(--blue); color:#fff; border:none; border-radius:6px; padding:8px 14px; min-height:44px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; touch-action:manipulation; }
-  .ai-send:hover { background:#90caf9; }
-  .ai-send:disabled { background:var(--line); color:var(--ink-mute); cursor:not-allowed; }
-
-  .ai-setup { padding:16px; }
-  .ai-setup label { display:block; font-size:12px; color:var(--ink-dim); margin-bottom:4px; }
-  .ai-setup select, .ai-setup input { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:16px; margin-bottom:10px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.2); }
-  .ai-setup select:focus, .ai-setup input:focus { border-color:var(--blue); outline:none; }
-  .ai-setup .ai-setup-btn { width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; }
-  .ai-setup .ai-note { font-size:11px; color:var(--ink-mute); margin-top:8px; line-height:1.5; }
-
-  @media(max-width:679px) {
-    .ai-panel { left:8px; right:8px; width:auto; bottom:72px; max-height:60vh; }
-    .ai-fab { right:16px; bottom:16px; width:44px; height:44px; font-size:20px; }
-  }
+  .disc-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9500; display:flex; align-items:center; justify-content:center; padding:16px; opacity:0; visibility:hidden; transition:opacity .18s,visibility .18s; }
+  .disc-overlay.open { opacity:1; visibility:visible; }
+  .disc-modal { background:var(--panel); border:1px solid var(--line); border-top:3px solid var(--amber); border-radius:12px; max-width:440px; width:100%; max-height:85vh; overflow-y:auto; padding:22px 20px 18px; position:relative; box-shadow:0 12px 40px rgba(0,0,0,.6); }
+  .disc-modal h2 { font-family:Archivo,sans-serif; font-size:17px; color:var(--amber); margin:0 0 12px; padding-right:28px; }
+  .disc-modal p { font-size:13.5px; line-height:1.65; color:var(--ink-dim); margin:0 0 14px; }
+  .disc-close { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--ink-mute); font-size:22px; cursor:pointer; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; }
+  .disc-close:hover { color:var(--ink); }
+  .disc-src-title { font-family:"IBM Plex Mono",monospace; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-mute); margin:0 0 8px; }
+  .disc-src { list-style:none; padding:0; margin:0; }
+  .disc-src li { margin:0 0 6px; }
+  .disc-src a { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 12px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:13px; text-decoration:none; min-height:44px; }
+  .disc-src a:hover { border-color:var(--amber); }
+  .disc-src a span.arw { color:var(--amber); }
+  .disc-fab:focus-visible { outline:2px solid #1a1100; outline-offset:1px; box-shadow:0 0 0 4px rgba(255,176,0,.55); }
 
   /* ============================================================
      Clickability & keyboard-accessibility affordances
@@ -886,23 +860,10 @@
   .scanner-toggle button.active:focus-visible,
   .modal-311-copy:focus-visible,
   .modal-rtkl-copy:focus-visible,
-  .ai-setup-btn:focus-visible,
   .zr-dl-btn:focus-visible{
     outline:2px solid #1a1100;
     outline-offset:1px;
     box-shadow:0 0 0 4px rgba(255,176,0,.5);
-  }
-  /* Blue-accented AI controls: use a blue ring to match their identity. */
-  .ai-send:focus-visible,
-  .ai-fab:focus-visible{
-    outline:2px solid #0a0f1a;
-    outline-offset:1px;
-    box-shadow:0 0 0 4px rgba(100,181,246,.5);
-  }
-  /* Red-accented emergency button. */
-  .help-fab:focus-visible{
-    outline:2px solid #fff;
-    outline-offset:2px;
   }
   /* Inputs / textareas / selects already border amber on focus; add a soft
      ring so keyboard focus is obvious even mid-typing. */
@@ -911,13 +872,6 @@
   select:focus-visible{
     outline:2px solid var(--amber);
     outline-offset:1px;
-  }
-  .ai-input:focus-visible,
-  .ai-key:focus-visible,
-  #ai-provider:focus-visible,
-  .ai-setup select:focus-visible,
-  .ai-setup input:focus-visible{
-    outline-color:var(--blue);
   }
   input[type="checkbox"]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
@@ -949,7 +903,7 @@
     <div>
       <div class="brand">
         <div class="brand-mark" role="button" tabindex="0" aria-label="4PHILLY — reset and return to lookup">4<span>PHILLY</span></div>
-        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.1</span>
+        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.3</span>
         <div class="brand-tag"> A Tenants App for Philadelphia Properties - made easy.</div>
       </div>
       <div class="gov-disclaimer" role="note">
@@ -957,15 +911,15 @@
       </div>
       <button type="button" id="cta-check" class="cta-check-btn">
         <span class="cta-check-btn-main">Check a Building or Apartment &rarr;</span>
-        <span class="cta-check-btn-sub">Before you sign a lease &mdash; or if your landlord's already ignoring you</span>
+        <span class="cta-check-btn-sub">Before you sign a lease &mdash; check the City's public record</span>
       </button>
       <div class="top-desc" style="margin-top:10px;color:var(--ink-dim);font-size:13px;max-width:640px">
-        Renting an apartment in Philadelphia? <b>Before you sign the lease, see what the landlord won't tell you.</b> Type any address to pull the building's real record straight from Philadelphia's public government records — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
+        Renting an apartment in Philadelphia? <b>Before you sign the lease, check the building's public City record.</b> Type any address to pull the building's record straight from Philadelphia's public government records — open code violations, whether the rental license is actually active, and 311 complaints filed by tenants and neighbors. Know exactly what you're moving into before you commit.
       </div>
     </div>
     <div class="top-meta">
       <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle light / dark">☾ Dark</button>
-      <div>build <span class="mono">1.0</span></div>
+      <div>build <span class="mono">3.3</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -985,7 +939,7 @@
   <div id="scanner-panel">
     <div style="text-align:center;padding:20px 0 8px">
       <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">Check Philly</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Scan the entire city for the worst properties, most 311 complaints, expired rental licenses, and repeat offender owners using Philadelphia open data.</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Search Philadelphia's public data for properties with the most open violations, 311 complaints, and expired rental licenses.</div>
     </div>
     <details class="scan-why">
       <summary>Where do these numbers come from, and why?</summary>
@@ -1016,7 +970,7 @@
     <div id="scan-timestamp" class="scan-timestamp" style="display:none"></div>
     <div id="scan-results" style="display:none">
       <div class="scan-section" id="scan-sec-violations">
-        <h2>Worst Properties — Open Violations <span class="scan-count" id="scan-viol-count"></span></h2>
+        <h2>Most Open Violations <span class="scan-count" id="scan-viol-count"></span></h2>
         <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
         <div id="scan-viol-body"></div>
       </div>
@@ -1032,7 +986,7 @@
         <div id="scan-lic-body"></div>
       </div>
       <div class="scan-section" id="scan-sec-owners">
-        <h2>Repeat Offender Owners <span class="scan-count" id="scan-owner-count"></span></h2>
+        <h2>Owners With Multiple Flagged Properties <span class="scan-count" id="scan-owner-count"></span></h2>
         <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
         <div id="scan-owner-body"></div>
       </div>
@@ -1042,7 +996,7 @@
   <div id="zip-scanner-panel">
     <div style="text-align:center;padding:20px 0 8px">
       <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">4P Zip Code Scanner</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Scan a Philadelphia zip code for the worst properties, most 311 complaints, expired rental licenses, and repeat offender owners.</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Search a Philadelphia zip code's public data for properties with the most open violations, 311 complaints, and expired rental licenses.</div>
     </div>
     <details class="scan-why">
       <summary>Where do these numbers come from, and why?</summary>
@@ -1093,7 +1047,7 @@
     <div id="zip-scan-timestamp" class="scan-timestamp" style="display:none"></div>
     <div id="zip-scan-results" style="display:none">
       <div class="scan-section" id="zip-sec-violations">
-        <h2>Worst Properties — Open Violations <span class="scan-count" id="zip-viol-count"></span></h2>
+        <h2>Most Open Violations <span class="scan-count" id="zip-viol-count"></span></h2>
         <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
         <div id="zip-viol-body"></div>
       </div>
@@ -1109,7 +1063,7 @@
         <div id="zip-lic-body"></div>
       </div>
       <div class="scan-section" id="zip-sec-owners">
-        <h2>Repeat Offender Owners <span class="scan-count" id="zip-owner-count"></span></h2>
+        <h2>Owners With Multiple Flagged Properties <span class="scan-count" id="zip-owner-count"></span></h2>
         <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
         <div id="zip-owner-body"></div>
       </div>
@@ -1133,7 +1087,7 @@
       <div class="opa-advanced-body">
         <div class="field opa-field">
           <label for="opa">OPA account #</label>
-          <input id="opa" type="text" placeholder="Digits only, e.g. 881519440" autocomplete="off" inputmode="numeric">
+          <input id="opa" type="text" placeholder="Digits only — the 9-digit OPA account number" autocomplete="off" inputmode="numeric">
         </div>
         <p class="opa-explain">
           An <b>OPA number</b> (Office of Property Assessment account number) is the city's unique ID for a
@@ -1141,7 +1095,7 @@
           <br><br>
           <b>Why it can beat the address:</b> one street address can cover several parcels (a corner lot, a
           subdivided building, a condo with many units), and the same address can be written many ways
-          (“315 N 12th St” vs the city's official “315-23 N 12TH ST”). The OPA number points at exactly one
+          (“1500 Market St” vs the city's official “1500-16 MARKET ST”). The OPA number points at exactly one
           parcel with no ambiguity, so if you have it, the lookup is guaranteed to hit the right record.
           Don't have it? Just use the address — that's what most people do, and this tool figures out the
           matching OPA for you. You can find a property's OPA number on
@@ -1152,9 +1106,9 @@
 
     <div class="quick">
       <span>try:</span>
-      <button data-addr="315 N 12TH ST">315 N 12th St</button>
-      <button data-addr="1900 MARKET ST">1900 Market St</button>
-      <button data-opa="881147700">The Sterling</button>
+      <button data-addr="1400 JOHN F KENNEDY BLVD">City Hall</button>
+      <button data-addr="1901 VINE ST">Free Library</button>
+      <button data-addr="1234 MARKET ST">1234 Market St</button>
     </div>
     <div class="peek-hint">A lookup shows: Inspect · Drift · Brief · Records · Limits · Council</div>
     <div class="saved-bar" id="saved-bar" style="display:none">
@@ -1206,7 +1160,7 @@
 
   <div id="score-card" class="score-card" style="display:none">
     <h2>4P Score <span class="score-badge" id="score-badge">—</span></h2>
-    <div class="score-desc">Composite tenant risk assessment using Philadelphia public records</div>
+    <div class="score-desc">A transparent summary of this address's public records. Based only on: open code violations, rental license status, and recent 311 complaints. It is not a safety rating and not a judgment about any person.</div>
     <div class="score-hero">
       <div class="score-number" id="score-number">—</div>
       <div>
@@ -1271,7 +1225,7 @@
 
   <!-- BRIEF -->
   <section id="pane-brief" class="pane" role="tabpanel" aria-labelledby="tab-brief" tabindex="0">
-    <button class="print-brief-btn no-print" id="print-brief" aria-label="Print report" title="Print or save as PDF"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Report</button>
+    <button class="print-brief-btn no-print" id="print-brief" aria-label="Property records summary" title="Print or save this property's public records summary"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Property Records Summary</button>
     <div class="brief" id="brief-body"></div>
   </section>
 
@@ -1324,16 +1278,17 @@
 
   <footer class="footer">
   <div class="footer-row"><b>WHY THIS EXISTS</b> &nbsp; Landlords don't volunteer open violations, a dead rental license, or a building's 311 history — but you're the one who has to live with them. Two minutes here before you sign can save your deposit, spare you a lease you can't get out of, and keep you out of a unit the City has already flagged. Look it up, then send it to anyone you know who's apartment-hunting.</div>
+  <div class="footer-row"><b>EMERGENCY &amp; TENANT HOTLINES</b> &nbsp; <a href="tel:911">911 (Police / Fire / Medical)</a> · <a href="tel:+18002221222">Poison Control 1-800-222-1222</a> · <a href="tel:+12156869500">Philadelphia Tenant Hotline 215-686-9500</a> · <a href="tel:+12159813700">Community Legal Services 215-981-3700</a> · <a href="https://phillytenant.org" target="_blank" rel="noopener">Philadelphia Tenants Union</a> · <a href="tel:+18007997233">National DV Hotline 1-800-799-7233 (text START to 88788)</a><br><small style="color:var(--ink-mute)">This app does not provide emergency services. For immediate danger, call 911.</small></div>
   <div class="footer-row"><b>SOURCES</b> &nbsp; <a href="https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services" target="_blank" rel="noopener">Eclipse ArcGIS feature services</a> · <a href="https://phl.carto.com" target="_blank" rel="noopener">Carto SQL API</a> · <a href="https://property.phila.gov/" target="_blank" rel="noopener">OPA assessment layer</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">DOR Parcel geometry (via Atlas)</a> · <a href="https://phlcouncil.com" target="_blank" rel="noopener">Council roster</a></div>
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a> · <a href="https://jlegal.pro/safe-healthy-homes.html" target="_blank" rel="noopener">Safe Healthy Homes Act</a></div>
   <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>. · <a href="privacy.html">Privacy Policy</a></div>
-  <div class="footer-row"><b>VERIFY DIRECTLY</b> &nbsp; <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Atlas</a> · <a href="https://property.phila.gov/" target="_blank" rel="noopener">Property Assessment</a> · <a href="https://www.phila.gov/311/" target="_blank" rel="noopener">Philly311</a> · <a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener">Licenses &amp; Inspections</a></div>
+  <div class="footer-row"><b>VERIFY DIRECTLY</b> &nbsp; <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Atlas</a> · <a href="https://property.phila.gov/" target="_blank" rel="noopener">Property Assessment</a> · <a href="https://www.phila.gov/departments/philly311/" target="_blank" rel="noopener">Philly311</a> · <a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener">Licenses &amp; Inspections</a></div>
   <div style="border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--panel);text-align:center;margin-top:16px">
     <img src="how-it-works.svg" alt="4PHILLY data flow diagram: an address or OPA number resolves through OPA lookup into two parallel sources, the authoritative Eclipse ArcGIS system and the historical Carto SQL mirror, which are compared by a drift comparator to produce a unified record with drift flags, while OPA data also resolves the council district to surface the councilmember and any L&amp;I Committee flag" style="max-width:100%;width:640px;display:block;margin:0 auto" loading="lazy">
   </div>
-  <div class="footer-disc">4PHILLY v3.1 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-disc">4PHILLY v3.3 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
@@ -1381,40 +1336,25 @@
 
 <!-- bottom-nav removed; tabs are always at top -->
 
-<!-- AI ASSISTANT (must be before main script so initAIAssistant can find elements) -->
-<button class="ai-fab no-print" id="ai-fab" title="AI Tenant Assistant" aria-label="Open AI assistant">&#129302;</button>
+<!-- DISCLAIMER FAB + MODAL (government non-affiliation notice) -->
+<button class="disc-fab no-print" id="disc-fab" type="button" aria-label="Important: this app is not affiliated with any government">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+  </svg>
+</button>
 
-<div class="ai-panel no-print" id="ai-panel">
-  <div class="ai-panel-header">
-    <h3>&#129302; Tenant Assistant</h3>
-    <button class="ai-panel-close" id="ai-close" aria-label="Close assistant">&times;</button>
-  </div>
-
-  <div id="ai-setup-view" class="ai-setup">
-    <label for="ai-provider">AI Provider</label>
-    <select id="ai-provider">
-      <option value="anthropic">Anthropic (Claude)</option>
-      <option value="openai">OpenAI (GPT)</option>
-      <option value="google">Google (Gemini)</option>
-    </select>
-    <label for="ai-tier">Model</label>
-    <select id="ai-tier">
-      <option value="fast">Fast &amp; low-cost (recommended)</option>
-      <option value="balanced">Balanced</option>
-      <option value="best">Most capable</option>
-    </select>
-    <label for="ai-key">API Key</label>
-    <input type="password" id="ai-key" placeholder="Paste your API key" autocomplete="off">
-    <button class="ai-setup-btn" id="ai-start">Start Assistant</button>
-    <div class="ai-note">Your API key is stored locally on your device only. It is sent directly to your chosen AI provider — never to our servers. We have no backend.</div>
-  </div>
-
-  <div id="ai-chat-view" style="display:none; flex-direction:column; flex:1;">
-    <div class="ai-messages" id="ai-messages"></div>
-    <div class="ai-input-row">
-      <textarea class="ai-input" id="ai-input" placeholder="Ask about your rights, violations, next steps..." rows="1"></textarea>
-      <button class="ai-send" id="ai-send">Send</button>
-    </div>
+<div class="disc-overlay no-print" id="disc-overlay" role="dialog" aria-modal="true" aria-label="This app is not a government app">
+  <div class="disc-modal">
+    <button class="disc-close" id="disc-close" type="button" aria-label="Close">&times;</button>
+    <h2>Not a Government App</h2>
+    <p>4PHILLY is an independent, non-governmental tool. It is not affiliated with, endorsed by, or operated by the City of Philadelphia or any government agency. All information comes from Philadelphia's public open-data records. Always verify directly with the City before relying on anything shown here.</p>
+    <div class="disc-src-title">Official City sources</div>
+    <ul class="disc-src">
+      <li><a href="https://atlas.phila.gov/" target="_blank" rel="noopener noreferrer" class="no-ext-cue">Atlas — property &amp; permits <span class="arw">&rarr;</span></a></li>
+      <li><a href="https://property.phila.gov/" target="_blank" rel="noopener noreferrer" class="no-ext-cue">Property assessments <span class="arw">&rarr;</span></a></li>
+      <li><a href="https://www.phila.gov/departments/philly311/" target="_blank" rel="noopener noreferrer" class="no-ext-cue">Philly311 <span class="arw">&rarr;</span></a></li>
+      <li><a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener noreferrer" class="no-ext-cue">Licenses &amp; Inspections <span class="arw">&rarr;</span></a></li>
+    </ul>
   </div>
 </div>
 
@@ -2639,7 +2579,7 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
     <div class="gap" style="border-style:solid;border-color:var(--line);background:var(--panel)">
       <h4>If you live here and something is wrong</h4>
       <ul>
-        <li>File a complaint at <a href="https://www.phila.gov/311/" target="_blank" rel="noopener">phila.gov/311</a> — that creates a public record.</li>
+        <li>File a complaint at <a href="https://www.phila.gov/departments/philly311/" target="_blank" rel="noopener">phila.gov/311</a> — that creates a public record.</li>
         <li>Request the property's full history under Pennsylvania RTKL: <a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener">L&amp;I Open Records Officer</a>.</li>
         <li>If the landlord is unlicensed during a rent collection period, see <i>Frempong v. Richardson</i>, 209 A.3d 1001 (Pa. Super. 2019). Note: subsequent 2024 proceedings in this case may have modified the practical scope of this holding — consult a housing attorney for current guidance.</li>
       </ul>
@@ -2651,7 +2591,7 @@ function renderBrief({opaRow,lic,licenseSummary,openViol,allViol,t311}){
   `;
   const issueType=detectIssueType(opaRow,safeOpenViol,lic);
   const opaNum=opaRow?.parcel_number||"unknown";
-  $("#brief-body").innerHTML=html+buildRightsCard(issueType)+renderLegalAid(issueType)+renderEvidenceChecklist(opaNum,issueType);
+  $("#brief-body").innerHTML=html+buildRightsCard(issueType)+renderLegalAid(issueType);
 
   // Wire up 311 complaint modal button
   const file311Btn=$("#brief-file311-btn");
@@ -3084,113 +3024,6 @@ var ZIP_RANKINGS = [
   {r:47,z:"19114",s:21.5,l:"moderate",v:541,c:2418,e:1539,p:10410,reason:"Low violation density (5.2 per 100 properties), 2418 311 complaints (23.2/100), 1539 expired licenses (14.8/100)"}
 ];
 var ZIP_RANKINGS_GENERATED = "2026-05-25T19:03:25Z";
-
-// ---- Evidence Checklists ----
-var EVIDENCE_CHECKLISTS = {
-  general: [
-    "Photograph the issue with date/time visible",
-    "Save all text messages and emails with landlord",
-    "Keep a written log of all calls and conversations",
-    "Save your 311 confirmation number after filing",
-    "Keep copies of your lease and all notices received",
-    "Document dates when you reported the issue"
-  ],
-  unfit_structure: [
-    "Photograph all visible damage and unsafe conditions",
-    "Get a copy of the L&I Unfit Structure citation",
-    "Document any health symptoms you experience",
-    "Save records of alternative housing costs"
-  ],
-  rental_license_expired: [
-    "Screenshot the expired license record from 4PHILLY",
-    "Save the 4P Score report (use Print button)",
-    "Document all rent payments made during unlicensed period",
-    "Keep records of any habitability complaints filed"
-  ],
-  fire_violation: [
-    "Photograph fire exits, smoke detectors, extinguishers",
-    "Document any blocked exits or missing equipment",
-    "Note dates of fire alarm tests (or lack thereof)",
-    "Photograph any fire hazard conditions"
-  ]
-};
-
-function renderEvidenceChecklist(opa,issueType){
-  var storageKey="4p_checklists";
-  var saved={};
-  try{saved=JSON.parse(localStorage.getItem(storageKey)||"{}");}catch(e){}
-
-  // FIFO eviction: cap at 50 properties
-  var keys=Object.keys(saved);
-  while(keys.length>=50){
-    var oldest=keys.shift();
-    delete saved[oldest];
-  }
-
-  if(!saved[opa]) saved[opa]={};
-  var state=saved[opa];
-
-  // Build items list: general always, then issue-specific
-  var items=EVIDENCE_CHECKLISTS.general.slice();
-  var hasSpecific=issueType&&EVIDENCE_CHECKLISTS[issueType];
-  if(hasSpecific) items=items.concat(EVIDENCE_CHECKLISTS[issueType]);
-
-  var html='<details class="evidence-checklist gap" style="border-style:solid;border-color:var(--line);background:var(--panel);padding:0">';
-  html+='<summary>Evidence Checklist</summary>';
-  html+='<div class="ecl-body">';
-
-  // General group
-  html+='<div class="ecl-group"><div class="ecl-group-title">General evidence</div>';
-  EVIDENCE_CHECKLISTS.general.forEach(function(txt,i){
-    var idx=i;
-    var chk=!!state[idx];
-    html+='<label class="ecl-item'+(chk?' checked':'')+'">';
-    html+='<input type="checkbox" data-ecl-opa="'+esc(opa)+'" data-ecl-idx="'+idx+'"'+(chk?' checked':'')+'>';
-    html+='<span>'+esc(txt)+'</span></label>';
-  });
-  html+='</div>';
-
-  // Issue-specific group
-  if(hasSpecific){
-    var label=issueType.replace(/_/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-    html+='<div class="ecl-group"><div class="ecl-group-title">'+esc(label)+' evidence</div>';
-    EVIDENCE_CHECKLISTS[issueType].forEach(function(txt,i){
-      var idx=EVIDENCE_CHECKLISTS.general.length+i;
-      var chk=!!state[idx];
-      html+='<label class="ecl-item'+(chk?' checked':'')+'">';
-      html+='<input type="checkbox" data-ecl-opa="'+esc(opa)+'" data-ecl-idx="'+idx+'"'+(chk?' checked':'')+'>';
-      html+='<span>'+esc(txt)+'</span></label>';
-    });
-    html+='</div>';
-  }
-
-  html+='</div></details>';
-  return html;
-}
-
-// Persist evidence checklist checkbox state
-document.addEventListener("change",function(e){
-  var cb=e.target;
-  if(!cb.dataset||!cb.dataset.eclOpa) return;
-  var opa=cb.dataset.eclOpa;
-  var idx=cb.dataset.eclIdx;
-  var storageKey="4p_checklists";
-  var saved={};
-  try{saved=JSON.parse(localStorage.getItem(storageKey)||"{}");}catch(ex){}
-  if(!saved[opa]) saved[opa]={};
-  if(cb.checked){
-    saved[opa][idx]=true;
-  } else {
-    delete saved[opa][idx];
-  }
-  // FIFO eviction
-  var keys=Object.keys(saved);
-  while(keys.length>50){delete saved[keys.shift()];}
-  try{localStorage.setItem(storageKey,JSON.stringify(saved));}catch(ex){}
-  // Toggle strikethrough class on label
-  var label=cb.closest("label.ecl-item");
-  if(label) label.classList.toggle("checked",cb.checked);
-});
 
 function detectIssueType(opaRow,openViol,lic){
   const unfit=(openViol||[]).some(v=>/^PM-?\d*-?109\.1$/i.test(v.violationcode||""));
@@ -4328,7 +4161,7 @@ function switchToLookupByAddress(addr){
     const count=$("#scan-owner-count");
     if(!rows||rows.length===0){
       count.textContent="";
-      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No repeat offender owners found city-wide.</div>`;
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No owners with multiple flagged properties found city-wide.</div>`;
       return;
     }
     count.textContent=rows.length;
@@ -4632,7 +4465,7 @@ function switchToLookupByAddress(addr){
     const count=$("#zip-owner-count");
     if(!rows||rows.length===0){
       count.textContent="";
-      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No repeat offender owners found in this zip code.</div>`;
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No owners with multiple flagged properties found in this zip code.</div>`;
       return;
     }
     count.textContent=rows.length;
@@ -4726,7 +4559,7 @@ function switchToLookupByAddress(addr){
       summary.innerHTML=`
         <div class="zs-check">&#10003;</div>
         <div class="zs-headline">No issues found in ZIP ${esc(zip)}</div>
-        <div class="zs-sub">No open violations, 311 complaints, expired licenses, or repeat offenders detected</div>
+        <div class="zs-sub">No open violations, 311 complaints, expired licenses, or owners with multiple flagged properties detected</div>
       `;
     }else{
       summary.className="zip-scan-summary has-issues";
@@ -4734,7 +4567,7 @@ function switchToLookupByAddress(addr){
       if(violCt>0) parts.push(`${violCt} propert${violCt===1?"y":"ies"} with violations`);
       if(compCt>0) parts.push(`${compCt} address${compCt===1?"":"es"} with 311 complaints`);
       if(licCt>0) parts.push(`${licCt} expired license${licCt===1?"":"s"}`);
-      if(ownerCt>0) parts.push(`${ownerCt} repeat offender${ownerCt===1?"":"s"}`);
+      if(ownerCt>0) parts.push(`${ownerCt} owner${ownerCt===1?"":"s"} with multiple flagged properties`);
       summary.innerHTML=`
         <div class="zs-headline">Found ${total} issue${total===1?"":"s"} in ZIP ${esc(zip)}</div>
         <div class="zs-sub">${parts.join(" &middot; ")}</div>
@@ -5079,565 +4912,34 @@ if('serviceWorker' in navigator){
   window.addEventListener("appinstalled",dismiss);
 })();
 
-/* ── AI Tenant Assistant ── */
-(function initAIAssistant() {
-  var AGENTS_MD = `# 4PHILLY Tenant Rights Assistant — Agent Context
-
-You are a Philadelphia tenant rights assistant embedded in the 4PHILLY property lookup tool. You help tenants understand their rights, navigate code violations, and take concrete action. You are knowledgeable, empathetic, and direct.
-
-**Disclaimer you must include in every response:** "This is legal information, not legal advice. For advice about your specific situation, contact a housing attorney or one of the legal aid organizations listed below."
-
----
-
-## What 4PHILLY is
-
-4PHILLY is a free, open-source tool that pulls Philadelphia property records from city data systems (L&I Eclipse, Carto, OPA, Philly311) and presents them in one unified view. It exists because the city's own property pages are incomplete — they can omit violations, show stale license data, and never surface 311 complaints.
-
-When a user looks up a property, you have access to the following data points:
-
-| Field | What it means |
-|---|---|
-| **4P Score** | Composite risk score (0-100) based on four factors — see breakdown below |
-| **Open violations count** | Number of currently open L&I code violations at the property |
-| **Rental license status** | Active, Expired, or No license found |
-| **311 complaint count** | Number of Philly311 service requests at this address (last 12 months) |
-| **Unfit Structure** | Whether the property has an open PM15-109.1 (Unfit Structure) citation |
-| **Owner name** | The property owner per OPA records |
-| **Council district** | The city council district the property falls in |
-| **Council member** | Name and contact info for the district council member |
-
----
-
-## Understanding the 4P Score
-
-The 4P Score is a 0-100 composite that summarizes property risk from public records. Higher is worse. It is calculated from four weighted factors:
-
-### 1. Open L&I Violations (max 50 points)
-- 0 violations = 0 pts
-- 1-3 violations = 10 pts
-- 4-8 violations = 25 pts
-- 9-15 violations = 40 pts
-- 16+ violations = 50 pts
-
-### 2. Rental License Status (max 25 points)
-- Active license = 0 pts
-- Expired license = 20 pts
-- No license found = 25 pts
-
-### 3. 311 Complaints in Last 12 Months (max 15 points)
-- 0 complaints = 0 pts
-- 1-3 complaints = 5 pts
-- 4-8 complaints = 10 pts
-- 9+ complaints = 15 pts
-
-### 4. Unfit Structure Citation (max 10 points)
-- No open unfit citation = 0 pts
-- Open PM15-109.1 citation = 10 pts
-
-### Score levels
-- **0-20: Low Risk** — Few or no documented issues.
-- **21-45: Moderate** — Some issues on record. Worth monitoring.
-- **46-70: Elevated** — Multiple documented problems. Tenant should understand their rights.
-- **71-100: High Risk** — Serious, compounding issues. Tenant should seek legal assistance.
-
-The 4P Score is based only on public records. A low score does not guarantee a safe building, and a high score does not prove a landlord is negligent. It is a starting point for understanding a property's documented history.
-
----
-
-## Philadelphia Tenant Rights — Key Laws
-
-### Implied Warranty of Habitability
-Every residential lease in Pennsylvania carries an implied warranty that the premises are fit for human habitation. Landlords must maintain the property in a safe, sanitary, and livable condition. This includes working plumbing, heat, electricity, structural integrity, freedom from pest infestations, and compliance with building codes.
-
-### PA Landlord-Tenant Act Section 5720 — Anti-Retaliation
-A landlord may not retaliate against a tenant for exercising legal rights. Retaliation includes raising rent, decreasing services, threatening eviction, or filing eviction proceedings within six months of a tenant:
-- Reporting code violations to L&I or another government agency
-- Filing a complaint with the Fair Housing Commission
-- Joining or organizing a tenants' union
-- Withholding rent through the legal escrow process
-
-If a landlord takes adverse action within six months of a tenant exercising these rights, retaliation is presumed. The burden shifts to the landlord to prove a legitimate, non-retaliatory reason.
-
-### Philadelphia Code Section 9-3902 — Rental License Requirement
-All rental properties in Philadelphia must have a valid, active rental license issued by L&I. A landlord who operates without a valid license:
-- Cannot legally collect rent for the unlicensed period
-- Under *Frempong v. Richardson*, 209 A.3d 1001 (Pa. Super. 2019), tenants may recover rent paid during unlicensed periods
-
-If the property the user is looking at shows "Expired" or "No license found," this is directly relevant. Tell the tenant clearly: the landlord may not be legally entitled to collect rent while unlicensed.
-
-### Right to Request L&I Inspection
-Any tenant can request an L&I inspection by calling 311 (dial 3-1-1 from any Philadelphia phone) or filing online at phila.gov/311. L&I is required to respond. Filing a 311 complaint creates a public record tied to the address.
-
-### Right to a Written Lease
-Under Pennsylvania law, leases for one year or longer must be in writing. Even without a written lease, tenants have rights under the implied warranty of habitability and statutory protections.
-
-### Fair Housing Act Protections
-Federal and local Fair Housing laws prohibit discrimination based on race, color, national origin, religion, sex, familial status, disability, sexual orientation, gender identity, age, marital status, and source of income (including housing vouchers, in Philadelphia).
-
----
-
-## Rent Withholding — The Legal Process
-
-Never tell a tenant to simply stop paying rent. Improper rent withholding can lead to eviction. Always explain the legal process:
-
-1. **Document the problem.** Photograph or video the condition. Note dates.
-2. **Notify the landlord in writing.** Send a letter (certified mail recommended) describing the problem and requesting repair within a reasonable time (typically 30 days for non-emergencies).
-3. **File a 311 complaint.** This creates a public record and may trigger an L&I inspection.
-4. **If the landlord does not repair:** The tenant can petition the Court of Common Pleas to pay rent into an escrow account instead of to the landlord. The court holds the funds until the landlord makes repairs.
-5. **Do not withhold rent on your own** without a court order or legal guidance. Contact Community Legal Services (215-981-3700) before taking this step.
-
-Philadelphia Code Section 9-3902 provides additional grounds when the landlord lacks a valid rental license — in that case, the landlord's right to collect rent is already legally impaired.
-
----
-
-## What Is an Unfit Structure?
-
-An Unfit Structure designation (Philadelphia code PM15-109.1) means an L&I inspector has determined that a building is unfit for human habitation or use. This is the most serious finding L&I can issue for a residential property. Common triggers:
-- Structural failure or risk of collapse
-- No running water or working sanitation
-- No heat in winter
-- Severe fire safety deficiencies
-- Hazardous electrical conditions
-
-If a property shows an open Unfit Structure citation, tenants should:
-1. Contact Community Legal Services immediately: **215-981-3700**
-2. Request an emergency L&I inspection via 311 if conditions are dangerous
-3. Document everything with photos, video, and written records
-4. Understand that they may have grounds to break the lease without penalty
-
----
-
-## Common Questions and How to Answer Them
-
-### "What does my 4P Score mean?"
-Explain the score using the breakdown above. Reference the specific factors contributing to the score for this property. A score above 45 means the tenant should review their rights carefully. Above 70, recommend contacting legal aid.
-
-### "My landlord won't fix [issue]"
-1. Ask if they have notified the landlord in writing.
-2. Recommend filing a 311 complaint to create a public record and trigger an inspection.
-3. Explain the rent escrow process if the issue is serious and unresolved.
-4. If the property data shows existing open violations, point that out — it strengthens the tenant's position.
-5. Recommend contacting Community Legal Services: **215-981-3700**.
-
-### "Can I withhold rent?"
-Walk through the legal rent escrow process described above. Emphasize: do not simply stop paying. The legal path is through court-supervised escrow. If the landlord lacks a valid rental license, mention the *Frempong v. Richardson* precedent.
-
-### "My landlord is retaliating against me"
-Explain PA Landlord-Tenant Act Section 5720. If the tenant exercised a legal right (filed a complaint, requested an inspection, joined a tenants' union) within the past six months and the landlord has raised rent, decreased services, or threatened eviction, the law presumes retaliation. Recommend documenting everything and contacting legal aid.
-
-### "Is my building safe?"
-Reference the property data. If there are open violations, list the count. If there is an Unfit Structure citation, flag it as the most serious finding. If the 4P Score is elevated or high risk, say so. Always note that the 4P Score reflects public records only — it cannot detect unreported problems. If the tenant feels unsafe, recommend calling 311 for an inspection.
-
-### "How do I file a complaint?"
-- **Call 311** from any Philadelphia phone (or 215-686-8686 from outside the city)
-- **Online:** phila.gov/311
-- **In person:** Any City Hall service counter
-- Filing a 311 complaint is free, creates a public record, and is protected against landlord retaliation under Section 5720.
-
-### "What is an Unfit Structure?"
-Use the explanation above. Emphasize this is the most serious L&I finding. If the property has one, recommend immediate legal consultation.
-
-### "My rental license is expired — what now?"
-If the property data shows an expired or missing rental license:
-1. The landlord is operating illegally under Philadelphia Code Section 9-3902.
-2. Under *Frempong v. Richardson*, the landlord may not be legally entitled to rent collected during unlicensed periods.
-3. The tenant should not stop paying rent unilaterally — but should contact a housing attorney about their options.
-4. The tenant can report the unlicensed operation to L&I via 311.
-5. Recommend contacting Community Legal Services: **215-981-3700**.
-
----
-
-## Key Organizations — Referrals
-
-Always provide relevant referrals. These organizations offer free or low-cost legal help to Philadelphia tenants:
-
-| Organization | Phone | Notes |
-|---|---|---|
-| **Community Legal Services (CLS)** | 215-981-3700 | Free legal aid for low-income Philadelphians. Housing is a major practice area. First call for most tenants. |
-| **Philadelphia Legal Assistance (PLA)** | 215-981-3800 | Free civil legal services. Handles housing, public benefits, employment. |
-| **SeniorLAW Center** | 215-988-1242 | Free legal help for Philadelphians age 60 and older. |
-| **Philadelphia Tenants Union** | phillytenant.org | Tenant organizing, mutual aid, know-your-rights workshops. |
-| **Fair Housing Commission** | 215-686-4670 | Investigates housing discrimination complaints. File here if you believe you were denied housing or treated differently because of a protected characteristic. |
-| **Philly311** | 311 (or 215-686-8686) | File code violation complaints, request L&I inspections, report unsafe conditions. |
-
----
-
-## Rules for the Assistant
-
-1. **Always include the disclaimer:** "This is legal information, not legal advice."
-2. **Recommend an attorney or legal aid** for specific situations. You inform — you do not replace a lawyer.
-3. **Be empathetic.** Tenants using this tool are often dealing with unsafe housing, unresponsive landlords, or fear of eviction. Acknowledge what they are going through.
-4. **Use plain language.** Avoid legal jargon. When you must use a legal term, define it immediately.
-5. **Reference the property data.** If the property has specific issues (expired license, open violations, unfit citation), mention them. Connect the data to the tenant's question.
-6. **Never tell a tenant to simply stop paying rent.** Always explain the legal escrow process and recommend legal counsel.
-7. **Provide actionable next steps.** Every response should end with concrete actions the tenant can take: a phone number to call, a complaint to file, a document to prepare.
-8. **If the council member is available in the data**, mention that tenants can contact their council member's office about persistent housing issues — include the name and district.
-9. **Do not speculate beyond the data.** If you do not have information about something, say so. Do not invent violation details or legal outcomes.
-10. **Be direct about serious situations.** If a property has an Unfit Structure citation or a 4P Score above 70, do not minimize it. The tenant needs to know the situation is serious and that help is available.`;
-
-  var aiPanel = document.getElementById('ai-panel');
-  var aiFab = document.getElementById('ai-fab');
-  var aiClose = document.getElementById('ai-close');
-  var aiSetup = document.getElementById('ai-setup-view');
-  var aiChat = document.getElementById('ai-chat-view');
-  var aiMessages = document.getElementById('ai-messages');
-  var aiInput = document.getElementById('ai-input');
-  var aiSend = document.getElementById('ai-send');
-  var aiStart = document.getElementById('ai-start');
-  var aiProvider = document.getElementById('ai-provider');
-  var aiTierSel = document.getElementById('ai-tier');
-  var aiKeyInput = document.getElementById('ai-key');
-
-  var apiKey = localStorage.getItem('4p_ai_key') || '';
-  var provider = localStorage.getItem('4p_ai_provider') || 'anthropic';
-  var tier = localStorage.getItem('4p_ai_tier') || 'fast';
-  var chatHistory = [];
-  var sending = false;
-
-  // Map (provider, tier) → a current model id. Kept in one place so model
-  // upgrades are a single edit. Defaults favor fast, low-cost models —
-  // the right fit for a browser-side tenant Q&A assistant.
-  var AI_MODELS = {
-    anthropic: { fast: 'claude-haiku-4-5', balanced: 'claude-sonnet-5', best: 'claude-opus-4-8' },
-    openai:    { fast: 'gpt-4o-mini',      balanced: 'gpt-4o',         best: 'gpt-4o' },
-    google:    { fast: 'gemini-2.0-flash', balanced: 'gemini-2.0-flash', best: 'gemini-2.0-pro' }
-  };
-  function aiModel(prov) {
-    var byTier = AI_MODELS[prov] || AI_MODELS.anthropic;
-    return byTier[tier] || byTier.fast;
-  }
-
-  // Show fab after a property is looked up
-  // Hook into the existing lookup success path
-  var origRender4P = window.render4PScore;
-  if (typeof render4PScore === 'function') {
-    // Can't easily hook - just show fab always
-  }
-  // fab is always visible via CSS — no classList toggle needed
-
-  // Restore saved provider/tier/key
-  aiProvider.value = provider;
-  if (aiTierSel) aiTierSel.value = tier;
-  if (apiKey) aiKeyInput.value = apiKey;
-
-  // Toggle panel
-  aiFab.addEventListener('click', function() {
-    aiPanel.classList.toggle('open');
-  });
-  aiClose.addEventListener('click', function() {
-    aiPanel.classList.remove('open');
-  });
-
-  // Start assistant
-  aiStart.addEventListener('click', function() {
-    var key = aiKeyInput.value.trim();
-    var prov = aiProvider.value;
-    var tr = aiTierSel ? aiTierSel.value : 'fast';
-    if (!key) { aiKeyInput.style.borderColor = 'var(--red)'; return; }
-    aiKeyInput.style.borderColor = '';
-    localStorage.setItem('4p_ai_key', key);
-    localStorage.setItem('4p_ai_provider', prov);
-    localStorage.setItem('4p_ai_tier', tr);
-    apiKey = key;
-    provider = prov;
-    tier = tr;
-    aiSetup.style.display = 'none';
-    aiChat.style.display = 'flex';
-    chatHistory = [];
-    addMessage('system', 'Connected to ' + prov + '. Ask me anything about your property, tenant rights, or next steps.');
-    // If property data is loaded, inject context
-    injectPropertyContext();
-  });
-
-  // If key already saved, skip setup
-  if (apiKey) {
-    aiSetup.style.display = 'none';
-    aiChat.style.display = 'flex';
-    addMessage('system', 'AI assistant ready. Ask about tenant rights, violations, or next steps.');
-  }
-
-  function getPropertyContext() {
-    // Prefer the structured record (accurate, complete) over DOM scraping.
-    var r = (typeof currentRecord !== 'undefined') ? currentRecord : null;
-    if (r) {
-      var lines = [];
-      lines.push('OPA: ' + r.opa);
-      if (r.opaRow) {
-        if (r.opaRow.location) lines.push('Property: ' + r.opaRow.location);
-        if (r.opaRow.owner_1) lines.push('Owner: ' + r.opaRow.owner_1);
-        var cd = r.opaRow.council_district_2024 || r.opaRow.council_district_2016;
-        if (cd) lines.push('Council District: ' + cd);
-      }
-      lines.push('Open L&I violations: ' + (r.openViol || []).length);
-      lines.push('All violations on record: ' + (r.allViol || []).length);
-      lines.push('311 complaints (24mo): ' + (r.t311 || []).length);
-      lines.push('Business/rental licenses: ' + (r.lic || []).length);
-      lines.push('Permits: ' + (r.permits || []).length);
-      // Include the codes of open violations — most actionable for a tenant.
-      var codes = (r.openViol || []).map(function(v){ return v.violationcode; }).filter(Boolean).slice(0, 15);
-      if (codes.length) lines.push('Open violation codes: ' + codes.join(', '));
-      return lines.join('\n') + '\n';
+/* ── Disclaimer FAB (government non-affiliation notice) ── */
+(function initDisclaimer(){
+  var fab = document.getElementById('disc-fab');
+  var overlay = document.getElementById('disc-overlay');
+  var closeBtn = document.getElementById('disc-close');
+  if(!fab || !overlay) return;
+  function open(){ overlay.classList.add('open'); fab.classList.remove('pulse'); }
+  function close(){ overlay.classList.remove('open'); }
+  fab.addEventListener('click', open);
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+  // One-time attention pulse so first-time users notice the "not a government app" notice.
+  try{
+    if(!localStorage.getItem('4p_disc_seen')){
+      setTimeout(function(){ fab.classList.add('pulse'); }, 900);
+      fab.addEventListener('animationend', function(e){ if(e.animationName==='disc-fab-pulse') fab.classList.remove('pulse'); });
+      localStorage.setItem('4p_disc_seen','1');
     }
-    // Fallback: scrape the DOM if no record is cached yet.
-    var ctx = '';
-    var owner = document.getElementById('ph-owner-line');
-    var addr = document.querySelector('#prophead h1');
-    if (addr) ctx += 'Property: ' + addr.textContent.trim() + '\n';
-    if (owner) ctx += 'Owner: ' + owner.textContent.replace('Owner:','').trim() + '\n';
-    var brief = document.getElementById('brief-body');
-    if (brief) ctx += 'Brief: ' + brief.textContent.trim().substring(0, 500) + '\n';
-    return ctx;
-  }
-
-  function injectPropertyContext() {
-    var ctx = getPropertyContext();
-    if (ctx) {
-      addMessage('system', 'Property data loaded. I can answer questions about this specific property.');
-    }
-  }
-
-  function addMessage(role, text) {
-    var div = document.createElement('div');
-    div.className = 'ai-msg ' + role;
-    var bubble = document.createElement('div');
-    bubble.className = 'ai-bubble';
-    bubble.textContent = text;
-    div.appendChild(bubble);
-    aiMessages.appendChild(div);
-    aiMessages.scrollTop = aiMessages.scrollHeight;
-  }
-
-  async function sendMessage() {
-    var text = aiInput.value.trim();
-    if (!text || sending) return;
-    sending = true;
-    aiSend.disabled = true;
-    aiSend.textContent = '...';
-    addMessage('user', text);
-    aiInput.value = '';
-
-    var propertyCtx = getPropertyContext();
-    var systemPrompt = AGENTS_MD + '\n\n--- CURRENT PROPERTY DATA ---\n' + propertyCtx;
-
-    chatHistory.push({ role: 'user', content: text });
-
-    try {
-      var response;
-      if (provider === 'openai') {
-        response = await callOpenAI(systemPrompt, chatHistory);
-      } else if (provider === 'anthropic') {
-        response = await callAnthropic(systemPrompt, chatHistory);
-      } else if (provider === 'google') {
-        response = await callGoogle(systemPrompt, chatHistory);
-      }
-      chatHistory.push({ role: 'assistant', content: response });
-      addMessage('assistant', response);
-    } catch (err) {
-      addMessage('system', 'Error: ' + err.message);
-    }
-    sending = false;
-    aiSend.disabled = false;
-    aiSend.textContent = 'Send';
-  }
-
-  async function callOpenAI(system, messages) {
-    var msgs = [{ role: 'system', content: system }].concat(messages);
-    var r = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({ model: aiModel('openai'), messages: msgs, max_tokens: 1000 })
-    });
-    if (!r.ok) throw new Error('OpenAI API error: ' + r.status);
-    var d = await r.json();
-    return d.choices[0].message.content;
-  }
-
-  async function callAnthropic(system, messages) {
-    var r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({ model: aiModel('anthropic'), max_tokens: 1000, system: system, messages: messages })
-    });
-    if (!r.ok) throw new Error('Anthropic API error: ' + r.status);
-    var d = await r.json();
-    return d.content[0].text;
-  }
-
-  async function callGoogle(system, messages) {
-    var contents = messages.map(function(m) {
-      return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] };
-    });
-    // Prepend system as first user message
-    contents.unshift({ role: 'user', parts: [{ text: system + '\n\nPlease acknowledge you understand your role.' }] });
-    contents.splice(1, 0, { role: 'model', parts: [{ text: 'Understood. I am the 4PHILLY tenant rights assistant. How can I help?' }] });
-    var r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + aiModel('google') + ':generateContent?key=' + apiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: contents })
-    });
-    if (!r.ok) throw new Error('Google API error: ' + r.status);
-    var d = await r.json();
-    return d.candidates[0].content.parts[0].text;
-  }
-
-  aiSend.addEventListener('click', sendMessage);
-  aiInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-
-  // Auto-resize textarea
-  aiInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 80) + 'px';
-  });
+  }catch(e){}
 })();
 </script>
 
-<!-- Get Help — emergency hotlines button + modal -->
-<style>
-  @media print{.no-print{display:none!important}}
-  .help-fab{
-    position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);left:16px;z-index:8000;
-    min-width:48px;min-height:48px;padding:10px 18px;
-    background:var(--red);color:#fff;border:none;border-radius:4px;
-    font-family:"Archivo",sans-serif;font-weight:700;font-size:15px;
-    cursor:pointer;touch-action:manipulation;
-    box-shadow:0 2px 12px rgba(255,69,58,.45);
-    transition:background .15s,transform .1s;
-    display:flex;align-items:center;gap:8px;line-height:1;
-  }
-  .help-fab:hover{background:#e03e35}
-  .help-fab:active{transform:scale(.96)}
-  .help-fab svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-
-  .help-overlay{
-    position:fixed;inset:0;z-index:10000;
-    background:rgba(0,0,0,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-    display:flex;align-items:center;justify-content:center;
-    opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;
-  }
-  .help-overlay.open{opacity:1;visibility:visible}
-
-  .help-modal{
-    background:var(--panel);border:1px solid var(--line);border-radius:6px;
-    width:92vw;max-width:420px;max-height:90vh;overflow-y:auto;
-    padding:28px 24px 20px;position:relative;
-    box-shadow:0 12px 40px rgba(0,0,0,.6);
-  }
-  .help-modal h2{
-    font-family:"Archivo",sans-serif;font-weight:800;font-size:20px;
-    color:var(--ink);margin:0 0 4px;
-  }
-  .help-modal .help-sub{
-    font-family:"IBM Plex Mono",monospace;font-size:11px;
-    color:var(--ink-mute);margin-bottom:18px;
-  }
-  .help-close{
-    position:absolute;top:12px;right:12px;
-    background:transparent;border:1px solid var(--line);color:var(--ink-dim);
-    width:44px;height:44px;border-radius:50%;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    font-size:18px;line-height:1;transition:color .15s,border-color .15s;
-  }
-  .help-close:hover{color:var(--ink);border-color:var(--ink-dim)}
-
-  .help-list{list-style:none;margin:0;padding:0}
-  .help-list li{border-bottom:1px solid var(--line-soft)}
-  .help-list li:last-child{border-bottom:none}
-  .help-list a,.help-list span.help-link{
-    display:flex;align-items:center;gap:12px;
-    padding:14px 8px;min-height:48px;
-    font-family:"IBM Plex Mono",monospace;font-size:14px;
-    color:var(--ink);text-decoration:none;border-bottom:none;
-    transition:background .15s;cursor:pointer;
-  }
-  .help-list a:hover,.help-list span.help-link:hover{background:rgba(255,69,58,.06)}
-  .help-list .hl-icon{width:22px;text-align:center;flex-shrink:0;font-size:16px}
-  .help-list .hl-name{flex:1;min-width:0}
-  .help-list .hl-name small{display:block;font-size:11px;color:var(--ink-mute);margin-top:2px}
-  .help-list .hl-num{color:var(--amber);font-weight:600;flex-shrink:0;white-space:nowrap}
-
-  .help-disc{
-    margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);
-    font-family:"IBM Plex Mono",monospace;font-size:10px;
-    color:var(--ink-mute);line-height:1.6;
-  }
-  @media(max-width:679px){
-    .help-modal{padding:22px 16px 16px}
-    .help-modal h2{font-size:18px}
-    .help-list a,.help-list span.help-link{padding:12px 6px;font-size:13px}
-  }
-</style>
-
-<button class="help-fab no-print" id="help-fab" type="button"
-        aria-label="Emergency help and tenant hotlines">
-  <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-  Get Help
-</button>
-
-<div class="help-overlay" id="help-overlay" role="dialog" aria-modal="true"
-     aria-label="Emergency hotlines">
-  <div class="help-modal">
-    <button class="help-close" id="help-close" aria-label="Close">&times;</button>
-    <h2>Emergency Hotlines</h2>
-    <div class="help-sub">Tap any number to call directly.</div>
-    <ul class="help-list">
-      <li><a href="tel:911"><span class="hl-icon">&#128680;</span><span class="hl-name">911<small>Police / Fire / Medical</small></span><span class="hl-num">911</span></a></li>
-      <li><a href="tel:+18002221222"><span class="hl-icon">&#9763;</span><span class="hl-name">Poison Control</span><span class="hl-num">1-800-222-1222</span></a></li>
-      <li><a href="tel:+12156869500"><span class="hl-icon">&#127969;</span><span class="hl-name">Philadelphia Tenant Hotline<small>City of Philadelphia</small></span><span class="hl-num">215-686-9500</span></a></li>
-      <li><a href="tel:+12159813700"><span class="hl-icon">&#9878;</span><span class="hl-name">Community Legal Services<small>Free legal help for tenants</small></span><span class="hl-num">215-981-3700</span></a></li>
-      <li><a href="https://phillytenant.org" target="_blank" rel="noopener" class="no-ext-cue"><span class="hl-icon">&#9994;</span><span class="hl-name">Philadelphia Tenants Union<small>phillytenant.org</small></span><span class="hl-num">&rarr;</span></a></li>
-      <li><a href="tel:+18007997233"><span class="hl-icon">&#128156;</span><span class="hl-name">National DV Hotline<small>Text START to 88788</small></span><span class="hl-num">1-800-799-7233</span></a></li>
-    </ul>
-    <div class="help-disc">This app does not provide emergency services. For immediate danger, call 911.</div>
-  </div>
-</div>
-
-<script>
-(function(){
-  var fab=document.getElementById("help-fab");
-  var overlay=document.getElementById("help-overlay");
-  var closeBtn=document.getElementById("help-close");
-  var modal=overlay.querySelector(".help-modal");
-  var prevFocus=null;
-
-  function openHelp(){
-    prevFocus=document.activeElement;
-    overlay.classList.add("open");
-    closeBtn.focus();
-    document.body.style.overflow="hidden";
-  }
-  function closeHelp(){
-    overlay.classList.remove("open");
-    document.body.style.overflow="";
-    if(prevFocus) prevFocus.focus();
-  }
-  fab.addEventListener("click",openHelp);
-  closeBtn.addEventListener("click",closeHelp);
-  overlay.addEventListener("click",function(e){if(e.target===overlay) closeHelp();});
-  document.addEventListener("keydown",function(e){
-    if(e.key==="Escape"&&overlay.classList.contains("open")) closeHelp();
-    if(!overlay.classList.contains("open")) return;
-    if(e.key==="Tab"){
-      var focusable=modal.querySelectorAll('a[href],button,[tabindex]:not([tabindex="-1"])');
-      if(!focusable.length) return;
-      var first=focusable[0],last=focusable[focusable.length-1];
-      if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
-      else{if(document.activeElement===last){e.preventDefault();first.focus();}}
-    }
-  });
-})();
-</script>
 
 <div id="zip-rankings" class="no-print">
   <div class="zr-header">
     <h2>Philadelphia ZIP Code Rankings</h2>
-    <div class="zr-sub">Worst to best — based on open violations, 311 complaints, and expired rental licenses (private landlords only)</div>
+    <div class="zr-sub">Ranked by public records — based on open violations, 311 complaints, and expired rental licenses (private landlords only)</div>
     <div class="zr-updated" id="zr-timestamp"></div>
   </div>
   <div class="zr-container">
@@ -5649,7 +4951,7 @@ Always provide relevant referrals. These organizations offer free or low-cost le
     </table>
   </div>
   <div class="zr-actions">
-    <button class="zr-dl-btn" id="zr-download">Download PDF Report</button>
+    <button class="zr-dl-btn" id="zr-download">Download rankings (PDF)</button>
   </div>
 </div>
 
