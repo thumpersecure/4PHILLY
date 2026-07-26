@@ -30,14 +30,14 @@
 <meta property="og:description" content="Apartments.com and Zillow show you photos and reviews. 4philly shows you the truth: open code violations, whether the rental license is active, and 311 complaints on any Philadelphia address. Apartment-hunting in Philly? Check here first — free, before you sign.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=3.3">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.65">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Philadelphia Apartments: Check It Before You Rent — 4PHILLY">
 <meta name="twitter:description" content="Listing sites show photos and reviews. 4philly shows the real City record — code violations, rental license status, and 311 complaints on any Philadelphia address. Check here first, free, before you sign.">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.3">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.65">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -131,12 +131,8 @@
   .field input::placeholder{color:var(--ink-mute)}
   .field input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.25)}
   .field-primary input{font-size:18px;padding:13px 14px;border-width:2px}
-  .field select{background:var(--panel-2);color:var(--ink);border:1.5px solid #f2ede3;padding:10px 12px;min-height:44px;font-family:"IBM Plex Mono",monospace;font-size:14px;border-radius:0;outline:none;transition:border-color .15s,box-shadow .15s}
-  .field select:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.25)}
   .finder-toolbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim)}
   .finder-toolbar select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);padding:6px 8px;font-family:"IBM Plex Mono",monospace;font-size:12px;border-radius:2px}
-  .finder-score-toggle{display:flex;align-items:center;gap:6px;cursor:pointer}
-  .finder-score-toggle input{cursor:pointer}
   .finder-row-meta{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);margin-top:1px}
   .btn{background:var(--amber-fill);color:#1a1100;border:2px solid #1a1100;padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgba(0,0,0,0.45)}
   .btn:hover{background:#ffbe2e}
@@ -911,7 +907,7 @@
     <div>
       <div class="brand">
         <div class="brand-mark" role="button" tabindex="0" aria-label="4PHILLY — reset and return to lookup">4<span>PHILLY</span></div>
-        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.3</span>
+        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.65</span>
         <div class="brand-tag"> A Tenants App for Philadelphia Properties - made easy.</div>
       </div>
       <div class="gov-disclaimer" role="note">
@@ -927,7 +923,7 @@
     </div>
     <div class="top-meta">
       <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle light / dark">☾ Dark</button>
-      <div>build <span class="mono">3.3</span></div>
+      <div>build <span class="mono">3.65</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -946,87 +942,65 @@
 
   <div id="scanner-panel">
     <div style="text-align:center;padding:20px 0 8px">
-      <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">Find a Place</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Search Philadelphia's public property records by zip code, size, and residential/commercial type — then optionally rank results by 4PHILLY's civic-data quality score.</div>
+      <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">License Gap Scanner</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:520px;margin:0 auto;line-height:1.6">Finds Philadelphia rental properties whose license has expired right now — a status the City's own map tools (Atlas, Property History) won't show for up to 60 days.</div>
     </div>
-    <details class="scan-why">
-      <summary>What this is (and isn't)</summary>
+    <details class="scan-why" open>
+      <summary>What "expired" means here, in plain terms</summary>
       <div class="scan-why-body">
-        This searches the City's own <b>OPA property assessment records</b> — recorded size, bedroom count, and
-        property category — not rental listings. The City doesn't publish what's currently for rent or asking
-        prices, so this can't tell you availability or rent. It can tell you a property's recorded size, unit
-        count, and type, and — if you turn it on — a <b>4P Score</b> computed from open violations, rental
-        license status, and 311 complaints. The 4P Score is <b>not a tenant review</b>; it's a civic-data signal
-        only, and only as current as the City's own records.
+        Philadelphia law is specific: under <b>Code § 9-3902(1)(a)</b>, a landlord may not collect rent on a
+        property that requires a rental license unless a valid license is currently in force. Under
+        <b>§ 9-3901(4)(e)</b>, an owner who lets that lapse cannot collect rent or evict for nonpayment
+        <i>during the period of non-compliance</i>.
         <br><br>
-        The property list comes from <b>Eclipse</b>, L&amp;I's live backend. Turning on the 4P Score adds a
-        per-property check against Eclipse (violations, licenses) and the Carto 311 mirror, which can lag by days
-        to weeks.
+        Every rental license carries two dates. The <b>expiration date</b> is the one with legal weight — it's
+        when that authority to collect rent ends. About <b>60 days later</b>, the license is reclassified
+        <b>"Inactive"</b> — an internal bookkeeping change, not a legal deadline.
+        <br><br>
+        The City's own map tools publish the second date, not the first. For the full 60-day window between
+        them, a lapsed license shows no expiration date and a status that hasn't yet flipped to "Inactive" — so
+        the property looks unremarkable on the map even though, right now, it isn't legally licensed to collect
+        rent.
+        <br><br>
+        This scanner queries that same City data directly for every <b>Rental</b>-type license currently sitting
+        in that window — status <code>Expired</code>, expiration date already passed, not yet reclassified. It
+        reads the City's independently-verified, correctly time-zoned copy of the data (a separate, confirmed
+        bug shifts the same date a calendar day early on the City's map-facing copy — not used here).
+        <br><br>
+        <b>This is public licensing information, not legal advice.</b> A property here means its rental license
+        shows expired in the City's own daily-refreshed data as of the scan time — confirm specifics for any one
+        address with a full lookup before relying on it.
       </div>
     </details>
     <div style="display:flex;gap:10px;justify-content:center;align-items:flex-end;padding:16px 0;flex-wrap:wrap">
-      <div class="field" style="flex:0 0 130px">
-        <label for="finder-zip">Zip code</label>
-        <input id="finder-zip" type="text" placeholder="19107" maxlength="5" inputmode="numeric" autocomplete="off" pattern="\d{5}">
-      </div>
       <div class="field" style="flex:0 0 160px">
-        <label for="finder-category">Type</label>
-        <select id="finder-category">
-          <option value="residential" selected>Residential</option>
-          <option value="commercial">Commercial</option>
-          <option value="any">Any</option>
-        </select>
+        <label for="gap-zip">Zip code (optional)</label>
+        <input id="gap-zip" type="text" placeholder="All of Philadelphia" maxlength="5" inputmode="numeric" autocomplete="off" pattern="\d{5}">
       </div>
-      <div class="field" style="flex:0 0 110px">
-        <label for="finder-min-size">Min sqft</label>
-        <input id="finder-min-size" type="number" min="0" step="50" placeholder="any" inputmode="numeric">
-      </div>
-      <div class="field" style="flex:0 0 110px">
-        <label for="finder-max-size">Max sqft</label>
-        <input id="finder-max-size" type="number" min="0" step="50" placeholder="any" inputmode="numeric">
-      </div>
-      <div class="field" style="flex:0 0 110px">
-        <label for="finder-min-beds">Min beds</label>
-        <input id="finder-min-beds" type="number" min="0" step="1" placeholder="any" inputmode="numeric">
-      </div>
-      <button class="btn" id="finder-go" style="min-height:44px;padding:0 24px">Search</button>
+      <button class="btn" id="gap-go" style="min-height:44px;padding:0 24px">Scan</button>
     </div>
-    <div id="finder-spinner" style="display:none">
+    <div id="gap-spinner" style="display:none">
       <div class="scan-spinner">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span id="finder-status-text">Searching city records...</span>
+        <span id="gap-status-text">Checking license records...</span>
       </div>
     </div>
-    <div id="finder-timestamp" class="scan-timestamp" style="display:none"></div>
-    <div id="finder-results" style="display:none">
-      <div class="scan-section" id="finder-sec-results">
-        <h2>Matching Properties <span class="scan-count" id="finder-count"></span></h2>
-        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia OPA property records (Eclipse)</div>
+    <div id="gap-timestamp" class="scan-timestamp" style="display:none"></div>
+    <div id="gap-results" style="display:none">
+      <div class="scan-section" id="gap-sec-results">
+        <h2>Currently Expired, Not Yet Flagged <span class="scan-count" id="gap-count"></span></h2>
+        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia rental license data (phl.carto.com), refreshed daily by the City</div>
         <div class="finder-toolbar">
-          <label for="finder-sort">Sort by
-            <select id="finder-sort">
-              <option value="size-desc">Size (largest first)</option>
-              <option value="size-asc">Size (smallest first)</option>
-              <option value="value-desc">Market value (highest)</option>
-              <option value="value-asc">Market value (lowest)</option>
-              <option value="year-desc">Year built (newest)</option>
-              <option value="year-asc">Year built (oldest)</option>
-              <option value="score-desc" id="finder-sort-score" disabled>4P Score (best first)</option>
+          <label for="gap-sort">Sort by
+            <select id="gap-sort">
+              <option value="recent">Most recently expired</option>
+              <option value="oldest">Longest overdue (closest to reclassifying)</option>
+              <option value="units">Most units</option>
             </select>
           </label>
-          <label class="finder-score-toggle" for="finder-score-toggle">
-            <input type="checkbox" id="finder-score-toggle">
-            Also rank by 4P Score
-          </label>
         </div>
-        <div id="finder-score-progress" class="zip-progress" style="display:none">
-          <div class="zip-progress-step" id="finder-score-step">
-            <span class="zip-progress-icon"><span class="zp-dot"></span></span>
-            <span class="zip-progress-label" id="finder-score-label">Scoring 0 of 0…</span>
-          </div>
-        </div>
-        <div id="finder-body"></div>
-        <div id="finder-truncated" class="op-note" style="display:none"></div>
+        <div id="gap-body"></div>
+        <div id="gap-truncated" class="op-note" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -1326,7 +1300,7 @@
   <div style="border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--panel);text-align:center;margin-top:16px">
     <img src="how-it-works.svg" alt="4PHILLY data flow diagram: an address or OPA number resolves through OPA lookup into two parallel sources, the authoritative Eclipse ArcGIS system and the historical Carto SQL mirror, which are compared by a drift comparator to produce a unified record with drift flags, while OPA data also resolves the council district to surface the councilmember and any L&amp;I Committee flag" style="max-width:100%;width:640px;display:block;margin:0 auto" loading="lazy">
   </div>
-  <div class="footer-disc">4PHILLY v3.3 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-disc">4PHILLY v3.65 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
@@ -1753,31 +1727,23 @@ async function getOwnerProperties(ownerName,mode){
   return rows;
 }
 
-// Search OPA property assessment records by zip, size, and residential/commercial
-// category. This is a property-records filter, not a rental-listing search — the
-// City doesn't publish availability or rent, only recorded parcel characteristics.
-// category_code values per OPA: 1 Residential, 2 Hotels/Apartments, 3 Store w/
-// Dwelling (all can carry dwelling units); 4 Commercial, 5 Industrial, 6 Vacant Land.
-async function findProperties({zip,category,minSize,maxSize,minBeds}){
+// Find Rental-type licenses currently sitting in the "expired but not yet
+// reclassified" gap: expirationdate has passed and licensestatus already reads
+// "Expired", but the City's public map tools (Atlas, Property History) publish
+// only the later inactivedate — about 60 days out — so this population is
+// invisible there for the whole gap. Reads Carto directly because its date
+// fields are confirmed correctly time-zoned; the ArcGIS copy behind Property
+// History stores the same kind of date fields at midnight UTC with no
+// localization, which renders a calendar day early in any US time zone.
+async function findLicenseGaps({zip}={}){
   const z=String(zip||"").trim();
-  if(!/^\d{5}$/.test(z)) throw new Error("Enter a valid 5-digit zip code.");
-  const clauses=[`zip_code='${z}'`];
-  if(category==="residential") clauses.push(`category_code IN ('1','2','3')`);
-  else if(category==="commercial") clauses.push(`category_code IN ('4','5')`);
-  const min=Number(minSize), max=Number(maxSize), beds=Number(minBeds);
-  if(minSize!==""&&minSize!=null&&Number.isFinite(min)&&min>=0) clauses.push(`total_livable_area>=${min}`);
-  if(maxSize!==""&&maxSize!=null&&Number.isFinite(max)&&max>=0) clauses.push(`total_livable_area<=${max}`);
-  if(minBeds!==""&&minBeds!=null&&Number.isFinite(beds)&&beds>=0) clauses.push(`number_of_bedrooms>=${beds}`);
-  const where=clauses.join(" AND ");
-  const rows=await eclipseQuery("opa_properties_public_pde",where,
-    "parcel_number,location,total_livable_area,number_of_bedrooms,number_of_bathrooms,number_stories,category_code,category_code_description,zip_code,market_value,year_built",
-    "&resultRecordCount=200");
-  // eclipseQuery's single-page path always asks the server for 2000 first, so a
-  // trailing "&resultRecordCount=200" doesn't actually cap the response — cap here.
-  const truncated=rows.length>200;
-  const capped=rows.slice(0,200);
-  Object.defineProperty(capped,"_truncated",{value:truncated,enumerable:false});
-  return capped;
+  if(z && !/^\d{5}$/.test(z)) throw new Error("Enter a valid 5-digit zip code, or leave it blank for all of Philadelphia.");
+  const zipClause=z?` AND zip LIKE '${z}%'`:"";
+  const sql=`SELECT opa_account_num, address, zip, legalname, business_name, licensestatus, licensenum, expirationdate, inactivedate, numberofunits FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus = 'Expired' AND expirationdate IS NOT NULL AND expirationdate < NOW()${zipClause} ORDER BY expirationdate DESC LIMIT 200`;
+  const rows=await cartoQuery(sql);
+  const truncated=rows.length>=200;
+  Object.defineProperty(rows,"_truncated",{value:truncated,enumerable:false});
+  return rows;
 }
 
 async function getBusinessLicenses(opa){
@@ -4020,81 +3986,71 @@ function switchToLookupByAddress(addr){
   $("#go").click();
 }
 
-// ---- Property Finder ("Find a Place") ----
-(function initFinder(){
-  const scoreCache=new Map(); // opa -> {score}
-  let currentRows=[]; // last search results
-  let searchRunning=false;
-  let scoringRunning=false;
+// ---- License Gap Scanner ----
+(function initLicenseGapScanner(){
+  let currentRows=[];
+  let scanRunning=false;
 
-  function sizeFmt(n){
-    const v=Number(n);
-    if(!Number.isFinite(v)||v<=0) return "size unknown";
-    return v.toLocaleString()+" sqft";
+  function parseCartoDate(v){
+    const d=new Date(v);
+    return Number.isNaN(d.getTime())?null:d;
   }
 
-  function scoreClass(score){
-    if(score==null) return "muted";
-    if(score>=85) return "green";
-    if(score>=60) return "yellow";
-    if(score>=35) return "orange";
-    return "red";
+  function daysSince(d){
+    return Math.max(0,Math.floor((Date.now()-d.getTime())/86400000));
+  }
+
+  function gapClass(days){
+    if(days>=45) return "red";
+    if(days>=25) return "orange";
+    if(days>=10) return "yellow";
+    return "muted";
   }
 
   function rowMeta(r){
-    const parts=[sizeFmt(r.total_livable_area)];
-    if(r.number_of_bedrooms) parts.push(`${r.number_of_bedrooms} bd`);
-    if(r.number_of_bathrooms) parts.push(`${r.number_of_bathrooms} ba`);
-    if(r.category_code_description) parts.push(r.category_code_description);
-    if(r.market_value) parts.push(fmtMoney(r.market_value));
-    if(r.year_built) parts.push(`built ${r.year_built}`);
+    const parts=[];
+    const name=(r.legalname||r.business_name||"").trim();
+    if(name) parts.push(name);
+    if(r.numberofunits) parts.push(`${r.numberofunits} unit${Number(r.numberofunits)===1?"":"s"}`);
+    if(r.licensenum) parts.push(`license ${r.licensenum}`);
     return parts.join(" · ");
   }
 
   function sortRows(rows,mode){
     const sorted=rows.slice();
-    const num=(v)=>{ const n=Number(v); return Number.isFinite(n)?n:-Infinity; };
-    if(mode==="size-asc") sorted.sort((a,b)=>num(a.total_livable_area)-num(b.total_livable_area));
-    else if(mode==="value-desc") sorted.sort((a,b)=>num(b.market_value)-num(a.market_value));
-    else if(mode==="value-asc") sorted.sort((a,b)=>num(a.market_value)-num(b.market_value));
-    else if(mode==="year-desc") sorted.sort((a,b)=>num(b.year_built)-num(a.year_built));
-    else if(mode==="year-asc") sorted.sort((a,b)=>num(a.year_built)-num(b.year_built));
-    else if(mode==="score-desc") sorted.sort((a,b)=>{
-      const as=scoreCache.get((a.parcel_number||"").trim())?.score;
-      const bs=scoreCache.get((b.parcel_number||"").trim())?.score;
-      if(as==null&&bs==null) return 0;
-      if(as==null) return 1;
-      if(bs==null) return -1;
-      return bs-as;
-    });
-    else sorted.sort((a,b)=>num(b.total_livable_area)-num(a.total_livable_area));
+    const time=(r)=>{ const d=parseCartoDate(r.expirationdate); return d?d.getTime():0; };
+    if(mode==="oldest") sorted.sort((a,b)=>time(a)-time(b));
+    else if(mode==="units") sorted.sort((a,b)=>(Number(b.numberofunits)||0)-(Number(a.numberofunits)||0));
+    else sorted.sort((a,b)=>time(b)-time(a));
     return sorted;
   }
 
   function renderResults(){
-    const body=$("#finder-body");
-    const count=$("#finder-count");
+    const body=$("#gap-body");
+    const count=$("#gap-count");
     if(!currentRows.length){
       count.textContent="";
-      body.innerHTML=`<div class="scan-unavail">No properties matched — try widening the zip, size range, or type.</div>`;
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No Rental licenses currently sitting in the gap here.</div>`;
       return;
     }
-    const mode=$("#finder-sort").value;
+    const mode=$("#gap-sort").value;
     const rows=sortRows(currentRows,mode);
     count.textContent=currentRows.length;
     let html=`<div class="scan-list">`;
     rows.forEach((r,i)=>{
-      const opa=(r.parcel_number||"").trim();
+      const opa=(r.opa_account_num||"").trim();
       const hasOpa=/^\d{6,12}$/.test(opa);
-      const addr=r.location||opa||"Unknown";
-      const scoreEntry=scoreCache.get(opa);
-      const scoreHtml=scoreEntry
-        ? `<span class="sr-count ${scoreClass(scoreEntry.score)}" title="4P Score — civic-data signal, not a review">${scoreEntry.score}</span>`
+      const addr=r.address||opa||"Unknown";
+      const expDate=parseCartoDate(r.expirationdate);
+      const days=expDate?daysSince(expDate):null;
+      const expLabel=expDate?expDate.toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric",timeZone:"UTC"}):"unknown date";
+      const badge=days!=null
+        ? `<span class="sr-count ${gapClass(days)}" title="Days since the license's expiration date — the gap the City's own map won't show yet">${days}d</span>`
         : "";
-      html+=`<div class="scan-row" ${hasOpa?`data-finder-opa="${esc(opa)}"`:""} title="Click to view property">
+      html+=`<div class="scan-row" ${hasOpa?`data-gap-opa="${esc(opa)}"`:""} title="Click to view property">
         <span class="sr-rank">${i+1}</span>
-        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span><span class="finder-row-meta">${esc(rowMeta(r))}</span></span>
-        ${scoreHtml}
+        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span><span class="finder-row-meta">Expired ${esc(expLabel)} · ${esc(rowMeta(r))}</span></span>
+        ${badge}
         <span class="sr-arrow">&rsaquo;</span>
       </div>`;
     });
@@ -4102,134 +4058,60 @@ function switchToLookupByAddress(addr){
     body.innerHTML=html;
     body.querySelectorAll(".scan-row").forEach(row=>{
       row.addEventListener("click",()=>{
-        const opa=row.dataset.finderOpa;
+        const opa=row.dataset.gapOpa;
         if(opa&&/^\d{6,12}$/.test(opa)) switchToLookupByOPA(opa);
       });
     });
   }
 
-  async function scoreOne(opa,location){
-    if(scoreCache.has(opa)) return scoreCache.get(opa);
-    let score=100;
-    try{
-      const [openViol,lic,t311]=await Promise.allSettled([
-        getOpenViolations(opa),
-        getBusinessLicenses(opa),
-        location?get311ForAddress(location):Promise.resolve([])
-      ]);
-      if(openViol.status==="fulfilled"){
-        score-=Math.min(40,(openViol.value.length||0)*8);
-      }
-      if(lic.status==="fulfilled"){
-        const rentalRows=(lic.value||[]).filter(L=>/^Rental/i.test(String(L?.licensetype||"").trim()));
-        const activeRental=rentalRows.some(L=>String(L?.licensestatus||"").trim()==="Active");
-        if(rentalRows.length>0 && !activeRental) score-=25;
-      }
-      if(t311.status==="fulfilled"){
-        const recent=(t311.value||[]).filter(r=>(Date.now()-new Date(r.requested_datetime).getTime())<1000*60*60*24*365);
-        score-=Math.min(20,recent.length*5);
-      }
-    }catch(e){
-      console.warn("4P Score failed for",opa,e);
-    }
-    score=Math.max(0,Math.round(score));
-    const entry={score};
-    scoreCache.set(opa,entry);
-    return entry;
-  }
-
-  async function runScoring(rows){
-    if(scoringRunning) return;
-    scoringRunning=true;
-    const targets=rows.filter(r=>/^\d{6,12}$/.test((r.parcel_number||"").trim())).slice(0,50);
-    const progress=$("#finder-score-progress");
-    const label=$("#finder-score-label");
-    progress.style.display="block";
-    let done=0;
-    label.textContent=`Scoring 0 of ${targets.length}…`;
-    const POOL=4;
-    let idx=0;
-    async function worker(){
-      while(idx<targets.length){
-        const r=targets[idx++];
-        const opa=(r.parcel_number||"").trim();
-        await scoreOne(opa,r.location);
-        done++;
-        label.textContent=`Scoring ${done} of ${targets.length}…`;
-        renderResults();
-      }
-    }
-    await Promise.all(Array.from({length:Math.min(POOL,targets.length)},worker));
-    dataFreshness.eclipse=Date.now();
-    dataFreshness.carto=Date.now();
-    progress.style.display="none";
-    scoringRunning=false;
-    $("#finder-sort-score").disabled=false;
-    $("#finder-sort").value="score-desc";
-    renderResults();
-  }
-
-  async function runSearch(){
-    if(searchRunning) return;
-    searchRunning=true;
-    const spinner=$("#finder-spinner");
-    const timestamp=$("#finder-timestamp");
-    const results=$("#finder-results");
-    const goBtn=$("#finder-go");
-    const truncatedNote=$("#finder-truncated");
+  async function runScan(){
+    if(scanRunning) return;
+    scanRunning=true;
+    const spinner=$("#gap-spinner");
+    const timestamp=$("#gap-timestamp");
+    const results=$("#gap-results");
+    const goBtn=$("#gap-go");
+    const truncatedNote=$("#gap-truncated");
     results.style.display="none";
     timestamp.style.display="none";
     spinner.style.display="block";
     goBtn.disabled=true;
     goBtn.classList.add("busy");
-    goBtn.textContent="Searching…";
-    $("#finder-sort-score").disabled=true;
-    $("#finder-score-toggle").checked=false;
-    $("#finder-score-progress").style.display="none";
-    scoreCache.clear();
+    goBtn.textContent="Scanning…";
 
     try{
-      const params={
-        zip:$("#finder-zip").value,
-        category:$("#finder-category").value,
-        minSize:$("#finder-min-size").value,
-        maxSize:$("#finder-max-size").value,
-        minBeds:$("#finder-min-beds").value
-      };
-      const rows=await findProperties(params);
+      const zip=$("#gap-zip").value;
+      const rows=await findLicenseGaps({zip});
       currentRows=rows;
-      $("#finder-sort").value="size-desc";
+      $("#gap-sort").value="recent";
       renderResults();
       truncatedNote.style.display=rows._truncated?"block":"none";
-      if(rows._truncated) truncatedNote.textContent="Showing first 200 results — narrow your search (smaller zip, tighter size range) to see more.";
+      if(rows._truncated) truncatedNote.textContent="Showing the 200 most recently expired — narrow with a zip code to see the rest.";
       results.style.display="block";
       const now=new Date();
-      dataFreshness.eclipse=Date.now();
-      timestamp.innerHTML=`Data checked at ${now.toISOString().replace("T"," ").slice(0,19)} UTC &mdash; <span class="freshness-source">Source: Philadelphia OPA property records (Eclipse)</span>`;
+      dataFreshness.carto=Date.now();
+      timestamp.innerHTML=`Data checked at ${now.toISOString().replace("T"," ").slice(0,19)} UTC &mdash; <span class="freshness-source">Source: Philadelphia rental license data (historical mirror, refreshed daily)</span>`;
       timestamp.style.display="block";
     }catch(err){
-      console.error("Property finder error:",err);
+      console.error("License gap scanner error:",err);
       currentRows=[];
       results.style.display="block";
-      $("#finder-body").innerHTML=`<div class="scan-unavail">${esc(err.message||"Search failed — the city API may be unreachable. Try again.")}</div>`;
-      $("#finder-count").textContent="";
+      $("#gap-body").innerHTML=`<div class="scan-unavail">${esc(err.message||"Scan failed — the city API may be unreachable. Try again.")}</div>`;
+      $("#gap-count").textContent="";
       truncatedNote.style.display="none";
       timestamp.style.display="none";
     }finally{
       spinner.style.display="none";
       goBtn.disabled=false;
       goBtn.classList.remove("busy");
-      goBtn.textContent="Search";
-      searchRunning=false;
+      goBtn.textContent="Scan";
+      scanRunning=false;
     }
   }
 
-  $("#finder-go").addEventListener("click",()=>{ runSearch(); });
-  $("#finder-zip").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#finder-go").click(); });
-  $("#finder-sort").addEventListener("change",()=>{ if(currentRows.length) renderResults(); });
-  $("#finder-score-toggle").addEventListener("change",e=>{
-    if(e.target.checked && currentRows.length && !scoringRunning) runScoring(currentRows);
-  });
+  $("#gap-go").addEventListener("click",()=>{ runScan(); });
+  $("#gap-zip").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#gap-go").click(); });
+  $("#gap-sort").addEventListener("change",()=>{ if(currentRows.length) renderResults(); });
 })();
 
 // ---- 4P Zip Code Scanner ----
