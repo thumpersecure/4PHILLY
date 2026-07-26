@@ -10,13 +10,21 @@
   var repo = "4philly";
   var segments = path.split("/");
 
-  if (segments.length > 1 && segments[1] && segments[1].toLowerCase() === repo) {
-    window.location.replace("/" + repo + "/" + window.location.search + window.location.hash);
+  // Project-pages deployment (site served from /<repo>/): send bad URLs to the
+  // repo root — but never redirect to the path we're already on, which would
+  // reload this 404 page forever.
+  var repoRoot = "/" + repo + "/";
+  if (segments.length > 1 && segments[1] && segments[1].toLowerCase() === repo && path !== repoRoot) {
+    window.location.replace(repoRoot + window.location.search + window.location.hash);
     return;
   }
 
-  // Fallback for custom-domain/root deployments.
-  window.location.replace("./" + window.location.search + window.location.hash);
+  // Custom-domain/root deployment: go to the ABSOLUTE site root. A relative
+  // "./" resolves against the 404'd URL's own directory (/blog/typo.html ->
+  // /blog/), which itself 404s and reloads this page in an infinite loop.
+  if (path !== "/") {
+    window.location.replace("/" + window.location.search + window.location.hash);
+  }
 })();
 </script>
 </head>
