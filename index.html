@@ -30,14 +30,14 @@
 <meta property="og:description" content="Apartments.com and Zillow show you photos and reviews. 4philly shows you the truth: open code violations, whether the rental license is active, and 311 complaints on any Philadelphia address. Apartment-hunting in Philly? Check here first — free, before you sign.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=3.3">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.65">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Philadelphia Apartments: Check It Before You Rent — 4PHILLY">
 <meta name="twitter:description" content="Listing sites show photos and reviews. 4philly shows the real City record — code violations, rental license status, and 311 complaints on any Philadelphia address. Check here first, free, before you sign.">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.3">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.65">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -131,6 +131,9 @@
   .field input::placeholder{color:var(--ink-mute)}
   .field input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,176,0,.25)}
   .field-primary input{font-size:18px;padding:13px 14px;border-width:2px}
+  .finder-toolbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim)}
+  .finder-toolbar select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);padding:6px 8px;font-family:"IBM Plex Mono",monospace;font-size:12px;border-radius:2px}
+  .finder-row-meta{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);margin-top:1px}
   .btn{background:var(--amber-fill);color:#1a1100;border:2px solid #1a1100;padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgba(0,0,0,0.45)}
   .btn:hover{background:#ffbe2e}
   .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,0.45)}
@@ -395,7 +398,7 @@
     .score-item{padding:10px 12px;border-radius:4px}
   }
 
-  /* 4P City Scanner */
+  /* Mode toggle + scanner/finder panels (shared across City Scanner and Zip Scanner) */
   .scanner-toggle{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
   .scanner-toggle button{flex:1;min-width:120px;background:var(--panel-2);color:var(--ink);border:2px solid var(--line);font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;padding:14px 16px;min-height:50px;cursor:pointer;border-radius:0;transition:background .12s,color .12s,box-shadow .1s,transform .08s,border-color .12s;touch-action:manipulation;box-shadow:4px 4px 0 rgba(0,0,0,0.4)}
   .scanner-toggle button.active{background:var(--amber);color:#1a1100;border-color:#1a1100;box-shadow:4px 4px 0 rgba(140,96,0,0.55)}
@@ -478,6 +481,7 @@
   .scan-row .sr-count.orange{background:rgba(255,149,0,.12);color:#ff9500;border:1px solid rgba(255,149,0,.35)}
   .scan-row .sr-count.yellow{background:rgba(255,214,10,.1);color:#ffd60a;border:1px solid rgba(255,214,10,.3)}
   .scan-row .sr-count.muted{background:rgba(154,154,154,.08);color:var(--ink-dim);border:1px solid var(--line)}
+  .scan-row .sr-count.green{background:rgba(48,209,88,.12);color:var(--green);border:1px solid rgba(48,209,88,.35)}
 
   .scan-row-owner{display:grid;grid-template-columns:30px 1fr 90px 90px;gap:8px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line-soft);font-family:"IBM Plex Mono",monospace;font-size:12px;border-left:2px solid transparent;transition:background .15s,border-color .15s}
   .scan-row-owner:last-child{border-bottom:none}
@@ -903,7 +907,7 @@
     <div>
       <div class="brand">
         <div class="brand-mark" role="button" tabindex="0" aria-label="4PHILLY — reset and return to lookup">4<span>PHILLY</span></div>
-        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.3</span>
+        <span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;background:rgba(255,176,0,.12);color:var(--amber);border:1px solid rgba(255,176,0,.35);text-transform:uppercase;vertical-align:middle;line-height:1.4">v3.65</span>
         <div class="brand-tag"> A Tenants App for Philadelphia Properties - made easy.</div>
       </div>
       <div class="gov-disclaimer" role="note">
@@ -919,7 +923,7 @@
     </div>
     <div class="top-meta">
       <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle light or dark theme" title="Toggle light / dark">☾ Dark</button>
-      <div>build <span class="mono">3.3</span></div>
+      <div>build <span class="mono">3.65</span></div>
       <div>pulled <span id="now" class="mono">—</span></div>
     </div>
   </header>
@@ -932,63 +936,71 @@
 
   <div class="scanner-toggle" id="mode-toggle">
     <button class="active" data-mode="lookup">Property Lookup</button>
-    <button data-mode="scanner">4P City Scanner</button>
+    <button data-mode="scanner">City Scanner</button>
     <button data-mode="zip">Zip Scanner</button>
   </div>
 
   <div id="scanner-panel">
     <div style="text-align:center;padding:20px 0 8px">
-      <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">Check Philly</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:480px;margin:0 auto;line-height:1.6">Search Philadelphia's public data for properties with the most open violations, 311 complaints, and expired rental licenses.</div>
+      <div style="font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--ink);margin-bottom:6px">License Gap Scanner</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-mute);max-width:520px;margin:0 auto;line-height:1.6">Finds Philadelphia rental properties whose license has expired right now — a status the City's own map tools (Atlas, Property History) won't show for up to 60 days.</div>
     </div>
-    <details class="scan-why">
-      <summary>Where do these numbers come from, and why?</summary>
+    <details class="scan-why" open>
+      <summary>What "expired" means here, in plain terms</summary>
       <div class="scan-why-body">
-        These rankings are computed live from <b>Philadelphia's open data on Carto</b> (<code>phl.carto.com</code>) —
-        the city's public historical mirror of L&amp;I violations, 311 complaints, and business/rental licenses.
-        Properties are grouped by their <b>OPA account number</b> (the exact parcel ID), not by address text, so the
-        counts are aggregated cleanly per parcel.
+        Philadelphia law is specific: under <b>Code § 9-3902(1)(a)</b>, a landlord may not collect rent on a
+        property that requires a rental license unless a valid license is currently in force. Under
+        <b>§ 9-3901(4)(e)</b>, an owner who lets that lapse cannot collect rent or evict for nonpayment
+        <i>during the period of non-compliance</i>.
         <br><br>
-        <b>Why it can differ from a single property lookup:</b> the property lookup at the top of this app reads
-        <b>Eclipse</b>, L&amp;I's authoritative live backend. This scanner reads the <b>Carto mirror</b>, which
-        <b>lags Eclipse</b> — sometimes by days or weeks. So a violation that was just resolved, or a license that
-        was just renewed, may still show here. Treat the scanner as a <b>city-wide triage view</b>: use it to find
-        candidates, then confirm any specific property with a lookup (which hits the live source).
+        Every rental license carries two dates. The <b>expiration date</b> is the one with legal weight — it's
+        when that authority to collect rent ends. About <b>60 days later</b>, the license is reclassified
+        <b>"Inactive"</b> — an internal bookkeeping change, not a legal deadline.
         <br><br>
-        Government, institutional, and hotel owners are filtered out so the list focuses on private landlords.
+        The City's own map tools publish the second date, not the first. For the full 60-day window between
+        them, a lapsed license shows no expiration date and a status that hasn't yet flipped to "Inactive" — so
+        the property looks unremarkable on the map even though, right now, it isn't legally licensed to collect
+        rent.
+        <br><br>
+        This scanner queries that same City data directly for every <b>Rental</b>-type license currently sitting
+        in that window — status <code>Expired</code>, expiration date already passed, not yet reclassified. It
+        reads the City's independently-verified, correctly time-zoned copy of the data (a separate, confirmed
+        bug shifts the same date a calendar day early on the City's map-facing copy — not used here).
+        <br><br>
+        <b>This is public licensing information, not legal advice.</b> A property here means its rental license
+        shows expired in the City's own daily-refreshed data as of the scan time — confirm specifics for any one
+        address with a full lookup before relying on it.
       </div>
     </details>
-    <div style="padding:20px 0">
-      <button class="scan-btn" id="scan-go">Check Philly</button>
+    <div style="display:flex;gap:10px;justify-content:center;align-items:flex-end;padding:16px 0;flex-wrap:wrap">
+      <div class="field" style="flex:0 0 160px">
+        <label for="gap-zip">Zip code (optional)</label>
+        <input id="gap-zip" type="text" placeholder="All of Philadelphia" maxlength="5" inputmode="numeric" autocomplete="off" pattern="\d{5}">
+      </div>
+      <button class="btn" id="gap-go" style="min-height:44px;padding:0 24px">Scan</button>
     </div>
-    <div id="scan-spinner" style="display:none">
+    <div id="gap-spinner" style="display:none">
       <div class="scan-spinner">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span id="scan-status-text">Scanning city-wide data...</span>
+        <span id="gap-status-text">Checking license records...</span>
       </div>
     </div>
-    <div id="scan-timestamp" class="scan-timestamp" style="display:none"></div>
-    <div id="scan-results" style="display:none">
-      <div class="scan-section" id="scan-sec-violations">
-        <h2>Most Open Violations <span class="scan-count" id="scan-viol-count"></span></h2>
-        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
-        <div id="scan-viol-body"></div>
-      </div>
-      <div class="scan-section" id="scan-sec-311">
-        <h2>Most 311 Complaints (12 months) <span class="scan-count" id="scan-311-count"></span></h2>
-        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
-        <div id="scan-311-body"></div>
-      </div>
-      <div class="scan-section" id="scan-sec-licenses">
-        <h2>Expired Rental Licenses <span class="scan-count" id="scan-lic-count"></span></h2>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);margin-bottom:8px">Historical record (Carto mirror) — verify current status via property lookup (Eclipse)</div>
-        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
-        <div id="scan-lic-body"></div>
-      </div>
-      <div class="scan-section" id="scan-sec-owners">
-        <h2>Owners With Multiple Flagged Properties <span class="scan-count" id="scan-owner-count"></span></h2>
-        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia Open Data (historical mirror)</div>
-        <div id="scan-owner-body"></div>
+    <div id="gap-timestamp" class="scan-timestamp" style="display:none"></div>
+    <div id="gap-results" style="display:none">
+      <div class="scan-section" id="gap-sec-results">
+        <h2>Currently Expired, Not Yet Flagged <span class="scan-count" id="gap-count"></span></h2>
+        <div class="freshness-source" style="margin-bottom:8px">Source: Philadelphia rental license data (phl.carto.com), refreshed daily by the City</div>
+        <div class="finder-toolbar">
+          <label for="gap-sort">Sort by
+            <select id="gap-sort">
+              <option value="recent">Most recently expired</option>
+              <option value="oldest">Longest overdue (closest to reclassifying)</option>
+              <option value="units">Most units</option>
+            </select>
+          </label>
+        </div>
+        <div id="gap-body"></div>
+        <div id="gap-truncated" class="op-note" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -1288,7 +1300,7 @@
   <div style="border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--panel);text-align:center;margin-top:16px">
     <img src="how-it-works.svg" alt="4PHILLY data flow diagram: an address or OPA number resolves through OPA lookup into two parallel sources, the authoritative Eclipse ArcGIS system and the historical Carto SQL mirror, which are compared by a drift comparator to produce a unified record with drift flags, while OPA data also resolves the council district to surface the councilmember and any L&amp;I Committee flag" style="max-width:100%;width:640px;display:block;margin:0 auto" loading="lazy">
   </div>
-  <div class="footer-disc">4PHILLY v3.3 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
+  <div class="footer-disc">4PHILLY v3.65 — open-source civic tool. Verify any claim before relying on it. No warranty.</div>
 </footer>
 
 </div><!-- /wrap -->
@@ -1712,6 +1724,25 @@ async function getOwnerProperties(ownerName,mode){
     : `owner_1='${safe}'`;
   const rows=await eclipseQuery("opa_properties_public_pde",where,
     "parcel_number,location,owner_1,market_value,zip_code","&resultRecordCount=200");
+  return rows;
+}
+
+// Find Rental-type licenses currently sitting in the "expired but not yet
+// reclassified" gap: expirationdate has passed and licensestatus already reads
+// "Expired", but the City's public map tools (Atlas, Property History) publish
+// only the later inactivedate — about 60 days out — so this population is
+// invisible there for the whole gap. Reads Carto directly because its date
+// fields are confirmed correctly time-zoned; the ArcGIS copy behind Property
+// History stores the same kind of date fields at midnight UTC with no
+// localization, which renders a calendar day early in any US time zone.
+async function findLicenseGaps({zip}={}){
+  const z=String(zip||"").trim();
+  if(z && !/^\d{5}$/.test(z)) throw new Error("Enter a valid 5-digit zip code, or leave it blank for all of Philadelphia.");
+  const zipClause=z?` AND zip LIKE '${z}%'`:"";
+  const sql=`SELECT opa_account_num, address, zip, legalname, business_name, licensestatus, licensenum, expirationdate, inactivedate, numberofunits FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus = 'Expired' AND expirationdate IS NOT NULL AND expirationdate < NOW()${zipClause} ORDER BY expirationdate DESC LIMIT 200`;
+  const rows=await cartoQuery(sql);
+  const truncated=rows.length>=200;
+  Object.defineProperty(rows,"_truncated",{value:truncated,enumerable:false});
   return rows;
 }
 
@@ -3955,317 +3986,132 @@ function switchToLookupByAddress(addr){
   $("#go").click();
 }
 
-// ---- City-wide Scanner ("Check Philly") ----
-(function initCityScanner(){
-  const CARTO_SQL="https://phl.carto.com/api/v2/sql";
+// ---- License Gap Scanner ----
+(function initLicenseGapScanner(){
+  let currentRows=[];
+  let scanRunning=false;
 
-  async function cityCartoQuery(sql){
-    const url=`${CARTO_SQL}?q=${encodeURIComponent(sql)}&format=json`;
-    let r;
-    try{ r=await fetch(url); }catch(e){ throw new Error(`Carto: network error (${e.message})`); }
-    if(!r.ok) throw new Error(`Carto HTTP ${r.status}`);
-    let j;
-    try{ j=await r.json(); }catch(e){ throw new Error(`Carto: invalid JSON response`); }
-    if(j.error) throw new Error(`Carto: ${Array.isArray(j.error)?j.error[0]:String(j.error)}`);
-    return j.rows||[];
+  function parseCartoDate(v){
+    const d=new Date(v);
+    return Number.isNaN(d.getTime())?null:d;
   }
 
-  function violationCountClass(n){
-    if(n>=10) return "red";
-    if(n>=5) return "orange";
-    if(n>=3) return "yellow";
+  function daysSince(d){
+    return Math.max(0,Math.floor((Date.now()-d.getTime())/86400000));
+  }
+
+  function gapClass(days){
+    if(days>=45) return "red";
+    if(days>=25) return "orange";
+    if(days>=10) return "yellow";
     return "muted";
   }
 
-  async function queryWorstProperties(){
-    const sql=`SELECT opa_account_num, address, MAX(opa_owner) as opa_owner, COUNT(*) as violation_count FROM violations WHERE violationstatus = 'OPEN' AND address IS NOT NULL AND opa_account_num IS NOT NULL AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' GROUP BY opa_account_num, address ORDER BY violation_count DESC LIMIT 50`;
-    // Let failures throw so runCityScan's allSettled shows "Data unavailable —
-    // query failed" instead of a false "No open violations found city-wide."
-    return await cityCartoQuery(sql);
+  function rowMeta(r){
+    const parts=[];
+    const name=(r.legalname||r.business_name||"").trim();
+    if(name) parts.push(name);
+    if(r.numberofunits) parts.push(`${r.numberofunits} unit${Number(r.numberofunits)===1?"":"s"}`);
+    if(r.licensenum) parts.push(`license ${r.licensenum}`);
+    return parts.join(" · ");
   }
 
-  // The 311 dataset (public_cases_fc) has no OPA number and no residential flag,
-  // so it can't be filtered by owner like the other scanner queries. These are
-  // well-known non-residential addresses (City Hall, Municipal Services Bldg,
-  // the Eagles stadium) plus intersection complaints ("X & Y"), which are public
-  // -space/road issues, not a tenant's building. Excluding them keeps the "most
-  // 311 complaints" list focused on actual residences.
-  const NON_RESIDENTIAL_311_FILTER=`AND UPPER(address) NOT LIKE '%1400%JOHN F KENNEDY%' AND UPPER(address) NOT LIKE '%1234 MARKET%' AND UPPER(address) NOT LIKE '%LINCOLN FINANCIAL%' AND address NOT LIKE '%&%'`;
-
-  async function query311Complaints(){
-    const queries=[
-      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= NOW() - INTERVAL '12 months' AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${NON_RESIDENTIAL_311_FILTER} GROUP BY address ORDER BY complaint_count DESC LIMIT 25`,
-      `SELECT address, COUNT(*) as complaint_count FROM public_cases_fc WHERE requested_datetime >= (current_date - 365) AND address IS NOT NULL AND LENGTH(address) > 5 AND address NOT IN ('.', 'Philadelphia', 'N/A') ${NON_RESIDENTIAL_311_FILTER} GROUP BY address ORDER BY complaint_count DESC LIMIT 25`
-    ];
-    let ran=false,lastErr=null;
-    for(const sql of queries){
-      try{
-        const rows=await cityCartoQuery(sql);
-        ran=true;
-        if(rows.length>0) return rows;
-      }catch(e){ lastErr=e; console.warn("City 311 query variant failed:",e.message); }
-    }
-    // Only return empty if a query actually RAN and found nothing; if every
-    // variant threw, propagate so the failure isn't shown as "no complaints".
-    if(!ran) throw lastErr||new Error("311 query failed");
-    return [];
+  function sortRows(rows,mode){
+    const sorted=rows.slice();
+    const time=(r)=>{ const d=parseCartoDate(r.expirationdate); return d?d.getTime():0; };
+    if(mode==="oldest") sorted.sort((a,b)=>time(a)-time(b));
+    else if(mode==="units") sorted.sort((a,b)=>(Number(b.numberofunits)||0)-(Number(a.numberofunits)||0));
+    else sorted.sort((a,b)=>time(b)-time(a));
+    return sorted;
   }
 
-  async function queryExpiredLicenses(){
-    const sql=`SELECT opa_account_num, legalname, business_name, licensestatus, numberofunits, expirationdate FROM business_licenses WHERE licensetype = 'Rental' AND licensestatus != 'Active' AND (rentalcategory IS NULL OR rentalcategory NOT LIKE '%Hotel%') AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNKNOWN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY OF PHILA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%REDEVELOPMENT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%HILTON WORLDWIDE%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WYNDHAM%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HOTEL%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%SHERATON%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%CROWNE PLAZA%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%RESIDENCE INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%HAMPTON INN%' AND UPPER(COALESCE(business_name,'')) NOT LIKE '%COURTYARD BY MARRIOTT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(legalname,'')) NOT LIKE '%BOARD OF EDUCATION%' ORDER BY numberofunits DESC NULLS LAST LIMIT 50`;
-    return await cityCartoQuery(sql);
-  }
-
-  async function queryRepeatOffenders(){
-    // First try with management company join
-    const sqlWithMgmt=`SELECT p.owner_1 as ownername, MAX(b.legalname) as mgmt_company, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number LEFT JOIN (SELECT DISTINCT opa_account_num, legalname FROM business_licenses WHERE licensetype = 'Rental' AND legalname IS NOT NULL AND legalname != '' LIMIT 5000) b ON v.opa_account_num = b.opa_account_num WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(p.owner_1) NOT LIKE '%HOUSING AUTH%' AND UPPER(p.owner_1) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(p.owner_1) NOT LIKE '%UNIVERSITY%' AND UPPER(p.owner_1) NOT LIKE '%COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%TEMPLE%' AND UPPER(p.owner_1) NOT LIKE '%DREXEL%' AND UPPER(p.owner_1) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%CHURCH%' AND UPPER(p.owner_1) NOT LIKE '%HOSPITAL%' AND UPPER(p.owner_1) NOT LIKE '%CITY HALL%' AND UPPER(p.owner_1) NOT LIKE '%COMMONWEALTH%' AND UPPER(p.owner_1) NOT LIKE '%STATE OF PENN%' AND UPPER(p.owner_1) NOT LIKE '%UNITED STATES%' AND UPPER(p.owner_1) NOT LIKE '%FEDERAL%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(p.owner_1) NOT LIKE '%POSTAL%' AND UPPER(p.owner_1) NOT LIKE '%USPS%' AND UPPER(p.owner_1) NOT LIKE '%SEPTA%' AND UPPER(p.owner_1) NOT LIKE '%AMTRAK%' AND UPPER(p.owner_1) NOT LIKE '%CONRAIL%' AND UPPER(p.owner_1) NOT LIKE '%WATER DEPT%' AND UPPER(p.owner_1) NOT LIKE '%DEPT OF%' AND UPPER(p.owner_1) NOT LIKE '%BOARD OF EDUCATION%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
-    const sqlSimple=`SELECT p.owner_1 as ownername, COUNT(DISTINCT v.opa_account_num) as property_count, COUNT(*) as total_violations FROM violations v JOIN opa_properties_public p ON v.opa_account_num = p.parcel_number WHERE v.violationstatus = 'OPEN' AND UPPER(p.owner_1) NOT LIKE '%UNKNOWN%' AND UPPER(p.owner_1) NOT LIKE '%THOMAS JEFFERSON%' AND UPPER(p.owner_1) NOT LIKE '%CITY OF PHILA%' AND UPPER(p.owner_1) NOT LIKE '%PHILADELPHIA HOUSING%' AND UPPER(p.owner_1) NOT LIKE '%REDEVELOPMENT%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(p.owner_1) NOT LIKE '%LAND BANK%' AND UPPER(p.owner_1) NOT LIKE '%HOUSING AUTH%' AND UPPER(p.owner_1) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(p.owner_1) NOT LIKE '%UNIVERSITY%' AND UPPER(p.owner_1) NOT LIKE '%COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%TEMPLE%' AND UPPER(p.owner_1) NOT LIKE '%DREXEL%' AND UPPER(p.owner_1) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(p.owner_1) NOT LIKE '%CHURCH%' AND UPPER(p.owner_1) NOT LIKE '%HOSPITAL%' AND UPPER(p.owner_1) NOT LIKE '%CITY HALL%' AND UPPER(p.owner_1) NOT LIKE '%COMMONWEALTH%' AND UPPER(p.owner_1) NOT LIKE '%STATE OF PENN%' AND UPPER(p.owner_1) NOT LIKE '%UNITED STATES%' AND UPPER(p.owner_1) NOT LIKE '%FEDERAL%' AND UPPER(p.owner_1) NOT LIKE '%SCHOOL BOARD%' AND UPPER(p.owner_1) NOT LIKE '%POSTAL%' AND UPPER(p.owner_1) NOT LIKE '%USPS%' AND UPPER(p.owner_1) NOT LIKE '%SEPTA%' AND UPPER(p.owner_1) NOT LIKE '%AMTRAK%' AND UPPER(p.owner_1) NOT LIKE '%CONRAIL%' AND UPPER(p.owner_1) NOT LIKE '%WATER DEPT%' AND UPPER(p.owner_1) NOT LIKE '%DEPT OF%' AND UPPER(p.owner_1) NOT LIKE '%BOARD OF EDUCATION%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL DISTRICT%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%LAND BANK%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%HOUSING AUTH%' AND UPPER(COALESCE(opa_owner,'')) NOT LIKE '%MUNICIPAL%AUTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNIVERSITY%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%TEMPLE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%DREXEL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMUNITY COLLEGE%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CHURCH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%HOSPITAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CITY HALL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%COMMONWEALTH%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%STATE OF PENN%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%UNITED STATES%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%FEDERAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SCHOOL BOARD%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%POSTAL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%USPS%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%SEPTA%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%AMTRAK%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%CONRAIL%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%WATER DEPT%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%DEPT OF%' AND UPPER(COALESCE(v.opa_owner,'')) NOT LIKE '%BOARD OF EDUCATION%' GROUP BY p.owner_1 HAVING COUNT(DISTINCT v.opa_account_num) > 1 ORDER BY total_violations DESC LIMIT 20`;
-    try{
-      const rows=await cityCartoQuery(sqlWithMgmt);
-      if(rows.length>0) return rows;
-      return await cityCartoQuery(sqlSimple);
-    }catch(e){
-      // Fall back to the simpler query; if that ALSO throws, let it propagate so
-      // the failure surfaces as "Data unavailable" rather than "no offenders".
-      return await cityCartoQuery(sqlSimple);
-    }
-  }
-
-  function renderCityViolations(rows){
-    const body=$("#scan-viol-body");
-    const count=$("#scan-viol-count");
-    if(!rows||rows.length===0){
+  function renderResults(){
+    const body=$("#gap-body");
+    const count=$("#gap-count");
+    if(!currentRows.length){
       count.textContent="";
-      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No open violations found city-wide.</div>`;
+      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No Rental licenses currently sitting in the gap here.</div>`;
       return;
     }
-    count.textContent=rows.length;
+    const mode=$("#gap-sort").value;
+    const rows=sortRows(currentRows,mode);
+    count.textContent=currentRows.length;
     let html=`<div class="scan-list">`;
-    let rank=0;
     rows.forEach((r,i)=>{
-      if(!r.address || String(r.address).trim() === '') return;
-      rank++;
-      const addr=r.violationlocation||r.address||r.opa_account_num||"Unknown";
-      const ct=Number(r.violation_count)||0;
-      const colorClass=violationCountClass(ct);
       const opa=(r.opa_account_num||"").trim();
       const hasOpa=/^\d{6,12}$/.test(opa);
-      const ownerLabel=r.opa_owner&&r.opa_owner.trim()?r.opa_owner.trim():'';
-      html+=`<div class="scan-row" ${hasOpa?`data-city-opa="${esc(opa)}"`:""} data-addr="${esc(String(addr))}" title="Click to view property">
-        <span class="sr-rank">${rank}</span>
-        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span>${ownerLabel?'<span class="sr-owner-line">'+esc(ownerLabel)+'</span>':''}</span>
-        <button class="sr-copy" data-copy="${esc(String(addr))}" title="Copy address">copy</button>
-        <span class="sr-count ${colorClass}">${ct}</span>
+      const addr=r.address||opa||"Unknown";
+      const expDate=parseCartoDate(r.expirationdate);
+      const days=expDate?daysSince(expDate):null;
+      const expLabel=expDate?expDate.toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric",timeZone:"UTC"}):"unknown date";
+      const badge=days!=null
+        ? `<span class="sr-count ${gapClass(days)}" title="Days since the license's expiration date — the gap the City's own map won't show yet">${days}d</span>`
+        : "";
+      html+=`<div class="scan-row" ${hasOpa?`data-gap-opa="${esc(opa)}"`:""} title="Click to view property">
+        <span class="sr-rank">${i+1}</span>
+        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span><span class="finder-row-meta">Expired ${esc(expLabel)} · ${esc(rowMeta(r))}</span></span>
+        ${badge}
         <span class="sr-arrow">&rsaquo;</span>
       </div>`;
     });
     html+=`</div>`;
     body.innerHTML=html;
     body.querySelectorAll(".scan-row").forEach(row=>{
-      row.addEventListener("click",e=>{
-        if(e.target.closest(".sr-copy")) return;
-        const opa=row.dataset.cityOpa;
-        const addr=row.dataset.addr;
-        if(opa&&/^\d{6,12}$/.test(opa)){
-          switchToLookupByOPA(opa);
-        }else if(addr&&addr!=="Unknown"){
-          switchToLookupByAddress(addr);
-        }
-      });
-    });
-    body.querySelectorAll(".sr-copy").forEach(btn=>{
-      btn.addEventListener("click",e=>copyAddress(btn.dataset.copy,e));
-    });
-  }
-
-  function renderCity311(rows){
-    const body=$("#scan-311-body");
-    const count=$("#scan-311-count");
-    if(!rows||rows.length===0){
-      count.textContent="";
-      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No 311 complaints found city-wide (last 12 months).</div>`;
-      return;
-    }
-    count.textContent=rows.length;
-    let html=`<div class="scan-list">`;
-    let rank=0;
-    rows.forEach((r,i)=>{
-      if(!r.address || r.address.trim() === '') return;
-      rank++;
-      const addr=r.address||"Unknown";
-      const ct=Number(r.complaint_count)||0;
-      const colorClass=ct>=10?"red":ct>=5?"orange":ct>=3?"yellow":"muted";
-      html+=`<div class="scan-row" data-addr="${esc(String(addr))}" title="Click to look up property">
-        <span class="sr-rank">${rank}</span>
-        <span class="sr-addr"><span class="sr-addr-line">${esc(String(addr))}</span></span>
-        <button class="sr-copy" data-copy="${esc(String(addr))}" title="Copy address">copy</button>
-        <span class="sr-count ${colorClass}">${ct}</span>
-        <span class="sr-arrow">&rsaquo;</span>
-      </div>`;
-    });
-    html+=`</div>`;
-    body.innerHTML=html;
-    body.querySelectorAll(".scan-row").forEach(row=>{
-      row.addEventListener("click",e=>{
-        if(e.target.closest(".sr-copy")) return;
-        const addr=row.dataset.addr;
-        if(addr&&addr!=="Unknown") switchToLookupByAddress(addr);
-      });
-    });
-    body.querySelectorAll(".sr-copy").forEach(btn=>{
-      btn.addEventListener("click",e=>copyAddress(btn.dataset.copy,e));
-    });
-  }
-
-  function renderCityLicenses(rows){
-    const body=$("#scan-lic-body");
-    const count=$("#scan-lic-count");
-    if(!rows||rows.length===0){
-      count.textContent="";
-      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No expired rental licenses found city-wide.</div>`;
-      return;
-    }
-    count.textContent=rows.length;
-    let html=`<div class="scan-list">`;
-    rows.forEach(r=>{
-      if(!r.legalname || r.legalname.trim() === '') return;
-      const name=r.legalname||r.business_name||"Unknown";
-      const biz=r.business_name||"";
-      const units=r.numberofunits!=null&&r.numberofunits!==""?String(r.numberofunits):"--";
-      const expRaw=r.expirationdate;
-      const expStr=expRaw?fmtDate(expRaw):"--";
-      const opa=(r.opa_account_num||"").trim();
-      const hasOpa=/^\d{6,12}$/.test(opa);
-      const statusRaw=String(r.licensestatus||"").trim();
-      const statusLabel=statusRaw?esc(statusRaw):"Unknown";
-      html+=`<div class="scan-row-lic" ${hasOpa?`data-lic-opa="${esc(opa)}"`:""} title="${hasOpa?"Click to view property — verify current status via Eclipse":"Historical record (Carto)"}">
-        <span class="sr-name">${esc(String(name))}</span>
-        <span class="sr-biz">${esc(String(biz))}${statusRaw?' <span class="pill admin" title="Historical record — Carto mirror, not current. Verify via property lookup (Eclipse).">'+statusLabel+' (Historical)</span>':''}</span>
-        <span class="sr-units">${esc(units)} units</span>
-        <span class="sr-exp">${esc(expStr)}</span>
-        <span class="sr-arrow">${hasOpa?"&rsaquo;":""}</span>
-      </div>`;
-    });
-    html+=`</div>`;
-    body.innerHTML=html;
-    body.querySelectorAll(".scan-row-lic[data-lic-opa]").forEach(row=>{
       row.addEventListener("click",()=>{
-        const opa=row.dataset.licOpa;
+        const opa=row.dataset.gapOpa;
         if(opa&&/^\d{6,12}$/.test(opa)) switchToLookupByOPA(opa);
       });
     });
   }
 
-  function renderCityOwners(rows){
-    const body=$("#scan-owner-body");
-    const count=$("#scan-owner-count");
-    if(!rows||rows.length===0){
-      count.textContent="";
-      body.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border:1px solid rgba(48,209,88,.3);border-left:3px solid var(--green);background:var(--panel);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--green)"><span style="font-size:16px">&#10003;</span> No owners with multiple flagged properties found city-wide.</div>`;
-      return;
-    }
-    count.textContent=rows.length;
-    let html=`<div class="scan-list">`;
-    let rank=0;
-    rows.forEach((r,i)=>{
-      if(!r.ownername || r.ownername.trim() === '') return;
-      rank++;
-      const name=r.ownername||"Unknown";
-      const mgmt=r.mgmt_company||"";
-      const showMgmt=mgmt&&mgmt.toUpperCase()!==name.toUpperCase();
-      const propCt=Number(r.property_count)||0;
-      const violCt=Number(r.total_violations)||0;
-      html+=`<div class="scan-row-owner">
-        <span class="sr-rank">${rank}</span>
-        <span class="sr-name">${esc(String(name))}${showMgmt?'<span style="display:block;font-size:11px;font-family:\'IBM Plex Mono\',monospace;color:var(--ink-dim);font-weight:400;margin-top:2px">mgmt: '+esc(String(mgmt))+'</span>':''}</span>
-        <span class="sr-meta">${propCt} prop${propCt===1?"":"s"}</span>
-        <span class="sr-meta"><b>${violCt}</b> violations</span>
-      </div>`;
-    });
-    html+=`</div>`;
-    body.innerHTML=html;
-  }
-
-  let cityScanRunning=false;
-  async function runCityScan(){
-    if(cityScanRunning) return;
-    cityScanRunning=true;
-
-    const spinner=$("#scan-spinner");
-    const timestamp=$("#scan-timestamp");
-    const results=$("#scan-results");
-    const statusText=$("#scan-status-text");
-    const scanBtn=$("#scan-go");
-
-    // Reset
+  async function runScan(){
+    if(scanRunning) return;
+    scanRunning=true;
+    const spinner=$("#gap-spinner");
+    const timestamp=$("#gap-timestamp");
+    const results=$("#gap-results");
+    const goBtn=$("#gap-go");
+    const truncatedNote=$("#gap-truncated");
     results.style.display="none";
     timestamp.style.display="none";
     spinner.style.display="block";
-    scanBtn.disabled=true;
-    scanBtn.classList.add("busy");
-    scanBtn.textContent="Scanning...";
-    statusText.textContent="Scanning city-wide data...";
+    goBtn.disabled=true;
+    goBtn.classList.add("busy");
+    goBtn.textContent="Scanning…";
 
     try{
-      const [violations,complaints,licenses,owners]=await Promise.allSettled([
-        queryWorstProperties(),
-        query311Complaints(),
-        queryExpiredLicenses(),
-        queryRepeatOffenders()
-      ]);
-
-      if(violations.status==="fulfilled"){
-        renderCityViolations(violations.value);
-      } else {
-        $("#scan-viol-count").textContent="";
-        $("#scan-viol-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
-      }
-
-      if(complaints.status==="fulfilled"){
-        renderCity311(complaints.value);
-      } else {
-        $("#scan-311-count").textContent="";
-        $("#scan-311-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
-      }
-
-      if(licenses.status==="fulfilled"){
-        renderCityLicenses(licenses.value);
-      } else {
-        $("#scan-lic-count").textContent="";
-        $("#scan-lic-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
-      }
-
-      if(owners.status==="fulfilled"){
-        renderCityOwners(owners.value);
-      } else {
-        $("#scan-owner-count").textContent="";
-        $("#scan-owner-body").innerHTML=`<div class="scan-unavail">Data unavailable — query failed.</div>`;
-      }
-
+      const zip=$("#gap-zip").value;
+      const rows=await findLicenseGaps({zip});
+      currentRows=rows;
+      $("#gap-sort").value="recent";
+      renderResults();
+      truncatedNote.style.display=rows._truncated?"block":"none";
+      if(rows._truncated) truncatedNote.textContent="Showing the 200 most recently expired — narrow with a zip code to see the rest.";
       results.style.display="block";
       const now=new Date();
-      dataFreshness.carto = Date.now();
-      timestamp.innerHTML=`Data checked at ${now.toISOString().replace("T"," ").slice(0,19)} UTC &mdash; <span class="freshness-source">Source: Philadelphia Open Data (historical mirror)</span>`;
+      dataFreshness.carto=Date.now();
+      timestamp.innerHTML=`Data checked at ${now.toISOString().replace("T"," ").slice(0,19)} UTC &mdash; <span class="freshness-source">Source: Philadelphia rental license data (historical mirror, refreshed daily)</span>`;
       timestamp.style.display="block";
-
     }catch(err){
-      console.error("City scan error:",err);
+      console.error("License gap scanner error:",err);
+      currentRows=[];
       results.style.display="block";
-      timestamp.textContent=`Scan failed: ${err.message}`;
-      timestamp.style.display="block";
+      $("#gap-body").innerHTML=`<div class="scan-unavail">${esc(err.message||"Scan failed — the city API may be unreachable. Try again.")}</div>`;
+      $("#gap-count").textContent="";
+      truncatedNote.style.display="none";
+      timestamp.style.display="none";
     }finally{
       spinner.style.display="none";
-      scanBtn.disabled=false;
-      scanBtn.classList.remove("busy");
-      scanBtn.textContent="Check Philly";
-      cityScanRunning=false;
+      goBtn.disabled=false;
+      goBtn.classList.remove("busy");
+      goBtn.textContent="Scan";
+      scanRunning=false;
     }
   }
 
-  // Event listener for city-wide scan button
-  $("#scan-go").addEventListener("click",()=>{
-    runCityScan();
-  });
+  $("#gap-go").addEventListener("click",()=>{ runScan(); });
+  $("#gap-zip").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#gap-go").click(); });
+  $("#gap-sort").addEventListener("change",()=>{ if(currentRows.length) renderResults(); });
 })();
 
 // ---- 4P Zip Code Scanner ----
