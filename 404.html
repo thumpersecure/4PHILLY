@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
-<title>4PHILLY</title>
+<title>Page not found — 4PHILLY</title>
 <script>
 (function(){
   var path = window.location.pathname || "/";
@@ -19,14 +20,39 @@
     return;
   }
 
-  // Custom-domain/root deployment: go to the ABSOLUTE site root. A relative
-  // "./" resolves against the 404'd URL's own directory (/blog/typo.html ->
-  // /blog/), which itself 404s and reloads this page in an infinite loop.
-  if (path !== "/") {
+  // A deep link pasted onto a bad path still deserves to land in the app.
+  if (/^#opa=\d{6,12}$/.test(window.location.hash) && path !== "/") {
     window.location.replace("/" + window.location.search + window.location.hash);
+    return;
   }
+  // Otherwise: show the 404 body below instead of silently bouncing home.
 })();
 </script>
+<style>
+  :root{--bg:#111214;--panel:#161819;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--amber:#ffb000;--amber-soft:#ffd166}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;line-height:1.65;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
+  .card{max-width:480px;text-align:center}
+  .brand{font-family:ui-sans-serif,system-ui,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:20px}
+  .brand span{color:var(--amber)}
+  h1{font-size:1.5em;margin:0 0 10px}
+  p{color:var(--ink-dim);font-size:.95em;margin:0 0 20px}
+  a{color:var(--amber);text-decoration:none}
+  a:hover{color:var(--amber-soft)}
+  .links{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;font-size:.9em}
+</style>
 </head>
-<body></body>
+<body>
+<div class="card">
+  <div class="brand">4<span>PHILLY</span></div>
+  <h1>404 — page not found</h1>
+  <p>That page doesn't exist. 4PHILLY is an independent, non-governmental tool for looking up public City of Philadelphia property records.</p>
+  <div class="links">
+    <a href="/">Search an address</a>
+    <a href="/blog/">Guides &amp; articles</a>
+    <a href="/p/">Property snapshots</a>
+    <a href="/privacy.html">Privacy Policy</a>
+  </div>
+</div>
+</body>
 </html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Philadelphia L&amp;I Code Violation Search: Check Any Address Free</title>
+<meta name="description" content="How to search Philadelphia L&I code violations for any address — free. What OPEN and COMPLIED really mean, why the OPA number is the key, and how to verify against the City's live record.">
+<meta property="og:title" content="Philadelphia L&amp;I Code Violation Search: Check Any Address Free">
+<meta property="og:description" content="Pull the L&I violation history for any Philadelphia property, understand OPEN vs COMPLIED, and verify against the City's authoritative record.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://4philly.net/guides/li-violation-search.html">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
+<meta property="og:site_name" content="4PHILLY">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-08-01">
+<meta property="article:modified_time" content="2026-08-01">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Philadelphia L&amp;I Code Violation Search: Check Any Address Free">
+<meta name="twitter:description" content="Pull the L&I violation history for any Philadelphia property, understand OPEN vs COMPLIED, and verify against the City's authoritative record.">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
+<link rel="canonical" href="https://4philly.net/guides/li-violation-search.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Philadelphia L&I Code Violation Search: Check Any Address Free",
+  "description": "How to search Philadelphia L&I code violations for any address — free. What OPEN and COMPLIED really mean, why the OPA number is the key, and how to verify against the City's live record.",
+  "url": "https://4philly.net/guides/li-violation-search.html",
+  "mainEntityOfPage": "https://4philly.net/guides/li-violation-search.html",
+  "datePublished": "2026-08-01",
+  "dateModified": "2026-08-01",
+  "image": "https://4philly.net/og-image.png",
+  "author": { "@type": "Organization", "name": "4PHILLY", "url": "https://4philly.net/" },
+  "publisher": { "@type": "Organization", "name": "4PHILLY", "url": "https://4philly.net/" }
+}
+</script>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111214; --panel:#161819; --panel-2:#1c1e20; --line:#2a2c2e; --line-soft:#1f2123;
+    --ink:#ececec; --ink-dim:#9a9a9a; --ink-mute:#666; --amber:#ffb000; --amber-soft:#ffd166;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--amber);text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)}
+  a:hover{color:var(--amber-soft);border-bottom-color:var(--amber-soft)}
+  code{font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--panel-2);padding:2px 5px;border-radius:2px;font-size:.9em}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+  .brand{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:36px}
+  .brand span{color:var(--amber)}
+  .brand a{border:none;color:var(--ink)}
+  h1{font-family:"Archivo",sans-serif;font-weight:800;font-size:2.1em;line-height:1.2;letter-spacing:-.01em;margin:0 0 12px}
+  h2{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.4em;margin:2em 0 .6em;border-top:1px solid var(--line);padding-top:1.4em}
+  h3{font-family:"Archivo",sans-serif;font-weight:700;font-size:1.1em;margin:1.6em 0 .4em}
+  .dek{font-size:1.2em;color:var(--ink-dim);margin:0 0 28px;font-weight:400}
+  strong{color:var(--ink)}
+  ul,ol{padding-left:1.3em}
+  li{margin:.4em 0}
+  table{width:100%;border-collapse:collapse;margin:1em 0;font-size:.95em}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--ink-dim);font-family:"IBM Plex Mono",monospace;font-size:.8em;text-transform:uppercase;letter-spacing:.08em}
+  hr{border:none;border-top:1px solid var(--line);margin:2.2em 0}
+  .disc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;padding:14px 16px;font-size:.88em;color:var(--ink-dim);margin:1.6em 0}
+  .cta{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:24px;text-align:center;margin:2.4em 0}
+  .cta .btn{display:inline-block;background:var(--amber);color:#1a1100;font-family:"Archivo",sans-serif;font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:10px}
+  .cta .btn:hover{background:var(--amber-soft)}
+  .tags{font-family:"IBM Plex Mono",monospace;font-size:.8em;color:var(--ink-mute);margin-top:3em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><a href="https://4philly.net/">4<span>PHILLY</span></a></div>
+  <p class="tags" style="margin-top:0"><a href="../blog/">← All guides &amp; articles</a></p>
+
+  <h1>Philadelphia L&amp;I Code Violation Search: Check Any Address Free</h1>
+  <p class="dek">Every violation Licenses &amp; Inspections has ever logged against a Philadelphia property is public record. Here's how to pull it, read it, and verify it.</p>
+  <p class="tags" style="margin-top:0">Published August 1, 2026</p>
+
+  <div class="disc"><b>4PHILLY is an independent, non-governmental tool</b> — not operated, affiliated with, or endorsed by the City of Philadelphia. This guide is legal information, not legal advice. For advice about your specific situation, contact a housing attorney or Community Legal Services (215-981-3700). Verify any record directly at <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">atlas.phila.gov</a>.</div>
+
+  <h2>What an L&amp;I violation is</h2>
+  <p>When a Philadelphia Licenses &amp; Inspections inspector finds a property out of compliance with the City's building, fire, or property maintenance codes, they issue a <strong>violation</strong> — a dated, numbered citation naming the code section and what was found: no heat, unsafe wiring, structural problems, pest infestation, missing smoke detectors, and so on. Each violation carries a case number and a status, and the whole history stays on the property's public record.</p>
+  <p>For a renter, that history answers a question no listing photo can: <strong>what has the City already caught at this address, and did the owner fix it?</strong></p>
+
+  <h2>How to run the search</h2>
+  <ol>
+    <li><strong>Go to <a href="https://4philly.net/">4philly.net</a></strong> and type the property's address. Free, no account, nothing stored.</li>
+    <li><strong>Or search by OPA number.</strong> Every Philadelphia parcel has a unique OPA account number. One street address can cover multiple parcels — a corner building, a subdivided lot — so the address alone can be ambiguous. The OPA number never is. 4PHILLY resolves your address to its OPA number and keys every record to it.</li>
+    <li><strong>Read the violations panel.</strong> You'll see each violation's case number, date, code section, title, and status — alongside the same parcel's rental license status, permits, building certifications, and 311 complaints.</li>
+  </ol>
+
+  <h2>Reading the results: OPEN vs COMPLIED</h2>
+  <table>
+    <tr><th>Status</th><th>What it means</th></tr>
+    <tr><td><strong>OPEN</strong></td><td>Unresolved as recorded. The City cited the condition and has not recorded compliance.</td></tr>
+    <tr><td><strong>COMPLIED</strong></td><td>Compliance was recorded in the system. Important caveat: that is not the same as an inspector physically re-visiting — a violation can be closed administratively. COMPLIED means "currently uncontested in the record," not "verified fixed."</td></tr>
+  </table>
+  <p>A pattern is more informative than any single entry. A building with a long history of violations that each took months to close tells you something the current snapshot doesn't.</p>
+
+  <h3>The most serious finding: Unfit Structure</h3>
+  <p>An <strong>Unfit Structure</strong> designation (code <strong>PM15-109.1</strong>) means an inspector determined the building is unfit for human habitation or use — the most serious finding L&amp;I can issue for a residential property. Common triggers: structural failure, no running water or working sanitation, no heat in winter, severe fire-safety deficiencies, hazardous electrical conditions. If an address shows an open Unfit Structure citation, a current tenant should contact Community Legal Services immediately (<a href="tel:+12159813700">215-981-3700</a>) and may have grounds to break the lease without penalty — that's a question for a lawyer, not a website.</p>
+
+  <h2>How fresh is the data?</h2>
+  <p>Philadelphia publishes violations through two pipelines, and they don't move at the same speed:</p>
+  <ul>
+    <li><strong>Eclipse</strong> — L&amp;I's live system, the authoritative record. 4PHILLY's property lookup queries it directly, so what you see reflects the current state.</li>
+    <li><strong>Carto</strong> — the City's open-data mirror, used for area-wide scans. It refreshes daily but can lag the live record by days to weeks on individual changes.</li>
+  </ul>
+  <p>Practical rule: use scans to find candidates, then confirm any specific address with a direct lookup — and for anything you'd put in front of a landlord, lawyer, or judge, verify against the City's own systems.</p>
+
+  <h2>Verifying and going deeper</h2>
+  <ul>
+    <li><strong><a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Atlas</a></strong> — the City's official property lookup. Confirm the parcel boundaries and the OPA number, then review the same violation history from the source.</li>
+    <li><strong>L&amp;I eCLIPSE</strong> — the authoritative record for licenses, violations, permits, and certifications. This is the record that holds up for a lease decision or a legal filing.</li>
+    <li><strong>Inspector notes and site photos</strong> are never public on their own. To get them, file a Right-to-Know Law (RTKL) request with L&amp;I's Open Records Officer. 4PHILLY can pre-fill that letter for you — address, OPA number, and case numbers pulled straight from the record you're viewing. Screenshots aren't certified evidence; RTKL copies from the City are.</li>
+  </ul>
+
+  <h2>What the violation record can't tell you</h2>
+  <p>Public data only contains what was reported and inspected. It won't show unreported problems, the inspector's identity or notes, who filed a 311 complaint (that's anonymized by design, and retaliation for reporting is illegal under PA Landlord-Tenant Act § 5720), or whether a re-inspection physically occurred. A clean record is a good sign, not a guarantee — and a bad record is a documented starting point, not a verdict on any person.</p>
+
+  <div class="cta">
+    <div>Search any Philadelphia address now — free, no account required</div>
+    <a class="btn" href="https://4philly.net/">Search 4philly.net</a>
+  </div>
+
+  <hr>
+  <p><strong>Related reading:</strong> <a href="rental-license-check.html">How to Check a Landlord's Rental License in Philadelphia</a> · <a href="unlicensed-landlord-rights.html">Unlicensed Landlord: Your Rights Under § 9-3902</a> · <a href="../blog/pre-lease-check.html">Before You Sign a Philadelphia Lease, Run This Free Search</a></p>
+
+  <p class="tags"><a href="../blog/">← All guides &amp; articles</a> · <a href="../">4philly.net home</a> · <a href="../privacy.html">Privacy Policy</a></p>
+</div>
+</body>
+</html>

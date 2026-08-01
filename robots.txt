@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /council/
+Disallow: /tests/
+Disallow: /lib/
+Disallow: /tools/
 
 Sitemap: https://4philly.net/sitemap.xml
