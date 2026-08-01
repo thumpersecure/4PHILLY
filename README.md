@@ -203,6 +203,10 @@ See the **Limits** tab inside the app for the full list with source citations.
 │       └── council.test.js        # 12 unit tests (geo + cache)
 ├── tests/
 │   └── opa-licenses.integration.test.mjs
+├── tools/
+│   ├── generate-property-pages.mjs    # builds the static /p/ snapshot pages — see tools/README.md
+│   └── README.md                      # exact run instructions for the generator
+├── p/                      # generated property-record snapshot pages (committed output)
 └── README.md
 ```
 
