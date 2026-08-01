@@ -6,7 +6,7 @@
 
 ## Key Pages
 
-- [Homepage](https://4philly.net/): address lookup tool surfacing L&I code violations, rental license status, 311 complaints, and City Council district for any Philadelphia property.
+- [Homepage](https://4philly.net/): address lookup tool surfacing L&I code violations, rental license status, 311 complaints, and City Council district for any Philadelphia property. Includes "Licensed & Clean", a live per-ZIP sample of rentals holding an active license with zero open violations and no open 311 complaints.
 - [Guides & Articles](https://4philly.net/blog/): plain-language guides for Philadelphia renters.
 - [How to Check a Landlord's Rental License in Philadelphia](https://4philly.net/guides/rental-license-check.html): step-by-step license check, what Active/Expired/No-license mean, and the 60-day reclassification lag on the City's own map tools.
 - [Philadelphia L&I Code Violation Search](https://4philly.net/guides/li-violation-search.html): how to pull any address's violation history, OPEN vs COMPLIED, Unfit Structure (PM15-109.1), and how to verify against the City's live record.
