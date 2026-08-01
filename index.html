@@ -805,6 +805,22 @@
   .zc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;font-family:"IBM Plex Mono",monospace;font-size:13px}
   .zc-grid span{color:var(--ink);text-align:center;padding:9px 4px;border:1px solid var(--line-soft);border-radius:3px;background:var(--panel)}
   @media(max-width:679px){.zc-grid{grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;font-size:12px}}
+  /* Licensed & Clean — live per-ZIP sample of good-standing rentals */
+  .clean-rentals{max-width:960px;margin:4px auto 40px;padding:0 16px}
+  .clean-rentals h2{font-family:Archivo,sans-serif;font-size:18px;color:var(--amber);margin:0 0 8px}
+  .clean-sub{font-size:12px;color:var(--ink-dim);margin:0 0 14px;max-width:660px;line-height:1.5}
+  .clean-controls{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+  .clean-controls label{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+  .clean-controls select{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:9px 10px;font-family:"IBM Plex Mono",monospace;font-size:13px;min-width:140px}
+  .clean-status{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim);margin:0 0 10px}
+  .clean-table{width:100%;border-collapse:collapse;font-size:13px}
+  .clean-table th{background:var(--panel-2);color:var(--amber);padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  .clean-table td{padding:8px 10px;border-bottom:1px solid var(--line-soft)}
+  .clean-table .num{font-family:"IBM Plex Mono",monospace}
+  .clean-view{background:none;border:1px solid var(--amber);color:var(--amber);border-radius:3px;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+  .clean-view:hover{background:var(--amber);color:var(--bg)}
+  .clean-disc{font-size:11px;color:var(--ink-mute);margin-top:12px;max-width:660px;line-height:1.5}
+  @media(max-width:679px){.clean-table th,.clean-table td{padding:6px 6px}.clean-table .col-exp{display:none}}
   @media print {
     body.print-rankings > *:not(#zip-rankings) { display:none!important; }
     body.print-rankings #zip-rankings { display:block!important; padding:0!important; max-width:100%!important; }
@@ -4944,6 +4960,101 @@ if('serviceWorker' in navigator){
     <button class="zr-dl-btn" id="zr-download">Download rankings (PDF)</button>
   </div>
 </div>
+
+<section id="clean-rentals" class="clean-rentals no-print" aria-label="Licensed and clean rentals by ZIP">
+  <h2>Licensed &amp; Clean — Sample by ZIP</h2>
+  <p class="clean-sub">Not every Philadelphia rental has a problem record. Pick a ZIP code to see how many properties currently hold an <b>active rental license</b> with <b>zero open L&amp;I violations</b> and <b>no open 311 complaints</b> — queried live from the City's own open data — plus the three covering the most rental units.</p>
+  <div class="clean-controls">
+    <div>
+      <label for="clean-zip">ZIP code</label>
+      <select id="clean-zip">
+        <option value="">Choose…</option>
+        <option>19102</option><option>19103</option><option>19104</option><option>19106</option><option>19107</option>
+        <option>19111</option><option>19112</option><option>19114</option><option>19115</option><option>19116</option>
+        <option>19118</option><option>19119</option><option>19120</option><option>19121</option><option>19122</option>
+        <option>19123</option><option>19124</option><option>19125</option><option>19126</option><option>19127</option>
+        <option>19128</option><option>19129</option><option>19130</option><option>19131</option><option>19132</option>
+        <option>19133</option><option>19134</option><option>19135</option><option>19136</option><option>19137</option>
+        <option>19138</option><option>19139</option><option>19140</option><option>19141</option><option>19142</option>
+        <option>19143</option><option>19144</option><option>19145</option><option>19146</option><option>19147</option>
+        <option>19148</option><option>19149</option><option>19150</option><option>19151</option><option>19152</option>
+        <option>19153</option><option>19154</option>
+      </select>
+    </div>
+    <button class="btn" id="clean-go" type="button" style="min-height:38px;padding:0 20px">Show</button>
+  </div>
+  <p class="clean-status" id="clean-status" style="display:none"></p>
+  <div id="clean-results" style="display:none">
+    <table class="clean-table">
+      <thead><tr><th>Address</th><th>Units</th><th class="col-exp">License expires</th><th></th></tr></thead>
+      <tbody id="clean-body"></tbody>
+    </table>
+  </div>
+  <p class="clean-disc">Live point-in-time query of Philadelphia's public rental-license, violation, and 311 data (phl.carto.com, refreshed daily by the City). 311 complaints are matched by address text — the 311 feed carries no parcel ID — so that filter is approximate. <b>A listing here is not an endorsement</b> of any property or owner; records change daily. Verify anything that matters at <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">atlas.phila.gov</a>.</p>
+</section>
+<script>
+  (function initCleanRentals(){
+    var sel=document.getElementById("clean-zip");
+    var go=document.getElementById("clean-go");
+    var status=document.getElementById("clean-status");
+    var results=document.getElementById("clean-results");
+    var body=document.getElementById("clean-body");
+    if(!sel||!go||!status||!results||!body) return;
+    var running=false;
+
+    function show(msg){ status.textContent=msg; status.style.display="block"; }
+
+    async function run(){
+      var zip=sel.value;
+      if(!/^\d{5}$/.test(zip)){ show("Pick a ZIP code first."); results.style.display="none"; return; }
+      if(running) return;
+      running=true;
+      results.style.display="none";
+      show("Checking city records for "+zip+"…");
+      var sql="SELECT sub.opa_account_num, sub.address, sub.units, sub.expires, sub.total FROM ("+
+        "SELECT bl.opa_account_num, min(bl.address) AS address, max(bl.numberofunits) AS units, max(bl.expirationdate) AS expires, COUNT(*) OVER() AS total "+
+        "FROM business_licenses bl "+
+        "LEFT JOIN violations v ON v.opa_account_num = bl.opa_account_num AND v.violationstatus = 'OPEN' "+
+        "LEFT JOIN public_cases_fc pc ON UPPER(pc.address) = UPPER(bl.address) AND pc.status = 'Open' "+
+        "WHERE bl.licensetype = 'Rental' AND bl.licensestatus = 'Active' AND bl.zip LIKE '"+zip+"%' AND bl.opa_account_num IS NOT NULL "+
+        "GROUP BY bl.opa_account_num HAVING count(v.cartodb_id) = 0 AND count(pc.cartodb_id) = 0"+
+        ") sub ORDER BY sub.units DESC NULLS LAST LIMIT 3";
+      try{
+        var rows=await cartoQuery(sql);
+        if(!rows.length){
+          show("No properties in "+zip+" currently match all three checks.");
+          running=false; return;
+        }
+        var total=Number(rows[0].total)||rows.length;
+        show(total.toLocaleString("en-US")+" propert"+(total===1?"y":"ies")+" in "+zip+
+          " currently hold an active rental license with zero open violations and no open 311 complaints — the "+
+          Math.min(3,rows.length)+" covering the most rental units:");
+        body.innerHTML=rows.map(function(r){
+          var units=(r.units==null)?"—":Number(r.units).toLocaleString("en-US");
+          var exp=r.expires?String(r.expires).slice(0,10):"—";
+          return "<tr><td>"+esc(r.address||"—")+"</td>"+
+            "<td class=\"num\">"+units+"</td>"+
+            "<td class=\"num col-exp\">"+exp+"</td>"+
+            "<td><button type=\"button\" class=\"clean-view\" data-opa=\""+esc(r.opa_account_num)+"\">View record →</button></td></tr>";
+        }).join("");
+        results.style.display="block";
+      }catch(e){
+        console.warn("clean-rentals query failed:",e);
+        show("City data unavailable right now — try again in a minute.");
+      }
+      running=false;
+    }
+
+    go.addEventListener("click",run);
+    sel.addEventListener("change",run);
+    body.addEventListener("click",function(e){
+      var btn=e.target.closest("button[data-opa]");
+      if(!btn) return;
+      switchToLookupByOPA(btn.getAttribute("data-opa"));
+      try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(_){ window.scrollTo(0,0); }
+    });
+  })();
+</script>
 
 <section id="zip-coverage" class="zip-coverage no-print" aria-label="Philadelphia ZIP codes covered by 4philly">
   <div class="zc-head">
