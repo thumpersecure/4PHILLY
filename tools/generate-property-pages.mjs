@@ -166,7 +166,7 @@ function fmtDate(v) {
 function propertyPage(p) {
   const title = `${p.address}, Philadelphia ${p.zip5} — L&I Violations, Rental License & 311 Records | 4PHILLY`;
   const complaints311 = p.count311 == null ? "unavailable" : String(p.count311);
-  const desc = `Public-record snapshot (${SNAPSHOT_DATE}): ${p.violations.length} open L&I violation${p.violations.length === 1 ? "" : "s"}, active rental license, ${complaints311 === "unavailable" ? "311 count unavailable" : complaints311 + " 311 complaints (12 mo)"} at ${p.address}, Philadelphia ${p.zip5}. Verify live — records change daily.`;
+  const desc = `Snapshot ${SNAPSHOT_DATE}: ${p.violations.length} open L&I violation${p.violations.length === 1 ? "" : "s"}, active rental license, ${complaints311 === "unavailable" ? "311 count unavailable" : complaints311 + " 311 complaints (12 mo)"} at ${p.address}, Philadelphia ${p.zip5}. Records change daily.`;
   const url = `https://4philly.net/p/${p.opa}.html`;
   const lic = p.license;
   const violRows = p.violations.map((v) =>
@@ -314,7 +314,7 @@ function hubPage(props) {
     return `    <h2 id="zip-${zip}">${zip}</h2>\n    <ul>\n${items}\n    </ul>`;
   }).join("\n");
 
-  const desc = `Point-in-time snapshots of public City of Philadelphia records — rental license, open L&I violations, and 311 counts — for ${props.length} actively licensed rental properties sampled from every Philadelphia ZIP code. Snapshot ${SNAPSHOT_DATE}.`;
+  const desc = `Snapshots of public Philadelphia records — rental license, open L&I violations, 311 counts — for ${props.length} licensed rentals sampled from every ZIP. Snapshot ${SNAPSHOT_DATE}.`;
 
   return `<!doctype html>
 <html lang="en">
