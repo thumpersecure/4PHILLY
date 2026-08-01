@@ -9,9 +9,124 @@
 <meta property="og:description" content="How 4philly.net turns three scattered city systems into one landlord check — no account, no login, nothing stored.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://4philly.net/blog/pre-lease-check.html">
-<meta property="og:image" content="https://4philly.net/og-image.png">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
+<meta property="og:site_name" content="4PHILLY">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-07-25">
+<meta property="article:modified_time" content="2026-08-01">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Before You Sign a Philadelphia Lease, Run This Free Search">
+<meta name="twitter:description" content="How 4philly.net turns three scattered city systems into one landlord check — no account, no login, nothing stored.">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="https://4philly.net/blog/pre-lease-check.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "headline": "Before You Sign a Philadelphia Lease, Run This Free Search",
+      "description": "How 4philly.net turns three scattered Philadelphia city systems — L&I violations, rental licenses, 311 complaints — into one free landlord check. No account, no login, nothing stored.",
+      "url": "https://4philly.net/blog/pre-lease-check.html",
+      "mainEntityOfPage": "https://4philly.net/blog/pre-lease-check.html",
+      "datePublished": "2026-07-25",
+      "dateModified": "2026-08-01",
+      "image": "https://4philly.net/og-image.png",
+      "author": { "@type": "Organization", "name": "4PHILLY", "url": "https://4philly.net/" },
+      "publisher": { "@type": "Organization", "name": "4PHILLY", "url": "https://4philly.net/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is 4PHILLY?",
+          "acceptedAnswer": { "@type": "Answer", "text": "4PHILLY is a free, independent tool that checks public landlord and property records before you sign a Philadelphia lease — pulling L&I violations, 311 complaints, and rental license status out of the city's open data onto one page. No account, no login, nothing stored on the server." }
+        },
+        {
+          "@type": "Question",
+          "name": "What city records does it actually pull?",
+          "acceptedAnswer": { "@type": "Answer", "text": "L&I violations, rental license status and expiration, 311 complaints tied to the address, building permits, and building certifications — all routed through the parcel's OPA account number so records stay tied to the exact parcel." }
+        },
+        {
+          "@type": "Question",
+          "name": "How does it join three city systems together?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Philadelphia runs L&I violations and licenses, property records, and 311 complaints as separate systems. 4PHILLY joins them: one search pulls the OPA account, L&I status and open violations, the Atlas-style parcel history, and the public 311 complaint feed for the address." }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does the OPA number matter so much?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It's Philadelphia's unique parcel ID. One street address can cover multiple parcels, so the address alone is ambiguous — the OPA number isn't. Violations, licenses, permits, and certifications are all matched by OPA number; 311 complaints are matched by address pattern." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use this to push back on a landlord?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — open records of expired licenses and violation history give you documentation for the landlord, a housing attorney, or your council member. But 4PHILLY can't certify anything; verified records for court come from L&I, and this is general information, not legal advice." }
+        },
+        {
+          "@type": "Question",
+          "name": "What if my landlord is unlicensed?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A landlord cannot legally collect rent while operating without a valid rental license in Philadelphia. Check the license in Property Lookup, create a public record by filing at phila.gov/311, and use the built-in RTKL letter to request the complete inspection history." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can landlords see what I look up?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No, by design. There is no account, no login, and no search history tied to you. 4PHILLY never notifies a landlord that their address was searched and keeps no record of who looked up what." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can anyone see who filed a 311 complaint?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. The public Philly311 feed shows the complaint and its timing — never who filed it. That anonymization protects tenants from retaliation, and retaliation is illegal under the PA Landlord Tenant Act § 5720 regardless." }
+        },
+        {
+          "@type": "Question",
+          "name": "How accurate is the violation data?",
+          "acceptedAnswer": { "@type": "Answer", "text": "L&I's live, authoritative backend is li.phila.gov; Philadelphia's open-data mirror is Carto, which can lag days to weeks behind. COMPLIED means compliance was recorded; OPEN means unresolved as recorded. Administrative closure still shows as COMPLIED." }
+        },
+        {
+          "@type": "Question",
+          "name": "What does COMPLIED actually mean?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Compliance was recorded in the system — not necessarily that an inspector physically re-visited. Compliance can be closed administratively, so verify with Atlas, the live L&I/Eclipse record, and the raw 311 feed before relying on it." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I trust the 4P Score?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Treat it as triage, not a verdict. It's a 0–100 summary built only from public data points — not an inspection, not a safety rating, and not a judgment about any person. Use it to sort addresses fast, then confirm with the live L&I record." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use 4PHILLY records in court?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Screenshots are not certified evidence — 4PHILLY isn't a government record. The underlying records are real and public. Use 4PHILLY to identify which records to request, then file a Right-to-Know Law (RTKL) request through L&I's Open Records Officer for certified copies." }
+        },
+        {
+          "@type": "Question",
+          "name": "Atlas or 4PHILLY — which one do I use?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Atlas when you need the record to hold up (it reads the authoritative Eclipse record and adds mapping, zoning, and permits). 4PHILLY when you need the read, fast — including the 4P Score and open permits in a click." }
+        },
+        {
+          "@type": "Question",
+          "name": "What data does 4PHILLY collect about me?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Zero. No account, no login, no profile, no stored searches. Anything you type into the 311 or RTKL templates stays yours — you fill it in, you send it, it isn't held on the server." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it write my RTKL request for me?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — pre-filled with the address, OPA number, and case numbers from the record you're viewing, addressed to L&I's Open Records Officer and formatted to the statute. This is how you reach inspector's notes and site photos, which are never public on their own." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which source do I trust for a lease decision?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Eclipse — the live record. Use the Carto-based scanners to find candidates, then confirm the address with a Property Lookup that queries Eclipse directly, keyed by the OPA number." }
+        }
+      ]
+    }
+  ]
+}
+</script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,9 +168,11 @@
 <body>
 <div class="wrap">
   <div class="brand"><a href="https://4philly.net/">4<span>PHILLY</span></a></div>
+  <p class="tags" style="margin-top:0"><a href="./">← All guides &amp; articles</a></p>
 
   <h1>Before You Sign a Philadelphia Lease, Run This Free Search</h1>
   <p class="dek">How 4philly.net turns three scattered city systems into one landlord check — no account, no login, nothing stored</p>
+  <p class="tags" style="margin-top:0">Published July 25, 2026 · Updated August 1, 2026</p>
 
   <p class="lede">Philadelphia keeps good records. L&amp;I logs every violation. The city's open data portal tracks every rental license. Philly311 catalogs every complaint. The problem isn't that the data doesn't exist — it's that it lives in three different systems, indexed three different ways, and none of them are built for someone standing outside an apartment trying to decide whether to sign a lease.</p>
 
@@ -114,6 +231,7 @@
     <li><strong>Create a record.</strong> File at phila.gov/311 — that gives you a public case number you can cite.</li>
     <li><strong>Get the full file.</strong> Use the built-in RTKL letter to request the complete inspection history.</li>
   </ul>
+  <p>For the full picture — including what Phila. Code § 9-3902 says about rent collection and eviction while unlicensed — see <a href="../guides/unlicensed-landlord-rights.html">your rights when a landlord is unlicensed</a> and <a href="../guides/rental-license-check.html">how to check a rental license</a>.</p>
   <figure>
     <img src="img/02_unlicensed-landlord.png" alt="4PHILLY flyer: what to do if your landlord is unlicensed" loading="lazy">
   </figure>
