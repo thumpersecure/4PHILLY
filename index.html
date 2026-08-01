@@ -30,14 +30,17 @@
 <meta property="og:description" content="Apartments.com and Zillow show you photos and reviews. 4philly shows you the truth: open code violations, whether the rental license is active, and 311 complaints on any Philadelphia address. Apartment-hunting in Philly? Check here first — free, before you sign.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=3.66">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=3.67">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
+<meta property="og:site_name" content="4PHILLY">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Philadelphia Apartments: Check It Before You Rent — 4PHILLY">
 <meta name="twitter:description" content="Listing sites show photos and reviews. 4philly shows the real City record — code violations, rental license status, and 311 complaints on any Philadelphia address. Check here first, free, before you sign.">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.66">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -57,7 +60,23 @@
   ],
   "areaServed": { "@type": "City", "name": "Philadelphia", "addressRegion": "PA", "addressCountry": "US" },
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "isAccessibleForFree": true
+  "isAccessibleForFree": true,
+  "publisher": { "@type": "Organization", "name": "4PHILLY", "url": "https://4philly.net/" },
+  "isBasedOn": [
+    "https://opendataphilly.org/datasets/licenses-and-inspections-code-violations/",
+    "https://opendataphilly.org/datasets/licenses-and-inspections-business-licenses/",
+    "https://opendataphilly.org/datasets/311-service-and-information-requests/",
+    "https://opendataphilly.org/datasets/philadelphia-properties-and-assessment-history/"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "4PHILLY",
+  "alternateName": "4philly.net",
+  "url": "https://4philly.net/"
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,7 +204,7 @@
   /* Property header */
   .prophead{margin-top:28px;padding:22px 24px;background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:3px}
   .prophead-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-  .prophead h1{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 4px}
+  .prophead h2{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 4px}
   .prophead .ph-owner-line{font-family:"Archivo",sans-serif;font-weight:600;font-size:15px;color:var(--amber);margin:2px 0 6px;letter-spacing:-.01em}
   .owner-link{background:none;border:0;color:var(--amber);font:inherit;cursor:pointer;padding:0;text-align:left;border-bottom:1px dashed rgba(255,176,0,.5)}
   .owner-link:hover{border-bottom-color:var(--amber)}
@@ -591,7 +610,7 @@
     .brand-mark{font-size:26px}
     .brand-tag{font-size:10px;letter-spacing:.14em}
     .prophead{padding:16px;margin-top:20px;border-radius:6px}
-    .prophead h1{font-size:18px}
+    .prophead h2{font-size:18px}
     .prophead .ph-owner-line{font-size:13px}
     .prophead-inner{flex-direction:row;align-items:flex-start;gap:10px}
     .prophead-inner > div:first-child{flex:1;min-width:0}
@@ -735,7 +754,7 @@
     body.print-brief .brief .verdict.good{border-left-color:#080!important}
     body.print-brief .brief .gap{border:1px dashed #aaa!important;padding:10px 14px!important;page-break-inside:avoid}
     body.print-brief .prophead .sub b{color:#000!important;font-weight:600!important}
-    body.print-brief .prophead h1{font-size:16pt!important}
+    body.print-brief .prophead h2{font-size:16pt!important}
     body.print-brief .wrap{max-width:100%!important;padding:0!important;margin:0!important}
     body.print-brief .top{border-bottom:1px solid #ccc!important;padding-bottom:8px!important;margin-bottom:12px!important}
     body.print-brief .brand-mark{font-size:18pt!important}
@@ -1142,7 +1161,7 @@
   <div id="prophead" class="prophead" style="display:none">
     <div class="prophead-inner">
       <div>
-        <h1 id="ph-addr">—</h1>
+        <h2 id="ph-addr">—</h2>
         <div class="ph-owner-line" id="ph-owner-line"></div>
         <div id="ph-freshness" style="margin:2px 0 4px"></div>
         <div class="sub">
@@ -1295,7 +1314,7 @@
   <div class="footer-row"><b>NOT IN THIS DATA</b> &nbsp; inspector identity · inspector notes · 311 complainant identity · internal correspondence · whether re-inspection physically occurred</div>
   <div class="footer-row"><b>METHOD</b> &nbsp; Anchored to OPA account number with DOR Parcel + coordinate fallback for re-numbered parcels. Eclipse authoritative; Carto historical only. Council district from OPA field, councilmember roster from phlcouncil.com. Only COMPLIED is real compliance.</div>
   <div class="footer-row"><b>PROJECT</b> &nbsp; <a href="https://thumpersecure.github.io/4philly/" target="_blank" rel="noopener">thumpersecure.github.io/4philly</a> · <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Verify on Atlas</a> · <a href="https://jlegal.pro/safe-healthy-homes.html" target="_blank" rel="noopener">Safe Healthy Homes Act</a></div>
-  <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>. · <a href="privacy.html">Privacy Policy</a> · <a href="blog/pre-lease-check.html">Guide: check a landlord before you sign</a></div>
+  <div class="footer-row"><b>ABOUT</b> &nbsp; Built by <a href="https://github.com/thumpersecure" target="_blank" rel="noopener">@thumpersecure</a>. · <a href="privacy.html">Privacy Policy</a> · <a href="blog/">Guides &amp; articles</a> · <a href="blog/pre-lease-check.html">Guide: check a landlord before you sign</a> · <a href="p/">Property record snapshots</a></div>
   <div class="footer-row"><b>VERIFY DIRECTLY</b> &nbsp; <a href="https://atlas.phila.gov/" target="_blank" rel="noopener">Atlas</a> · <a href="https://property.phila.gov/" target="_blank" rel="noopener">Property Assessment</a> · <a href="https://www.phila.gov/departments/philly311/" target="_blank" rel="noopener">Philly311</a> · <a href="https://www.phila.gov/departments/department-of-licenses-and-inspections/" target="_blank" rel="noopener">Licenses &amp; Inspections</a></div>
   <div style="border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--panel);text-align:center;margin-top:16px">
     <img src="how-it-works.svg" alt="4PHILLY data flow diagram: an address or OPA number resolves through OPA lookup into two parallel sources, the authoritative Eclipse ArcGIS system and the historical Carto SQL mirror, which are compared by a drift comparator to produce a unified record with drift flags, while OPA data also resolves the council district to surface the councilmember and any L&amp;I Committee flag" style="max-width:100%;width:640px;display:block;margin:0 auto" loading="lazy">
