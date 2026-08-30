@@ -177,6 +177,7 @@ function propertyPage(p) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
@@ -184,12 +185,12 @@ function propertyPage(p) {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=4.0">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta property="og:site_name" content="4PHILLY">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.0">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="${url}">
 <script type="application/ld+json">
@@ -231,22 +232,23 @@ function propertyPage(p) {
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <style>
-  :root{--bg:#111214;--panel:#161819;--panel-2:#1c1e20;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--ink-mute:#666;--amber:#ffb000;--amber-soft:#ffd166}
+  :root{color-scheme:light;--bg:#faf9f4;--panel:#f2f0e7;--panel-2:#e8e5d8;--line:#d5d1c0;--ink:#11231c;--ink-dim:#3f5349;--ink-mute:#56675d;--accent:#846314;--accent-rgb:132 99 20;--accent-soft:#5e4409;--accent-fill:#c9a227;--accent-fill-hover:#dbb440;--on-accent:#11231c}
+  html[data-theme="dark"]{color-scheme:dark;--bg:#111214;--panel:#161819;--panel-2:#1c1e20;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--ink-mute:#666;--accent:#ffb000;--accent-rgb:255 176 0;--accent-soft:#ffd166;--accent-fill:#ffb000;--accent-fill-hover:#ffbe2e;--on-accent:#1a1100}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
-  a{color:var(--amber);text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)}
-  a:hover{color:var(--amber-soft)}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted rgb(var(--accent-rgb) / .4)}
+  a:hover{color:var(--accent-soft)}
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
   .brand{font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:28px}
-  .brand span{color:var(--amber)}
+  .brand span{color:var(--accent)}
   .brand a{border:none;color:var(--ink)}
-  .snap{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;padding:12px 16px;font-size:.9em;color:var(--ink-dim);margin:0 0 24px}
+  .snap{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:12px 16px;font-size:.9em;color:var(--ink-dim);margin:0 0 24px}
   h1{font-weight:800;font-size:1.7em;line-height:1.25;letter-spacing:-.01em;margin:0 0 4px}
   h2{font-weight:800;font-size:1.15em;margin:2em 0 .5em;border-top:1px solid var(--line);padding-top:1.2em}
   .opa{font-family:ui-monospace,monospace;font-size:.85em;color:var(--ink-mute);margin:0 0 20px}
   .cta{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;text-align:center;margin:1.8em 0}
-  .cta .btn{display:inline-block;background:var(--amber);color:#1a1100;font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:8px}
-  .cta .btn:hover{background:var(--amber-soft)}
+  .cta .btn{display:inline-block;background:var(--accent-fill);color:var(--on-accent);font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:8px}
+  .cta .btn:hover{background:var(--accent-fill-hover)}
   table{width:100%;border-collapse:collapse;margin:1em 0;font-size:.9em}
   th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--ink-dim);font-family:ui-monospace,monospace;font-size:.75em;text-transform:uppercase;letter-spacing:.08em}
@@ -320,6 +322,7 @@ function hubPage(props) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Philadelphia Property Record Snapshots | 4PHILLY</title>
 <meta name="description" content="${esc(desc)}">
@@ -327,12 +330,12 @@ function hubPage(props) {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/p/">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=4.0">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta property="og:site_name" content="4PHILLY">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.0">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="https://4philly.net/p/">
 <script type="application/ld+json">
@@ -348,25 +351,26 @@ function hubPage(props) {
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <style>
-  :root{--bg:#111214;--panel:#161819;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--ink-mute:#666;--amber:#ffb000;--amber-soft:#ffd166}
+  :root{color-scheme:light;--bg:#faf9f4;--panel:#f2f0e7;--panel-2:#e8e5d8;--line:#d5d1c0;--ink:#11231c;--ink-dim:#3f5349;--ink-mute:#56675d;--accent:#846314;--accent-rgb:132 99 20;--accent-soft:#5e4409;--accent-fill:#c9a227;--accent-fill-hover:#dbb440;--on-accent:#11231c}
+  html[data-theme="dark"]{color-scheme:dark;--bg:#111214;--panel:#161819;--panel-2:#1c1e20;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--ink-mute:#666;--accent:#ffb000;--accent-rgb:255 176 0;--accent-soft:#ffd166;--accent-fill:#ffb000;--accent-fill-hover:#ffbe2e;--on-accent:#1a1100}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
-  a{color:var(--amber);text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)}
-  a:hover{color:var(--amber-soft)}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted rgb(var(--accent-rgb) / .4)}
+  a:hover{color:var(--accent-soft)}
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
   .brand{font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:28px}
-  .brand span{color:var(--amber)}
+  .brand span{color:var(--accent)}
   .brand a{border:none;color:var(--ink)}
   h1{font-weight:800;font-size:1.9em;line-height:1.2;margin:0 0 12px}
-  h2{font-weight:800;font-size:1.05em;margin:1.8em 0 .4em;color:var(--amber);font-family:ui-monospace,monospace}
+  h2{font-weight:800;font-size:1.05em;margin:1.8em 0 .4em;color:var(--accent);font-family:ui-monospace,monospace}
   ul{padding-left:1.3em;margin:.3em 0;columns:2;column-gap:28px}
   li{margin:.25em 0;break-inside:avoid;font-size:.92em}
   @media (max-width:560px){ul{columns:1}}
   .dek{font-size:1.05em;color:var(--ink-dim);margin:0 0 20px}
-  .disc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;padding:12px 16px;font-size:.88em;color:var(--ink-dim);margin:1.6em 0}
+  .disc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:12px 16px;font-size:.88em;color:var(--ink-dim);margin:1.6em 0}
   .cta{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;text-align:center;margin:1.8em 0}
-  .cta .btn{display:inline-block;background:var(--amber);color:#1a1100;font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:8px}
-  .cta .btn:hover{background:var(--amber-soft)}
+  .cta .btn{display:inline-block;background:var(--accent-fill);color:var(--on-accent);font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:8px}
+  .cta .btn:hover{background:var(--accent-fill-hover)}
   .foot{font-family:ui-monospace,monospace;font-size:.8em;color:var(--ink-mute);margin-top:3em}
 </style>
 </head>

@@ -7,8 +7,8 @@
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#ffb000",
-  "background_color": "#ffffff",
+  "theme_color": "#faf9f4",
+  "background_color": "#faf9f4",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
@@ -18,5 +18,5 @@
   ],
   "categories": ["utilities"],
   "lang": "en-US",
-  "version": "4.0"
+  "version": "4.1"
 }

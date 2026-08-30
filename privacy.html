@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Privacy Policy — 4PHILLY</title>
 <meta name="description" content="What 4philly.net collects (almost nothing): no accounts, no stored searches, aggregate analytics only. All property data shown is public City of Philadelphia record.">
@@ -9,26 +10,41 @@
 <meta property="og:description" content="No accounts, no stored searches, aggregate analytics only. All property data shown is public City of Philadelphia record.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/privacy.html">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=4.0">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta property="og:site_name" content="4PHILLY">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.0">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="https://4philly.net/privacy.html">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <style>
-  :root{--bg:#111214;--panel:#17181b;--ink:#e8e8e8;--ink-dim:#9a9a9a;--ink-mute:#666;--amber:#ffb000;--line:#2a2c30}
+  :root{
+    /* Light by default — warm paper, green-black ink, brass accent.
+       Dark is opt-in and keeps the original yellow-on-black. */
+    color-scheme:light;
+    --bg:#faf9f4; --panel:#f2f0e7; --panel-2:#e8e5d8; --line:#d5d1c0; --line-soft:#e3e0d2;
+    --ink:#11231c; --ink-dim:#3f5349; --ink-mute:#56675d;
+    --accent:#846314; --accent-rgb:132 99 20; --accent-soft:#5e4409;
+    --accent-fill:#c9a227; --accent-fill-hover:#dbb440; --on-accent:#11231c; --rule:#c9a227;
+  }
+  html[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#111214; --panel:#161819; --panel-2:#1c1e20; --line:#2a2c2e; --line-soft:#1f2123;
+    --ink:#ececec; --ink-dim:#9a9a9a; --ink-mute:#666;
+    --accent:#ffb000; --accent-rgb:255 176 0; --accent-soft:#ffd166;
+    --accent-fill:#ffb000; --accent-fill-hover:#ffbe2e; --on-accent:#1a1100; --rule:#ffb000;
+  }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.65;padding:32px 20px}
   .wrap{max-width:720px;margin:0 auto}
-  a{color:var(--amber);text-decoration:none}
+  a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
   .back{display:inline-block;font-size:13px;margin-bottom:24px;color:var(--ink-dim)}
   h1{font-size:26px;margin:0 0 4px}
-  h2{font-size:17px;margin:28px 0 6px;color:var(--amber)}
+  h2{font-size:17px;margin:28px 0 6px;color:var(--accent)}
   .updated{color:var(--ink-mute);font-size:13px;margin-bottom:20px}
   p{margin:8px 0}
   ul{margin:8px 0;padding-left:20px}

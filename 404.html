@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,follow">
 <title>Page not found — 4PHILLY</title>
@@ -29,16 +30,31 @@
 })();
 </script>
 <style>
-  :root{--bg:#111214;--panel:#161819;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--amber:#ffb000;--amber-soft:#ffd166}
+  :root{
+    /* Light by default — warm paper, green-black ink, brass accent.
+       Dark is opt-in and keeps the original yellow-on-black. */
+    color-scheme:light;
+    --bg:#faf9f4; --panel:#f2f0e7; --panel-2:#e8e5d8; --line:#d5d1c0; --line-soft:#e3e0d2;
+    --ink:#11231c; --ink-dim:#3f5349; --ink-mute:#56675d;
+    --accent:#846314; --accent-rgb:132 99 20; --accent-soft:#5e4409;
+    --accent-fill:#c9a227; --accent-fill-hover:#dbb440; --on-accent:#11231c; --rule:#c9a227;
+  }
+  html[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#111214; --panel:#161819; --panel-2:#1c1e20; --line:#2a2c2e; --line-soft:#1f2123;
+    --ink:#ececec; --ink-dim:#9a9a9a; --ink-mute:#666;
+    --accent:#ffb000; --accent-rgb:255 176 0; --accent-soft:#ffd166;
+    --accent-fill:#ffb000; --accent-fill-hover:#ffbe2e; --on-accent:#1a1100; --rule:#ffb000;
+  }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;line-height:1.65;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
   .card{max-width:480px;text-align:center}
   .brand{font-family:ui-sans-serif,system-ui,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:20px}
-  .brand span{color:var(--amber)}
+  .brand span{color:var(--accent)}
   h1{font-size:1.5em;margin:0 0 10px}
   p{color:var(--ink-dim);font-size:.95em;margin:0 0 20px}
-  a{color:var(--amber);text-decoration:none}
-  a:hover{color:var(--amber-soft)}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{color:var(--accent-soft)}
   .links{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;font-size:.9em}
 </style>
 </head>
