@@ -64,7 +64,7 @@ Drop any of these into the lookup bar at the top of the app:
 ## How it works
 
 ```mermaid
-%%{init: {'theme':'base','themeVariables':{'primaryColor':'#0b4634','primaryTextColor':'#f3f1e6','primaryBorderColor':'#0b4634','lineColor':'#c9a227','secondaryColor':'#1a1a1a','tertiaryColor':'#000'}}}%%
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#1550e0','primaryTextColor':'#ffffff','primaryBorderColor':'#1550e0','lineColor':'#1550e0','secondaryColor':'#f6f7f9','tertiaryColor':'#fff'}}}%%
 flowchart LR
     A[Address or OPA #] --> B{OPA resolve}
     B --> C[Eclipse ArcGIS<br/>authoritative]

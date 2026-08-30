@@ -17,96 +17,56 @@
   viewport is exactly 1200x630. Bump the version pill and the ?v= query on
   every og:image / twitter:image tag whenever this is re-rendered.
 
-  Same tokens as the site's light theme: warm paper, green-black ink, brass
-  accent, one gold rule, and the record itself on the deep-green slab.
+  Same tokens as the site's light theme: white ground, near-black ink,
+  one blue.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#faf9f4; --panel:#f2f0e7; --line:#d5d1c0;
-    --ink:#11231c; --ink-dim:#3f5349; --ink-mute:#56675d;
-    --accent:#846314; --accent-fill:#c9a227; --rule:#c9a227;
-    --slab:#0b4634; --slab-ink:#f3f1e6; --slab-ink-dim:#b7cdc1;
-    --slab-accent:#d3ae4a; --slab-red:#ff8a80; --slab-green:#5fd58a;
+    --bg:#ffffff; --line:#d8dde4;
+    --ink:#14171a; --ink-dim:#474e57; --ink-mute:#5d6570;
+    --accent:#1550e0;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{width:1200px;height:630px}
-  body{
-    background:var(--bg);
-    font-family:"IBM Plex Mono",ui-monospace,monospace;
-    color:var(--ink);
-  }
+  body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif}
   /* Fixed geometry rather than insets: the render must be exactly 1200x630
      whatever viewport the headless shell decides to hand us. */
-  .card{width:1156px;height:586px;margin:22px;border:1px solid var(--line);border-top:5px solid var(--rule)}
-  .inner{height:100%;padding:42px 52px 40px;display:flex;flex-direction:column;justify-content:space-between}
+  .card{width:1200px;height:630px;padding:62px 72px 54px;display:flex;flex-direction:column;justify-content:space-between}
 
-  .row-top{display:flex;align-items:center;justify-content:space-between}
-  .eyebrow{
-    font-size:15px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
-    color:var(--accent);border:1px solid var(--rule);padding:9px 15px;
-  }
-  .ver{
-    font-size:15px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-    background:var(--accent-fill);color:var(--ink);padding:9px 15px;
-  }
-
-  .body{display:flex;gap:44px;align-items:flex-start;margin:6px 0}
-  .left{flex:1 1 auto;min-width:0}
-  .mark{font-family:"Archivo",sans-serif;font-weight:800;font-size:96px;line-height:1;letter-spacing:-.03em;color:var(--ink)}
+  .mark{font-family:"Archivo",sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em;color:var(--ink);line-height:1}
   .mark b{color:var(--accent)}
+
   .head{
-    font-family:"Archivo",sans-serif;font-weight:800;font-size:39px;line-height:1.2;
-    letter-spacing:-.015em;color:var(--ink);margin-top:28px;max-width:590px;text-wrap:balance;
+    font-family:"Archivo",sans-serif;font-weight:800;font-size:60px;line-height:1.08;
+    letter-spacing:-.022em;color:var(--ink);max-width:1010px;
   }
   .head em{font-style:normal;color:var(--accent)}
 
-  /* The record, as the site shows it: a deep green slab with a gold rule. */
-  .slab{
-    flex:0 0 380px;background:var(--slab);border-top:4px solid var(--slab-accent);
-    padding:22px 24px 24px;margin-top:6px;
+  .lede{
+    font-size:22px;line-height:1.5;color:var(--ink-dim);max-width:940px;margin-top:26px;
   }
-  .slab-cap{
-    font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--slab-accent);margin-bottom:16px;
-  }
-  .rec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid rgb(243 241 230 / .16)}
-  .rec:last-child{border-bottom:0;padding-bottom:0}
-  .rec .k{font-size:14px;letter-spacing:.07em;text-transform:uppercase;color:var(--slab-ink-dim)}
-  .rec .v{font-size:17px;font-weight:600;color:var(--slab-ink)}
-  .rec .v.bad{color:var(--slab-red)}
-  .rec .v.ok{color:var(--slab-green)}
+  .lede b{color:var(--ink);font-weight:600}
 
-  .row-bot{display:flex;align-items:center;justify-content:space-between;font-size:16px}
-  .tags{color:var(--ink-dim);letter-spacing:.09em}
+  .row-bot{display:flex;align-items:center;justify-content:space-between;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:16px;
+    border-top:1px solid var(--line);padding-top:22px}
+  .tags{color:var(--ink-dim);letter-spacing:.07em}
   .tags i{font-style:normal;color:var(--ink-mute);padding:0 9px}
   .site{font-weight:600;letter-spacing:.02em;color:var(--ink-mute)}
   .site b{color:var(--accent)}
 </style>
 </head>
 <body>
-<div class="card"><div class="inner">
+<div class="card">
 
-  <div class="row-top">
-    <div class="eyebrow">Philadelphia &middot; Free &middot; No signup</div>
-    <div class="ver">&#9679; v4.1</div>
-  </div>
+  <div class="mark">4<b>PHILLY</b></div>
 
-  <div class="body">
-    <div class="left">
-      <div class="mark"><b>4</b>PHILLY</div>
-      <div class="head">Check before you rent &mdash; see what the city's own map <em>won't show you.</em></div>
-    </div>
-
-    <div class="slab">
-      <div class="slab-cap">Public record</div>
-      <div class="rec"><span class="k">Open violations</span><span class="v bad">4</span></div>
-      <div class="rec"><span class="k">Rental license</span><span class="v bad">Expired</span></div>
-      <div class="rec"><span class="k">311 complaints</span><span class="v">7</span></div>
-      <div class="rec"><span class="k">License gap</span><span class="v ok">Clear</span></div>
-    </div>
+  <div>
+    <div class="head">Philadelphia's rental records are public. <em>They just aren't easy to read.</em></div>
+    <div class="lede">An independent tool that lets renters check public landlord and property records <b>before signing a lease</b> &mdash; pulling L&amp;I violations, 311 complaints and rental license status out of the City's open data and putting them on one page.</div>
   </div>
 
   <div class="row-bot">
@@ -114,6 +74,6 @@
     <div class="site"><b>4philly</b>.net</div>
   </div>
 
-</div></div>
+</div>
 </body>
 </html>
