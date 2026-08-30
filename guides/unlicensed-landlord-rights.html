@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Unlicensed Landlord in Philadelphia: Your Rights Under § 9-3902</title>
 <meta name="description" content="An unlicensed Philadelphia landlord can't legally collect rent or evict for nonpayment under Phila. Code § 9-3902 — what the law says, and what not to do.">
@@ -9,7 +10,7 @@
 <meta property="og:description" content="Phila. Code § 9-3902 limits an unlicensed landlord's right to collect rent or evict for nonpayment. What the law says — and what not to do.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://4philly.net/guides/unlicensed-landlord-rights.html">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
@@ -20,7 +21,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Unlicensed Landlord in Philadelphia: Your Rights Under § 9-3902">
 <meta name="twitter:description" content="Phila. Code § 9-3902 limits an unlicensed landlord's right to collect rent or evict for nonpayment. What the law says — and what not to do.">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=3.67">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.1">
 <meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="https://4philly.net/guides/unlicensed-landlord-rights.html">
 <script type="application/ld+json">
@@ -44,17 +45,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* Light by default — warm paper, green-black ink, brass accent.
+       Dark is opt-in and keeps the original yellow-on-black. */
+    color-scheme:light;
+    --bg:#faf9f4; --panel:#f2f0e7; --panel-2:#e8e5d8; --line:#d5d1c0; --line-soft:#e3e0d2;
+    --ink:#11231c; --ink-dim:#3f5349; --ink-mute:#56675d;
+    --accent:#846314; --accent-rgb:132 99 20; --accent-soft:#5e4409;
+    --accent-fill:#c9a227; --accent-fill-hover:#dbb440; --on-accent:#11231c; --rule:#c9a227;
+  }
+  html[data-theme="dark"]{
+    color-scheme:dark;
     --bg:#111214; --panel:#161819; --panel-2:#1c1e20; --line:#2a2c2e; --line-soft:#1f2123;
-    --ink:#ececec; --ink-dim:#9a9a9a; --ink-mute:#666; --amber:#ffb000; --amber-soft:#ffd166;
+    --ink:#ececec; --ink-dim:#9a9a9a; --ink-mute:#666;
+    --accent:#ffb000; --accent-rgb:255 176 0; --accent-soft:#ffd166;
+    --accent-fill:#ffb000; --accent-fill-hover:#ffbe2e; --on-accent:#1a1100; --rule:#ffb000;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
-  a{color:var(--amber);text-decoration:none;border-bottom:1px dotted rgba(255,176,0,.4)}
-  a:hover{color:var(--amber-soft);border-bottom-color:var(--amber-soft)}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted rgb(var(--accent-rgb) / .4)}
+  a:hover{color:var(--accent-soft);border-bottom-color:var(--accent-soft)}
   code{font-family:"IBM Plex Mono",ui-monospace,monospace;background:var(--panel-2);padding:2px 5px;border-radius:2px;font-size:.9em}
   .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
   .brand{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-bottom:36px}
-  .brand span{color:var(--amber)}
+  .brand span{color:var(--accent)}
   .brand a{border:none;color:var(--ink)}
   h1{font-family:"Archivo",sans-serif;font-weight:800;font-size:2.1em;line-height:1.2;letter-spacing:-.01em;margin:0 0 12px}
   h2{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.4em;margin:2em 0 .6em;border-top:1px solid var(--line);padding-top:1.4em}
@@ -67,11 +80,11 @@
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   th{color:var(--ink-dim);font-family:"IBM Plex Mono",monospace;font-size:.8em;text-transform:uppercase;letter-spacing:.08em}
   hr{border:none;border-top:1px solid var(--line);margin:2.2em 0}
-  .disc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;padding:14px 16px;font-size:.88em;color:var(--ink-dim);margin:1.6em 0}
+  .disc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:14px 16px;font-size:.88em;color:var(--ink-dim);margin:1.6em 0}
   .warn{background:var(--panel);border:1px solid var(--line);border-left:3px solid #c62f28;border-radius:4px;padding:14px 16px;margin:1.6em 0}
   .cta{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:24px;text-align:center;margin:2.4em 0}
-  .cta .btn{display:inline-block;background:var(--amber);color:#1a1100;font-family:"Archivo",sans-serif;font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:10px}
-  .cta .btn:hover{background:var(--amber-soft)}
+  .cta .btn{display:inline-block;background:var(--accent-fill);color:var(--on-accent);font-family:"Archivo",sans-serif;font-weight:700;padding:12px 26px;border-radius:3px;border:none;margin-top:10px}
+  .cta .btn:hover{background:var(--accent-fill-hover)}
   .tags{font-family:"IBM Plex Mono",monospace;font-size:.8em;color:var(--ink-mute);margin-top:3em}
 </style>
 </head>
