@@ -185,12 +185,12 @@ function propertyPage(p) {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=4.1">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=4.2">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta property="og:site_name" content="4PHILLY">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.1">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.2">
 <meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="${url}">
 <script type="application/ld+json">
@@ -330,12 +330,12 @@ function hubPage(props) {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4philly.net/p/">
-<meta property="og:image" content="https://4philly.net/og-image.png?v=4.1">
+<meta property="og:image" content="https://4philly.net/og-image.png?v=4.2">
 <meta property="og:image:alt" content="4PHILLY — Philadelphia property record">
 <meta property="og:site_name" content="4PHILLY">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.1">
+<meta name="twitter:image" content="https://4philly.net/og-image.png?v=4.2">
 <meta name="twitter:image:alt" content="4PHILLY — Philadelphia property record">
 <link rel="canonical" href="https://4philly.net/p/">
 <script type="application/ld+json">
