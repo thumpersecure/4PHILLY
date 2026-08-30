@@ -232,7 +232,7 @@ function propertyPage(p) {
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <style>
-  :root{color-scheme:light;--bg:#faf9f4;--panel:#f2f0e7;--panel-2:#e8e5d8;--line:#d5d1c0;--ink:#11231c;--ink-dim:#3f5349;--ink-mute:#56675d;--accent:#846314;--accent-rgb:132 99 20;--accent-soft:#5e4409;--accent-fill:#c9a227;--accent-fill-hover:#dbb440;--on-accent:#11231c}
+  :root{color-scheme:light;--bg:#ffffff;--panel:#f6f7f9;--panel-2:#eceef2;--line:#d8dde4;--ink:#14171a;--ink-dim:#474e57;--ink-mute:#5d6570;--accent:#1550e0;--accent-rgb:21 80 224;--accent-soft:#0f3fb3;--accent-fill:#1550e0;--accent-fill-hover:#0f3fb3;--on-accent:#ffffff}
   html[data-theme="dark"]{color-scheme:dark;--bg:#111214;--panel:#161819;--panel-2:#1c1e20;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--ink-mute:#666;--accent:#ffb000;--accent-rgb:255 176 0;--accent-soft:#ffd166;--accent-fill:#ffb000;--accent-fill-hover:#ffbe2e;--on-accent:#1a1100}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
@@ -351,7 +351,7 @@ function hubPage(props) {
 </script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
 <style>
-  :root{color-scheme:light;--bg:#faf9f4;--panel:#f2f0e7;--panel-2:#e8e5d8;--line:#d5d1c0;--ink:#11231c;--ink-dim:#3f5349;--ink-mute:#56675d;--accent:#846314;--accent-rgb:132 99 20;--accent-soft:#5e4409;--accent-fill:#c9a227;--accent-fill-hover:#dbb440;--on-accent:#11231c}
+  :root{color-scheme:light;--bg:#ffffff;--panel:#f6f7f9;--panel-2:#eceef2;--line:#d8dde4;--ink:#14171a;--ink-dim:#474e57;--ink-mute:#5d6570;--accent:#1550e0;--accent-rgb:21 80 224;--accent-soft:#0f3fb3;--accent-fill:#1550e0;--accent-fill-hover:#0f3fb3;--on-accent:#ffffff}
   html[data-theme="dark"]{color-scheme:dark;--bg:#111214;--panel:#161819;--panel-2:#1c1e20;--line:#2a2c2e;--ink:#ececec;--ink-dim:#9a9a9a;--ink-mute:#666;--accent:#ffb000;--accent-rgb:255 176 0;--accent-soft:#ffd166;--accent-fill:#ffb000;--accent-fill-hover:#ffbe2e;--on-accent:#1a1100}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}

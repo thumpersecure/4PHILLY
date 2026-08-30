@@ -22,7 +22,7 @@
      Kept in sync with the active theme by the toggle below; media-scoped
      variants would be wrong here because the theme follows the stored
      choice, not the OS setting. -->
-<meta name="theme-color" content="#faf9f4">
+<meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="4PHILLY">
@@ -96,12 +96,17 @@
      is opt-in through the header toggle, persisted in localStorage, and
      deliberately unchanged: the original yellow-on-black.
 
-     Light is a printed-record palette — warm paper ground, green-black
-     ink, deep-green institutional slabs, brass accent, one gold rule.
-     Brass (not green) carries the accent role because green is already
-     spoken for by the "good / clear" status colour; keeping the brand
-     and the status hues apart is what keeps a status readable at a
-     glance.
+     Light is blue on white. Plain white ground, near-black ink, one blue
+     for links, controls and emphasis. No borrowed institutional colour,
+     no decorative rules: nothing on the page should make a record look
+     more verified than it is. The records carry themselves.
+
+     --accent is brand. --attn is "needs your attention" (expired licence,
+     stale data, moderate risk). Those were the same amber before, which
+     only worked because the brand colour happened to be a warning colour;
+     turning the brand blue would have rendered EXPIRED as brand blue, so
+     they are separate tokens now. In dark they resolve to the same amber,
+     which is why dark is unchanged.
 
      Every translucent tint is derived from a `--*-rgb` token rather than
      written as a literal, so a colour picked for one theme can no longer
@@ -109,40 +114,37 @@
      ------------------------------------------------------------------ */
   :root{
     color-scheme:light;
-    --bg:#faf9f4;
-    --panel:#f2f0e7;
-    --panel-2:#e8e5d8;
-    --line:#d5d1c0;
-    --line-soft:#e3e0d2;
-    --ink:#11231c;
-    --ink-dim:#3f5349;
-    --ink-mute:#56675d;        /* 4.7:1 even on --panel-2, so placeholders,
+    --bg:#ffffff;
+    --panel:#f6f7f9;
+    --panel-2:#eceef2;
+    --line:#d8dde4;
+    --line-soft:#e8ebf0;
+    --ink:#14171a;
+    --ink-dim:#474e57;
+    --ink-mute:#5d6570;        /* 5.1:1 even on --panel-2, so placeholders,
                                   meta lines and captions all clear AA */
-    --accent:#846314;          /* brass — accent TEXT, 5.2:1 on paper */
-    --accent-rgb:132 99 20;
-    --accent-soft:#5e4409;     /* hover. On light, "soft" means DARKER: a
+    --accent:#1550e0;          /* the blue. 6.5:1 on white as text, and
+                                  6.5:1 against white as a fill */
+    --accent-rgb:21 80 224;
+    --accent-soft:#0f3fb3;     /* hover. On light, "soft" means DARKER: a
                                   hover state must never lose contrast. */
-    --accent-fill:#c9a227;     /* brass FILL for buttons and pills */
-    --accent-fill-hover:#dbb440;
-    --on-accent:#11231c;       /* text on a brass fill */
-    --rule:#c9a227;            /* the gold hairline */
-    --slab:#0b4634;            /* deep institutional green surface */
-    --slab-2:#0e5540;
-    --slab-ink:#f3f1e6;
-    --slab-ink-dim:#b7cdc1;
-    --slab-line:rgb(243 241 230 / .18);
-    --slab-accent:#d3ae4a;
+    --accent-fill:#1550e0;
+    --accent-fill-hover:#0f3fb3;
+    --on-accent:#ffffff;       /* text on a blue fill */
+    --accent-edge:#0d3392;     /* border/focus ring around a blue fill —
+                                  --on-accent is white and would vanish */
+    --attn:#8a5a00;   --attn-rgb:138 90 0;
     --red:#c62f28;    --red-rgb:198 47 40;
     --green:#1a7f37;  --green-rgb:26 127 55;
-    --blue:#1f6feb;   --blue-rgb:31 111 235;
+    --blue:#1550e0;   --blue-rgb:21 80 224;   /* info == brand: one blue */
     --orange:#b45309; --orange-rgb:180 83 9;
     --warn:#8a6d0a;   --warn-rgb:138 109 10;
-    --neutral-rgb:101 118 108;
-    --hard-rgb:11 70 52;       /* the offset "hard" shadow under controls */
-    --overlay:rgb(11 35 28 / .58);
-    --shadow:0 1px 2px rgb(17 35 28 / .07), 0 8px 24px rgb(17 35 28 / .12);
-    --shadow-lg:0 12px 40px rgb(17 35 28 / .22);
-    --hover-tint:rgb(17 35 28 / .04);
+    --neutral-rgb:93 101 112;
+    --hard-rgb:13 23 41;       /* the offset "hard" shadow under controls */
+    --overlay:rgb(13 23 41 / .55);
+    --shadow:0 1px 2px rgb(16 24 40 / .06), 0 8px 24px rgb(16 24 40 / .10);
+    --shadow-lg:0 12px 40px rgb(16 24 40 / .20);
+    --hover-tint:rgb(16 24 40 / .035);
   }
   html[data-theme="dark"]{
     color-scheme:dark;
@@ -160,14 +162,9 @@
     --accent-fill:#ffb000;
     --accent-fill-hover:#ffbe2e;
     --on-accent:#1a1100;
-    --rule:#2a2c2e;            /* the gold rule is a light-theme device;
-                                  dark keeps the hairline it always had */
-    --slab:#141518;
-    --slab-2:#1b1d20;
-    --slab-ink:#ececec;
-    --slab-ink-dim:#9a9a9a;
-    --slab-line:#2a2c2e;
-    --slab-accent:#ffb000;
+    --accent-edge:#1a1100;
+    --attn:#ffb000;   --attn-rgb:255 176 0;   /* same amber as the brand,
+                                                 so dark is unchanged */
     --red:#ff453a;    --red-rgb:255 69 58;
     --green:#30d158;  --green-rgb:48 209 88;
     --blue:#64b5f6;   --blue-rgb:100 181 246;
@@ -191,9 +188,7 @@
   @media(min-width:680px){.wrap{padding:36px 28px calc(88px + env(safe-area-inset-bottom))}}
 
   /* Header */
-  /* The masthead, the record header and the footer are separated by the
-     one gold rule the palette allows itself. */
-  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:2px solid var(--rule);padding-bottom:22px;margin-bottom:24px}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px}
   .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
   .brand-mark{font-family:"Archivo",sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;color:var(--ink);cursor:pointer;user-select:none}
   .brand-mark:hover span{color:var(--accent-soft)}
@@ -217,7 +212,7 @@
   .finder-toolbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim)}
   .finder-toolbar select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);padding:6px 8px;font-family:"IBM Plex Mono",monospace;font-size:12px;border-radius:2px}
   .finder-row-meta{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);margin-top:1px}
-  .btn{background:var(--accent-fill);color:var(--on-accent);border:2px solid var(--on-accent);padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgb(var(--hard-rgb) / 0.45)}
+  .btn{background:var(--accent-fill);color:var(--on-accent);border:2px solid var(--accent-edge);padding:0 22px;min-height:48px;font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:0;transition:background .15s,box-shadow .1s,transform .08s;touch-action:manipulation;box-shadow:4px 4px 0 rgb(var(--hard-rgb) / 0.45)}
   .btn:hover{background:var(--accent-fill-hover)}
   .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgb(var(--hard-rgb) / 0.45)}
   .btn:disabled{cursor:not-allowed;opacity:.72}
@@ -266,7 +261,7 @@
   .pwa-install-btn{min-height:36px;padding:0 14px;font-size:12px}
 
   /* Property header */
-  .prophead{margin-top:28px;padding:22px 24px;background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-top:2px solid var(--rule);border-radius:3px}
+  .prophead{margin-top:28px;padding:22px 24px;background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:3px}
   .prophead-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
   .prophead h2{font-family:"Archivo",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 4px}
   .prophead .ph-owner-line{font-family:"Archivo",sans-serif;font-weight:600;font-size:15px;color:var(--accent);margin:2px 0 6px;letter-spacing:-.01em}
@@ -320,7 +315,7 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:18px 20px;transition:border-color .15s}
   .card h3{margin:0 0 4px;font-family:"Archivo",sans-serif;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-mute)}
   .card .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:28px;color:var(--ink);letter-spacing:-.01em;line-height:1.1;margin-top:4px}
-  .card .big.amber{color:var(--accent)}
+  .card .big.amber{color:var(--attn)}
   .card .big.red{color:var(--red)}
   .card .big.green{color:var(--green)}
   .card .note{font-size:11px;color:var(--ink-mute);margin-top:6px;font-family:"IBM Plex Mono",monospace}
@@ -351,7 +346,7 @@
   .pill.open{background:rgb(var(--red-rgb) / .12);color:var(--red);border:1px solid rgb(var(--red-rgb) / .35)}
   .pill.complied{background:rgb(var(--green-rgb) / .1);color:var(--green);border:1px solid rgb(var(--green-rgb) / .3)}
   .pill.admin{background:rgb(var(--neutral-rgb) / .08);color:var(--ink-dim);border:1px solid var(--line)}
-  .pill.amber{background:rgb(var(--accent-rgb) / .1);color:var(--accent);border:1px solid rgb(var(--accent-rgb) / .35)}
+  .pill.amber{background:rgb(var(--attn-rgb) / .1);color:var(--attn);border:1px solid rgb(var(--attn-rgb) / .35)}
   .pill.danger{background:var(--red);color:#fff;border:1px solid var(--red)}
   .pill.blue{background:rgb(var(--blue-rgb) / .1);color:var(--blue);border:1px solid rgb(var(--blue-rgb) / .3)}
 
@@ -416,7 +411,7 @@
   .limit-card .severity{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;padding:2px 7px;border-radius:2px;text-transform:uppercase;margin-bottom:8px}
   .limit-card .severity.technical{background:rgb(var(--blue-rgb) / .1);color:var(--blue);border:1px solid rgb(var(--blue-rgb) / .3)}
   .limit-card .severity.policy{background:rgb(var(--neutral-rgb) / .08);color:var(--ink-dim);border:1px solid var(--line)}
-  .limit-card .severity.context{background:rgb(var(--accent-rgb) / .08);color:var(--accent);border:1px solid rgb(var(--accent-rgb) / .3)}
+  .limit-card .severity.context{background:rgb(var(--attn-rgb) / .08);color:var(--attn);border:1px solid rgb(var(--attn-rgb) / .3)}
 
   /* Council tab */
   .council-member{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:20px;margin-bottom:14px}
@@ -484,7 +479,7 @@
   /* Mode toggle + scanner/finder panels (shared across City Scanner and Zip Scanner) */
   .scanner-toggle{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
   .scanner-toggle button{flex:1;min-width:120px;background:var(--panel-2);color:var(--ink);border:2px solid var(--line);font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.06em;padding:14px 16px;min-height:50px;cursor:pointer;border-radius:0;transition:background .12s,color .12s,box-shadow .1s,transform .08s,border-color .12s;touch-action:manipulation;box-shadow:4px 4px 0 rgb(var(--hard-rgb) / 0.4)}
-  .scanner-toggle button.active{background:var(--accent-fill);color:var(--on-accent);border-color:var(--on-accent);box-shadow:4px 4px 0 rgb(var(--hard-rgb) / .45)}
+  .scanner-toggle button.active{background:var(--accent-fill);color:var(--on-accent);border-color:var(--accent-edge);box-shadow:4px 4px 0 rgb(var(--hard-rgb) / .45)}
   .scanner-toggle button:hover:not(.active){border-color:var(--accent);color:var(--accent)}
   .scanner-toggle button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgb(var(--hard-rgb) / 0.4)}
   #scanner-panel{display:none}
@@ -520,8 +515,8 @@
   .zip-scan-summary{text-align:center;padding:16px 18px;margin-bottom:12px;border:1px solid var(--line);border-radius:3px;font-family:"Archivo",sans-serif}
   .zip-scan-summary .zs-headline{font-weight:800;font-size:20px;color:var(--ink);margin-bottom:4px}
   .zip-scan-summary .zs-sub{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-dim)}
-  .zip-scan-summary.has-issues{border-left:3px solid var(--accent);background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%)}
-  .zip-scan-summary.has-issues .zs-headline{color:var(--accent)}
+  .zip-scan-summary.has-issues{border-left:3px solid var(--attn);background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%)}
+  .zip-scan-summary.has-issues .zs-headline{color:var(--attn)}
   .zip-scan-summary.no-issues{border-left:3px solid var(--green);background:var(--panel)}
   .zip-scan-summary.no-issues .zs-headline{color:var(--green)}
   .zip-scan-summary .zs-check{font-size:28px;margin-bottom:4px}
@@ -532,7 +527,7 @@
   .freshness-badge{display:inline-flex;align-items:center;gap:5px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);line-height:1.4}
   .freshness-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
   .freshness-dot.green{background:var(--green)}
-  .freshness-dot.amber{background:var(--accent)}
+  .freshness-dot.amber{background:var(--attn)}
   .freshness-dot.red{background:var(--red)}
   .freshness-source{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-mute);font-style:italic}
 
@@ -615,7 +610,7 @@
   .lookup-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent) 0%,var(--accent-soft) 100%);transition:width .25s ease}
   .lookup-progress.error .lookup-progress-fill{background:var(--red)}
 
-  .footer{margin-top:72px;padding-top:24px;padding-bottom:88px;border-top:2px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:2}
+  .footer{margin-top:72px;padding-top:24px;padding-bottom:88px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-mute);line-height:2}
   .footer b{color:var(--ink-dim)}
   .footer .footer-row{margin-bottom:8px}
   .footer .footer-disc{margin-top:16px;padding-top:12px;border-top:1px solid var(--line-soft);font-size:10px;color:var(--ink-mute);opacity:.7}
@@ -626,22 +621,19 @@
   .table-scroll{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .table-scroll::after{content:'';position:sticky;right:0;top:0;bottom:0;width:28px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--bg) 90%);display:block;margin-top:-100%;float:right;height:100%}
 
-  /* Impact / value section — the one slab on the page. It runs on the
-     --slab-* tokens rather than the page tokens, so it is a deep green
-     block with a gold rule on light and stays near-black on dark. */
-  .impact-hero{background:var(--slab);color:var(--slab-ink);border:1px solid var(--slab-line);border-top:3px solid var(--slab-accent);border-radius:6px;margin:32px 0 12px;padding:40px 36px}
+  /* Impact / value section — uses theme tokens (banner style), so it is dark in
+     dark mode and becomes white automatically when light mode flips the vars. */
+  .impact-hero{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;margin:32px 0 12px;padding:40px 36px}
   .impact-inner{max-width:840px;margin:0 auto}
-  .impact-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slab-accent);font-weight:700;margin-bottom:12px}
-  .impact-h{font-family:"Archivo",sans-serif;font-size:28px;line-height:1.15;margin:0 0 16px;font-weight:800;color:var(--slab-ink);letter-spacing:-.01em}
-  .impact-lede{font-size:16px;line-height:1.65;color:var(--slab-ink-dim);margin:0 0 32px;max-width:700px}
+  .impact-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:12px}
+  .impact-h{font-family:"Archivo",sans-serif;font-size:28px;line-height:1.15;margin:0 0 16px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+  .impact-lede{font-size:16px;line-height:1.65;color:var(--ink-dim);margin:0 0 32px;max-width:700px}
   .impact-cols{display:grid;grid-template-columns:1fr;gap:22px}
-  .impact-col{padding-left:16px;border-left:3px solid var(--slab-accent)}
-  .impact-col h3{font-family:"Archivo",sans-serif;font-size:16px;margin:0 0 8px;color:var(--slab-ink);font-weight:700}
-  .impact-col p{font-size:14.5px;line-height:1.6;color:var(--slab-ink-dim);margin:0}
-  .impact-foot{margin:32px 0 0;padding-top:20px;border-top:1px solid var(--slab-line);font-size:14.5px;color:var(--slab-ink-dim);font-weight:500}
-  .impact-foot b{color:var(--slab-ink)}
-  .impact-hero a{color:var(--slab-accent);border-bottom-color:rgb(var(--accent-rgb) / .5)}
-  .impact-hero a:hover{color:var(--slab-ink)}
+  .impact-col{padding-left:16px;border-left:3px solid var(--accent)}
+  .impact-col h3{font-family:"Archivo",sans-serif;font-size:16px;margin:0 0 8px;color:var(--ink);font-weight:700}
+  .impact-col p{font-size:14.5px;line-height:1.6;color:var(--ink-dim);margin:0}
+  .impact-foot{margin:32px 0 0;padding-top:20px;border-top:1px solid var(--line-soft);font-size:14.5px;color:var(--ink-dim);font-weight:500}
+  .impact-foot b{color:var(--ink)}
   @media(min-width:640px){.impact-cols{grid-template-columns:1fr 1fr;gap:36px}}
   @media(max-width:679px){.impact-hero{padding:28px 20px;margin:24px 0 8px}.impact-h{font-size:22px}.impact-lede{font-size:15px;margin-bottom:26px}}
   /* Theme toggle */
@@ -650,7 +642,7 @@
 
   /* Primary hero CTA — turns the "check before you sign" message into a
      standout call-to-action button instead of just body copy. */
-  .cta-check-btn{display:block;width:100%;margin-top:18px;padding:16px 22px;background:var(--accent-fill);color:var(--on-accent);border:2px solid var(--on-accent);border-radius:6px;text-align:left;cursor:pointer;box-shadow:4px 4px 0 rgb(var(--hard-rgb) / .28);transition:transform .08s,box-shadow .08s;touch-action:manipulation}
+  .cta-check-btn{display:block;width:100%;margin-top:18px;padding:16px 22px;background:var(--accent-fill);color:var(--on-accent);border:2px solid var(--accent-edge);border-radius:6px;text-align:left;cursor:pointer;box-shadow:4px 4px 0 rgb(var(--hard-rgb) / .28);transition:transform .08s,box-shadow .08s;touch-action:manipulation}
   .cta-check-btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 rgb(var(--hard-rgb) / .32)}
   .cta-check-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgb(var(--hard-rgb) / .28)}
   .cta-check-btn-main{display:block;font-family:"Archivo",sans-serif;font-weight:800;font-size:17px;letter-spacing:-.01em}
@@ -843,12 +835,12 @@
   .zr-score { font-weight:700; font-family:Archivo,sans-serif; }
   .zr-score.high { color:var(--red); }
   .zr-score.elevated { color:var(--orange); }
-  .zr-score.moderate { color:var(--accent); }
+  .zr-score.moderate { color:var(--attn); }
   .zr-score.low { color:var(--green); }
   .zr-level { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; padding:2px 6px; border-radius:3px; }
   .zr-level.high { background:rgb(var(--red-rgb) / 0.15); color:var(--red); }
   .zr-level.elevated { background:rgb(var(--orange-rgb) / 0.15); color:var(--orange); }
-  .zr-level.moderate { background:rgb(var(--accent-rgb) / 0.15); color:var(--accent); }
+  .zr-level.moderate { background:rgb(var(--attn-rgb) / 0.15); color:var(--attn); }
   .zr-level.low { background:rgb(var(--green-rgb) / 0.15); color:var(--green); }
   .zr-reason { font-size:11px; color:var(--ink-dim); max-width:300px; }
   .zr-actions { text-align:center; margin-top:16px; }
@@ -934,7 +926,7 @@
   .disc-src a { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 12px; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; color:var(--ink); font-size:13px; text-decoration:none; min-height:44px; }
   .disc-src a:hover { border-color:var(--accent); }
   .disc-src a span.arw { color:var(--accent); }
-  .disc-fab:focus-visible { outline:2px solid var(--on-accent); outline-offset:1px; box-shadow:0 0 0 4px rgb(var(--accent-rgb) / .55); }
+  .disc-fab:focus-visible { outline:2px solid var(--accent-edge); outline-offset:1px; box-shadow:0 0 0 4px rgb(var(--accent-rgb) / .55); }
 
   /* ============================================================
      Clickability & keyboard-accessibility affordances
@@ -967,7 +959,7 @@
   .modal-311-copy:focus-visible,
   .modal-rtkl-copy:focus-visible,
   .zr-dl-btn:focus-visible{
-    outline:2px solid var(--on-accent);
+    outline:2px solid var(--accent-edge);
     outline-offset:1px;
     box-shadow:0 0 0 4px rgb(var(--accent-rgb) / .5);
   }
@@ -3650,7 +3642,7 @@ function calc4PScore({openViolCount, rentalLicenseStatus, complaints12mo, hasUnf
 
 function get4PScoreLevel(score){
   if(score<=20) return {label:"Low Risk",color:"var(--green)",bg:"rgb(var(--green-rgb) / .12)",border:"rgb(var(--green-rgb) / .3)"};
-  if(score<=45) return {label:"Moderate",color:"var(--accent)",bg:"rgb(var(--accent-rgb) / .12)",border:"rgb(var(--accent-rgb) / .35)"};
+  if(score<=45) return {label:"Moderate",color:"var(--attn)",bg:"rgb(var(--attn-rgb) / .12)",border:"rgb(var(--attn-rgb) / .35)"};
   if(score<=70) return {label:"Elevated",color:"var(--orange)",bg:"rgb(var(--orange-rgb) / .12)",border:"rgb(var(--orange-rgb) / .35)"};
   return {label:"High Risk",color:"var(--red)",bg:"rgb(var(--red-rgb) / .12)",border:"rgb(var(--red-rgb) / .35)"};
 }
@@ -5162,7 +5154,7 @@ if('serviceWorker' in navigator){
     if(!btn) return;
     // Browser-chrome colour per theme. The <meta> in <head> can't be set by
     // the pre-paint bootstrap (it isn't parsed yet), so it is reconciled here.
-    var CHROME={light:"#faf9f4",dark:"#111214"};
+    var CHROME={light:"#ffffff",dark:"#111214"};
     function cur(){ return document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light"; }
     function paint(){
       var d = cur()==="dark";
