@@ -1436,7 +1436,7 @@
         <button class="modal-rtkl-copy" id="modal-rtkl-copy">Copy letter</button>
         <button class="modal-rtkl-print" id="modal-rtkl-print">Print letter</button>
       </div>
-      <div class="modal-rtkl-note">Edit the letter above if needed. Copy or print, then mail or email to the L&amp;I Open Records Officer.</div>
+      <div class="modal-rtkl-note">Edit the letter above if needed. Before sending, confirm the current L&amp;I Open Records Officer's mailing address and email at <a href="https://www.phila.gov/open-records-policy/" target="_blank" rel="noopener noreferrer">phila.gov/open-records-policy</a> — the office holder and contact details can change.</div>
     </div>
   </div>
 </div>
@@ -2869,9 +2869,7 @@ function buildRTKLLetter(addr,opa,caseNums,tenantName){
   let letter=dateStr+"\n\n";
   letter+="Open Records Officer\n";
   letter+="Department of Licenses and Inspections\n";
-  letter+="Municipal Services Building\n";
-  letter+="1401 John F. Kennedy Boulevard\n";
-  letter+="Philadelphia, PA 19102\n\n";
+  letter+="[Mailing address/email — confirm current Open Records Officer contact at phila.gov/open-records-policy before sending]\n\n";
   letter+="Re: Right-to-Know Law Request — 65 P.S. Section 67.702\n";
   letter+="Property: "+addr+" (OPA "+opa+")\n\n";
   letter+="Dear Open Records Officer:\n\n";
@@ -2880,7 +2878,7 @@ function buildRTKLLetter(addr,opa,caseNums,tenantName){
   letter+="2. All inspection reports and findings\n";
   letter+="3. All correspondence between L&I and the property owner or management\n";
   letter+="4. All complaints filed regarding this property\n\n";
-  letter+="Under Section 67.902, you are required to respond within five business days.\n\n";
+  letter+="Under Section 67.901, you are required to respond within five business days. If I do not receive a response within that time, the request is deemed denied under the law, and I may appeal to the Pennsylvania Office of Open Records within 15 business days pursuant to Section 67.1101.\n\n";
   letter+="Sincerely,\n";
   letter+=tenantName||"[YOUR NAME]";
   return letter;
