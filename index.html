@@ -11,13 +11,15 @@
   gtag('config', 'G-EBGSHY69K6');
 </script>
 <script>(function(){try{if(localStorage.getItem('4p-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+<!-- reCAPTCHA v3 — invisible bot/abuse scoring for the lookup burst (see lookup() gate). No backend here (static GitHub Pages), so this is a client-side speed bump against naive scripted abuse, not a hard guarantee. -->
+<script src="https://www.google.com/recaptcha/api.js?render=6LcBIa8tAAAAAJix1ngdx2S61kTe5X1aXknL3QY-" async defer></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Philadelphia Apartments — Check Violations &amp; Records | 4PHILLY</title>
 <meta name="description" content="Before you sign a Philadelphia lease, check the address: real code violations, rental license status, and 311 complaints — free, no signup, not run by the City.">
 <meta name="keywords" content="Philadelphia apartments, apartments in Philadelphia, Philadelphia apartments for rent, apartment search Philadelphia, Philly apartment hunting, Philadelphia rental license lookup, code violation lookup Philadelphia, check landlord Philadelphia, Philadelphia tenant tool, is my apartment safe Philadelphia">
 <meta name="robots" content="index,follow,max-image-preview:large">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; img-src 'self' data: https://www.google-analytics.com;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://services.arcgis.com https://phl.carto.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; img-src 'self' data: https://www.google-analytics.com; frame-src https://www.google.com/recaptcha/;">
 <!-- Light is the default, so the browser chrome starts on the paper ground.
      Kept in sync with the active theme by the toggle below; media-scoped
      variants would be wrong here because the theme follows the stored
@@ -3733,9 +3735,47 @@ function compute4PScoreFromLookup({lic, ovE, t311, allViol, opaRow}){
   return calc4PScore({openViolCount, rentalLicenseStatus, complaints12mo, hasUnfit});
 }
 
+// ---- reCAPTCHA v3 abuse gate ----
+// Static site, no backend — this can't be a hard server-verified block, so it
+// combines two checks that both work client-only: a sliding-window burst
+// limiter (real, not spoofable by skipping JS since it just stops firing the
+// fetches) and a v3 score fetch (soft signal, logged to the Google dashboard;
+// a scripted client that skips this file entirely bypasses it, but it stops
+// naive/automated abuse of the page itself from hammering Philly's public APIs).
+const RECAPTCHA_SITE_KEY = "6LcBIa8tAAAAAJix1ngdx2S61kTe5X1aXknL3QY-";
+const LOOKUP_BURST_MAX = 8;      // lookups allowed per window
+const LOOKUP_BURST_WINDOW_MS = 60000;
+let lookupTimestamps = [];
+
+function lookupBurstCheck(){
+  const now = Date.now();
+  lookupTimestamps = lookupTimestamps.filter(t => now - t < LOOKUP_BURST_WINDOW_MS);
+  if(lookupTimestamps.length >= LOOKUP_BURST_MAX) return false;
+  lookupTimestamps.push(now);
+  return true;
+}
+
+function recaptchaV3Check(action){
+  return new Promise(resolve => {
+    try{
+      if(!window.grecaptcha || !grecaptcha.ready){ resolve(null); return; }
+      grecaptcha.ready(() => {
+        grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: action})
+          .then(token => resolve(token))
+          .catch(() => resolve(null));
+      });
+    }catch(e){ resolve(null); }
+  });
+}
+
 // ---- Main lookup ----
 async function lookup(opa){
   if(!/^\d{6,12}$/.test(opa)){ banner("Invalid OPA account number.",true); return; }
+  if(!lookupBurstCheck()){
+    banner("You're looking up properties faster than the City's public data servers can handle — please wait a moment and try again.", true);
+    return;
+  }
+  recaptchaV3Check('lookup'); // fire-and-forget; scores land in the reCAPTCHA admin console for monitoring, not a blocking gate
   setNow();
   const seq = ++lookupSeq;
   setLookupBusy(true);
